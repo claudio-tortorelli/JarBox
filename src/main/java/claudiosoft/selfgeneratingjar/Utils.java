@@ -1,4 +1,4 @@
-package esecurity.selfgeneratingjar;
+package claudiosoft.selfgeneratingjar;
 
 import java.io.Closeable;
 import java.io.File;
@@ -93,16 +93,13 @@ public class Utils {
         }
     }
 
-    public static boolean testLockFile(File testFile) {
-        boolean bLocked = false;
+    public static void testLockFile(File testFile) throws SelfJarException {
+
         try (RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
             FileLock lck = fis.getChannel().lock();
             lck.release();
         } catch (Exception ex) {
-            bLocked = true;
-        }
-        if (bLocked) {
-            return bLocked;
+            throw new SelfJarException("Locked");
         }
         // try further with rename
         String parent = testFile.getParent();
@@ -111,9 +108,8 @@ public class Utils {
         if (testFile.renameTo(newName)) {
             newName.renameTo(testFile);
         } else {
-            bLocked = true;
+            throw new SelfJarException("Locked");
         }
-        return bLocked;
     }
 
     public static void doLock(File lockFile) throws FileNotFoundException, IOException {
@@ -156,5 +152,16 @@ public class Utils {
         }
         byte[] hash = digest.digest();
         return hash;
+    }
+
+    public static String bytesToHex(final byte[] data) {
+        final char[] HEX_DIGITS = "0123456789abcdef".toCharArray();
+        final int l = data.length;
+        final char[] hexChars = new char[l << 1];
+        for (int i = 0, j = 0; i < l; i++) {
+            hexChars[j++] = HEX_DIGITS[(0xF0 & data[i]) >>> 4];
+            hexChars[j++] = HEX_DIGITS[0x0F & data[i]];
+        }
+        return new String(hexChars);
     }
 }

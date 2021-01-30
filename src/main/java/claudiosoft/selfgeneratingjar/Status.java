@@ -1,9 +1,13 @@
-package esecurity.selfgeneratingjar;
+package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +37,7 @@ public class Status {
     public Status() {
     }
 
-    public static void init(Class mainClass) throws URISyntaxException, IOException {
+    public static void init(Class mainClass) throws URISyntaxException, IOException, NoSuchAlgorithmException {
         if (initialized) {
             return;
         }
@@ -138,7 +142,7 @@ public class Status {
         ret += "I'm executing by JVM " + getJavaRuntime() + "\n";
         ret += "I was rebuilt " + getRebuildCount() + " times\n";
         ret += "I'm including following content" + "\n";
-        ret += printContent();
+        ret += printContentList();
         return ret;
     }
 
@@ -146,18 +150,42 @@ public class Status {
         logger.info(print());
     }
 
-    private static void scanJarContent() throws IOException {
+    private static void scanJarContent() throws IOException, NoSuchAlgorithmException {
         content.clear();
         JarFile jar = new JarFile(getCurrentJar());
         Enumeration<? extends JarEntry> enumeration = jar.entries();
         while (enumeration.hasMoreElements()) {
             ZipEntry zipEntry = enumeration.nextElement();
-            content.add(new ContentEntry(zipEntry.getName(), zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory()));
+            InputStream is = null;
+            byte[] hash = null;
+            try {
+                if (!zipEntry.isDirectory()) {
+                    is = jar.getInputStream(zipEntry);
+                    hash = Utils.getSHA256(is);
+                }
+                content.add(new ContentEntry(zipEntry.getName(), zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory(), hash));
+            } finally {
+                Utils.closeQuietly(is);
+            }
         }
+
+        Collections.sort(content, new Comparator<ContentEntry>() {
+            @Override
+            public int compare(ContentEntry e1, ContentEntry e2) {
+                return e1.getPath().compareTo(e2.getPath());
+            }
+        });
     }
 
-    private static String printContent() {
+    private static String printContentList() {
         String ret = "";
+        for (ContentEntry entry : content) {
+            String hash = "";
+            if (entry.getHash() != null) {
+                hash = Utils.bytesToHex(entry.getHash());
+            }
+            ret += String.format("  %s %s\n", hash, entry.getPath());
+        }
         return ret;
     }
 }

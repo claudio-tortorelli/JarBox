@@ -1,4 +1,4 @@
-package esecurity.selfgeneratingjar;
+package claudiosoft.selfgeneratingjar;
 
 /**
  *

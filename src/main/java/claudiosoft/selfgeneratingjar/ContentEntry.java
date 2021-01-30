@@ -1,6 +1,4 @@
-package esecurity.selfgeneratingjar;
-
-import java.io.File;
+package claudiosoft.selfgeneratingjar;
 
 /**
  *
@@ -12,17 +10,20 @@ public class ContentEntry {
     private String path;
     private byte[] hash;
     private long size;
-    private boolean isDirectory;
+    private boolean directory;
+    private boolean core;
 
     public ContentEntry() {
 
     }
 
-    public ContentEntry(String name, String path, long size, boolean isDir) {
+    public ContentEntry(String name, String path, long size, boolean isDir, byte[] hash) {
         this.name = name;
         this.path = path;
         this.size = size;
-        this.isDirectory = isDir;
+        this.directory = isDir;
+        this.core = CoreEntries.isCore(path);
+        this.hash = hash;
     }
 
     public String getName() {
@@ -57,16 +58,21 @@ public class ContentEntry {
         this.size = size;
     }
 
-    public boolean isIsDirectory() {
-        return isDirectory;
+    public boolean isDirectory() {
+        return directory;
     }
 
-    public void setIsDirectory(boolean isDirectory) {
-        this.isDirectory = isDirectory;
+    public void setDirectory(boolean isDirectory) {
+        this.directory = isDirectory;
     }
 
-    public String getFullName() {
-        return String.format("%s%s%s", path, File.separator, name);
+    public boolean isCore() {
+        return core;
+    }
+
+    @Override
+    public String toString() {
+        return "ContentEntry{" + "name=" + name + ", path=" + path + ", hash=" + hash + ", size=" + size + ", directory=" + directory + ", core=" + core + '}';
     }
 
 }

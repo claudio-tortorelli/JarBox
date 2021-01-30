@@ -1,7 +1,9 @@
-package esecurity.selfgeneratingjar;
+package claudiosoft.selfgeneratingjar;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 
 /**
  *
@@ -10,11 +12,15 @@ import java.net.URISyntaxException;
 public class SelfJar {
 
     private BasicConsoleLogger logger;
+    private static final File FILE_LOCK = new File(System.getProperty("user.home") + File.separator + ".selfgenerating_lock");
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
         BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.DEBUG, "SelfJar");
 
         try {
+            // avoid multiple instances
+            Utils.testLockFile(FILE_LOCK);
+            Utils.doLock(FILE_LOCK);
             logger.info("SelfJar started");
             if (args.length == 0) {
                 ///////////////////////////////////////////////////////
@@ -28,11 +34,11 @@ public class SelfJar {
             ex.printStackTrace(System.out);
             System.exit(Constants.RET_CODE_ERR);
         } finally {
-
+            Utils.doUnlock();
         }
     }
 
-    public SelfJar(BasicConsoleLogger logger) throws URISyntaxException, IOException, InterruptedException {
+    public SelfJar(BasicConsoleLogger logger) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException {
         this.logger = logger;
 
         Status.init(this.getClass());

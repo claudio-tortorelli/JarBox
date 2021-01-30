@@ -1,4 +1,4 @@
-package esecurity.selfgeneratingjar;
+package claudiosoft.selfgeneratingjar;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
