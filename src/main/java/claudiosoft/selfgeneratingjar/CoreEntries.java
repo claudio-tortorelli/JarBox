@@ -15,10 +15,10 @@ public class CoreEntries {
         coreEntries.add(".netbeans_automatic_build");
         coreEntries.add("META-INF/MANIFEST.MF");
         coreEntries.add("META-INF/maven/");
-        coreEntries.add("META-INF/maven/esecurity/");
-        coreEntries.add("META-INF/maven/esecurity/SelfGeneratingJar/");
-        coreEntries.add("META-INF/maven/esecurity/SelfGeneratingJar/pom.properties");
-        coreEntries.add("META-INF/maven/esecurity/SelfGeneratingJar/pom.xml");
+        coreEntries.add("META-INF/maven/claudiosoft/");
+        coreEntries.add("META-INF/maven/claudiosoft/SelfGeneratingJar/");
+        coreEntries.add("META-INF/maven/claudiosoft/SelfGeneratingJar/pom.properties");
+        coreEntries.add("META-INF/maven/claudiosoft/SelfGeneratingJar/pom.xml");
         coreEntries.add("claudiosoft/selfgeneratingjar/");
         coreEntries.add("claudiosoft/selfgeneratingjar/BasicConsoleLogger$LogLevel.class");
         coreEntries.add("claudiosoft/selfgeneratingjar/BasicConsoleLogger.class");
