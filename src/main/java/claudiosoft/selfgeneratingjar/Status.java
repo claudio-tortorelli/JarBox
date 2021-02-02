@@ -282,4 +282,11 @@ public class Status {
         }
         return ret;
     }
+
+    // TODO, salvare lo status su file crittato da ripristinare all'avvio successivo
+    // TODO, la chiave di cript/decript non può stare nel java stesso...
+    // tool c++ che esegue la decifratura byte a byte
+    private static void storeInternal() {
+
+    }
 }
