@@ -38,7 +38,7 @@ public class SelfJar {
         }
     }
 
-    public SelfJar(BasicConsoleLogger logger) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException {
+    public SelfJar(BasicConsoleLogger logger) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException, SelfJarException {
         this.logger = logger;
 
         Status.init(this.getClass());

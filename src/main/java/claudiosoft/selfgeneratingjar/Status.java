@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -32,12 +33,27 @@ public class Status {
 
     private static boolean initialized = false;
 
-    private static List<ContentEntry> content = new LinkedList<>();
+    private static final List<ContentEntry> content = new LinkedList<>();
+
+    public static enum CHECK_MODE {
+        SIZE,
+        ADD,
+        SUB,
+        ADD_SUB,
+        ADD_SUB_COHERENCE,
+        ALL
+    }
+
+    public static enum CHECK_TARGET {
+        ALL,
+        CORE_ONLY,
+        EXTRA_ONLY
+    }
 
     public Status() {
     }
 
-    public static void init(Class mainClass) throws URISyntaxException, IOException, NoSuchAlgorithmException {
+    public static void init(Class mainClass) throws URISyntaxException, IOException, NoSuchAlgorithmException, SelfJarException {
         if (initialized) {
             return;
         }
@@ -59,7 +75,7 @@ public class Status {
         setJarName(curName);
         setCurrentJar(new File(getParentFolderJar() + File.separator + getJarName()));
         setJavaRuntime(System.getProperty("java.home") + File.separator + "bin" + File.separator + "java");
-        scanJarContent();
+        checkJarContent();
         initialized = true;
     }
 
@@ -150,8 +166,31 @@ public class Status {
         logger.info(print());
     }
 
-    private static void scanJarContent() throws IOException, NoSuchAlgorithmException {
-        content.clear();
+    public static void checkJarContent() throws IOException, NoSuchAlgorithmException, SelfJarException {
+        checkJarContent(CHECK_MODE.ALL, CHECK_TARGET.ALL);
+    }
+
+    public static void checkJarContent(CHECK_MODE mode, CHECK_TARGET target) throws IOException, NoSuchAlgorithmException, SelfJarException {
+        List<ContentEntry> curContent = null;
+        if (!initialized) {
+            curContent = content;
+        } else {
+            curContent = new LinkedList<>();
+        }
+        scanJarContent(curContent);
+        if (!initialized) {
+            return;
+        }
+        // compare previous content with current
+        compareContents(curContent, mode, target);
+    }
+
+    public static void updateJarContent() throws IOException, NoSuchAlgorithmException {
+        scanJarContent(content);
+    }
+
+    private static void scanJarContent(List<ContentEntry> curContent) throws IOException, NoSuchAlgorithmException {
+        curContent.clear();
         JarFile jar = new JarFile(getCurrentJar());
         Enumeration<? extends JarEntry> enumeration = jar.entries();
         while (enumeration.hasMoreElements()) {
@@ -163,18 +202,73 @@ public class Status {
                     is = jar.getInputStream(zipEntry);
                     hash = Utils.getSHA256(is);
                 }
-                content.add(new ContentEntry(zipEntry.getName(), zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory(), hash));
+                curContent.add(new ContentEntry(zipEntry.getName(), zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory(), hash));
             } finally {
                 Utils.closeQuietly(is);
             }
         }
 
-        Collections.sort(content, new Comparator<ContentEntry>() {
+        Collections.sort(curContent, new Comparator<ContentEntry>() {
             @Override
             public int compare(ContentEntry e1, ContentEntry e2) {
                 return e1.getPath().compareTo(e2.getPath());
             }
         });
+    }
+
+    /**
+     * suppose two list are sorted in same way
+     */
+    private static void compareContents(List<ContentEntry> actualContent, CHECK_MODE mode, CHECK_TARGET target) throws SelfJarException {
+        if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.SIZE)) {
+            if (actualContent.size() != content.size()) {
+                throw new SelfJarException(String.format("actual content size is %d against %d expected", actualContent.size(), content.size()));
+            }
+        }
+
+        if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.SUB) || mode.equals(CHECK_MODE.ADD_SUB)) {
+            for (ContentEntry entry : content) {
+                if (target.equals(CHECK_TARGET.CORE_ONLY) && !entry.isCore()) {
+                    continue;
+                } else if (target.equals(CHECK_TARGET.EXTRA_ONLY) && entry.isCore()) {
+                    continue;
+                }
+                boolean found = false;
+                for (ContentEntry entry2 : actualContent) {
+                    if (entry.getPath().equals(entry2.getPath())) {
+                        found = true;
+                        if (mode.equals(CHECK_MODE.ADD_SUB_COHERENCE)) {
+                            if (!Arrays.equals(entry.getHash(), entry2.getHash())) {
+                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getPath()));
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (!found) {
+                    throw new SelfJarException(String.format("missing entry %s", entry.getPath()));
+                }
+            }
+        }
+        if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.ADD) || mode.equals(CHECK_MODE.ADD_SUB)) {
+            for (ContentEntry entry : actualContent) {
+                boolean found = false;
+                for (ContentEntry entry2 : content) {
+                    if (entry.getPath().equals(entry2.getPath())) {
+                        found = true;
+                        if (mode.equals(CHECK_MODE.ADD_SUB_COHERENCE)) {
+                            if (!Arrays.equals(entry.getHash(), entry2.getHash())) {
+                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getPath()));
+                            }
+                        }
+                        break;
+                    }
+                }
+                if (!found) {
+                    throw new SelfJarException(String.format("entry %s was added", entry.getPath()));
+                }
+            }
+        }
     }
 
     private static String printContentList() {
