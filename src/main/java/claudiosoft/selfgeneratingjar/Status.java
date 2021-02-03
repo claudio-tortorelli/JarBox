@@ -193,19 +193,19 @@ public class Status {
         curContent.clear();
         JarFile jar = new JarFile(getCurrentJar());
         Enumeration<? extends JarEntry> enumeration = jar.entries();
-        while (enumeration.hasMoreElements()) {
-            ZipEntry zipEntry = enumeration.nextElement();
-            InputStream is = null;
-            byte[] hash = null;
-            try {
+        InputStream is = null;
+        try {
+            while (enumeration.hasMoreElements()) {
+                ZipEntry zipEntry = enumeration.nextElement();
+                byte[] hash = null;
                 if (!zipEntry.isDirectory()) {
                     is = jar.getInputStream(zipEntry);
                     hash = Utils.getSHA256(is);
                 }
                 curContent.add(new ContentEntry(zipEntry.getName(), zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory(), hash));
-            } finally {
-                Utils.closeQuietly(is);
             }
+        } finally {
+            Utils.closeQuietly(is);
         }
 
         Collections.sort(curContent, new Comparator<ContentEntry>() {
