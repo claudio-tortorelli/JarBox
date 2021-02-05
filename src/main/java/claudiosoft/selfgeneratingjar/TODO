@@ -1,0 +1,9 @@
+APPUNTI
+per eventuale approccio con protezione di file interni
+    https://www.baeldung.com/java-aes-encryption-decryption
+    https://www.codeproject.com/Articles/1400/A-C-Implementation-of-the-Blowfish-Encryption-Decr
+la cosa però non è intrinsecamente valida, in quanto chiave la chiave per il decrypt finisce per essere inclusa nel jar stesso e quindi è attaccabile
+utilizzare una chiave dipendente da risorse esterne è però controindicato per la portabilità e l'autoconsistenza del progetto
+---> si procede con un approccio ibrido: quando il jar è in esecuzione si mantiene lo stato e l'elenco dei file che lo compongono.
+    Quando non lo è, il jar è "attaccabile" e modificabile. Si demanda a qualche tool esterno la protezione in quella fase.
+
