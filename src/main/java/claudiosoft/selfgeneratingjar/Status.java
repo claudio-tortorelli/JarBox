@@ -143,6 +143,10 @@ public class Status {
         Status.rebuildCount = rebuildCount;
     }
 
+    public static final List<ContentEntry> getContent() {
+        return content;
+    }
+
     /**
      *
      * @return
@@ -160,10 +164,6 @@ public class Status {
         ret += "I'm including following content" + "\n";
         ret += printContentList();
         return ret;
-    }
-
-    public static void print(BasicConsoleLogger logger) throws IOException {
-        logger.info(print());
     }
 
     public static void checkJarContent() throws IOException, NoSuchAlgorithmException, SelfJarException {
@@ -202,7 +202,7 @@ public class Status {
                     is = jar.getInputStream(zipEntry);
                     hash = Utils.getSHA256(is);
                 }
-                curContent.add(new ContentEntry(zipEntry.getName(), zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory(), hash));
+                curContent.add(new ContentEntry(zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory(), hash));
             }
         } finally {
             Utils.closeQuietly(is);
@@ -286,7 +286,7 @@ public class Status {
     // TODO, salvare lo status su file crittato da ripristinare all'avvio successivo
     // TODO, la chiave di cript/decript non può stare nel java stesso...
     // tool c++ che esegue la decifratura byte a byte
-    private static void storeInternal() {
-
+    private static void storeInternal() throws SelfJarException {
+        throw new SelfJarException("not defined");
     }
 }

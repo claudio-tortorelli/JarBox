@@ -1,5 +1,7 @@
 package claudiosoft.selfgeneratingjar;
 
+import java.io.File;
+
 /**
  *
  * @author claudio.tortorelli
@@ -17,8 +19,8 @@ public class ContentEntry {
 
     }
 
-    public ContentEntry(String name, String path, long size, boolean isDir, byte[] hash) {
-        this.name = name;
+    public ContentEntry(String path, long size, boolean isDir, byte[] hash) {
+        this.name = new File(path).getName();
         this.path = path;
         this.size = size;
         this.directory = isDir;

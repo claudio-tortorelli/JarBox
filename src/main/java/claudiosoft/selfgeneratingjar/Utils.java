@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -163,5 +164,13 @@ public class Utils {
             hexChars[j++] = HEX_DIGITS[0x0F & data[i]];
         }
         return new String(hexChars);
+    }
+
+    public static void inputToOutput(InputStream source, OutputStream target) throws IOException {
+        byte[] buf = new byte[Constants.BUFFER_SIZE];
+        int length;
+        while ((length = source.read(buf)) > 0) {
+            target.write(buf, 0, length);
+        }
     }
 }

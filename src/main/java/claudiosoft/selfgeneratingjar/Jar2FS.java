@@ -1,8 +1,10 @@
 package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -23,17 +25,23 @@ public class Jar2FS {
         JarFile jar = new JarFile(currentJar);
         Enumeration<? extends JarEntry> enumeration = jar.entries();
         InputStream is = null;
+        FileOutputStream fos = null;
         try {
             while (enumeration.hasMoreElements()) {
                 ZipEntry zipEntry = enumeration.nextElement();
                 if (!zipEntry.isDirectory()) {
                     is = jar.getInputStream(zipEntry);
+                    File outFile = new File(baseFolder.getAbsoluteFile() + File.separator + zipEntry.getName());
+                    fos = new FileOutputStream(outFile);
+                    Utils.inputToOutput(is, fos);
                 } else {
-                    //Files.createDirectory(zipEntry.);
+                    File outFolder = new File(baseFolder.getAbsoluteFile() + File.separator + zipEntry.getName());
+                    Files.createDirectory(outFolder.toPath());
                 }
             }
         } finally {
             Utils.closeQuietly(is);
+            Utils.closeQuietly(fos);
         }
     }
 
