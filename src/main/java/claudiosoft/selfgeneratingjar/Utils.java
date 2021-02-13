@@ -84,10 +84,10 @@ public class Utils {
             String param = splitted[0].toLowerCase().trim();
             String value = splitted[1];
             if (param.startsWith("parent")) {
-                Status.setParent(new File(value));
+                JarStatus.setParent(new File(value));
             } else if (param.startsWith("count")) {
                 int counter = Integer.parseInt(value);
-                Status.setRebuildCount(counter);
+                JarStatus.setRebuildCount(counter);
             } else {
                 throw new IllegalArgumentException("unrecognized input argument: " + param);
             }

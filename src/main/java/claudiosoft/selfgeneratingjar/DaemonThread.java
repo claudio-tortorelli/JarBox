@@ -18,17 +18,17 @@ public class DaemonThread extends Thread {
 
     public void run() {
         final ArrayList<String> command = new ArrayList<>();
-        command.add(Status.getJavaRuntime());
+        command.add(JarStatus.getJavaRuntime());
         command.add("-jar");
-        command.add(Status.getCurrentJar().getPath());
-        if (Status.getParent() == null) {
+        command.add(JarStatus.getCurrentJar().getPath());
+        if (JarStatus.getParent() == null) {
 
             /////////// NON MI CONVINCE QUESTO PASSAGGIO DI PARAMETRI
             logger.info("starting myself...");
             command.add("parent=");
-            command.add(Status.getCurrentJar().getAbsolutePath());
+            command.add(JarStatus.getCurrentJar().getAbsolutePath());
             command.add("count=");
-            command.add(String.format("%d", Status.getRebuildCount() + 1));
+            command.add(String.format("%d", JarStatus.getRebuildCount() + 1));
             final ProcessBuilder builder = new ProcessBuilder(command);
             try {
                 Process p = builder.start();

@@ -43,13 +43,13 @@ public class SelfJar {
         this.logger = logger;
 
         try {
-            Status.init(this.getClass());
-            logger.info(Status.print());
+            JarStatus.init(this.getClass());
+            logger.info(JarStatus.print());
 
             File baseFolder = new File(System.getProperty("java.io.tmpdir") + File.separator + Constants.TMP_BASEFOLDER);
             Files.createDirectories(baseFolder.toPath());
-            Jar2FS.jar2Fs(Status.getCurrentJar(), null, baseFolder);
-            //        if (Status.getIncarnationCount() < 3) {
+            JarIO.toFS(JarStatus.getCurrentJar(), null, baseFolder);
+            //        if (JarStatus.getIncarnationCount() < 3) {
             //            restartMySelf();
             //        }
         } finally {

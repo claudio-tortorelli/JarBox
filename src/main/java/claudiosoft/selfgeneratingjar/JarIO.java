@@ -15,13 +15,13 @@ import java.util.zip.ZipEntry;
  *
  * @author claudio.tortorelli
  */
-public class Jar2FS {
+public class JarIO {
 
-    public Jar2FS() {
+    public JarIO() {
 
     }
 
-    public static void jar2Fs(File currentJar, List<ContentEntry> content, File baseFolder) throws IOException {
+    public static void toFS(File currentJar, List<ContentEntry> content, File baseFolder) throws IOException {
         JarFile jar = new JarFile(currentJar);
         Enumeration<? extends JarEntry> enumeration = jar.entries();
         InputStream is = null;
@@ -45,7 +45,7 @@ public class Jar2FS {
         }
     }
 
-    public static void fs2Jar(List<ContentEntry> content, File baseFolder, File nextJar) throws SelfJarException {
+    public static void fromFS(List<ContentEntry> content, File baseFolder, File nextJar) throws SelfJarException {
         if (nextJar.exists()) {
             throw new SelfJarException("target jar already exists");
         }

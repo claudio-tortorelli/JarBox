@@ -20,7 +20,7 @@ import java.util.zip.ZipEntry;
  *
  * @author Claudio
  */
-public class Status {
+public class JarStatus {
 
     private static File parent = null;
     private static String fullName = "";
@@ -50,7 +50,7 @@ public class Status {
         EXTRA_ONLY
     }
 
-    public Status() {
+    public JarStatus() {
     }
 
     public static void init(Class mainClass) throws URISyntaxException, IOException, NoSuchAlgorithmException, SelfJarException {
@@ -84,7 +84,7 @@ public class Status {
     }
 
     public static void setParent(File file) {
-        Status.parent = file;
+        JarStatus.parent = file;
     }
 
     public static String getFullName() {
@@ -92,7 +92,7 @@ public class Status {
     }
 
     public static void setFullName(String fullName) {
-        Status.fullName = fullName;
+        JarStatus.fullName = fullName;
     }
 
     public static String getClassName() {
@@ -100,7 +100,7 @@ public class Status {
     }
 
     public static void setClassName(String className) {
-        Status.className = className;
+        JarStatus.className = className;
     }
 
     public static String getParentFolderJar() {
@@ -108,7 +108,7 @@ public class Status {
     }
 
     public static void setParentFolderJar(String parentFolderJar) {
-        Status.parentFolderJar = parentFolderJar;
+        JarStatus.parentFolderJar = parentFolderJar;
     }
 
     public static String getJarName() {
@@ -116,7 +116,7 @@ public class Status {
     }
 
     public static void setJarName(String jarName) {
-        Status.jarName = jarName;
+        JarStatus.jarName = jarName;
     }
 
     public static File getCurrentJar() {
@@ -124,7 +124,7 @@ public class Status {
     }
 
     public static void setCurrentJar(File currentJar) {
-        Status.currentJar = currentJar;
+        JarStatus.currentJar = currentJar;
     }
 
     public static String getJavaRuntime() {
@@ -132,7 +132,7 @@ public class Status {
     }
 
     public static void setJavaRuntime(String javaRuntime) {
-        Status.javaRuntime = javaRuntime;
+        JarStatus.javaRuntime = javaRuntime;
     }
 
     public static int getRebuildCount() {
@@ -140,7 +140,7 @@ public class Status {
     }
 
     public static void setRebuildCount(int rebuildCount) {
-        Status.rebuildCount = rebuildCount;
+        JarStatus.rebuildCount = rebuildCount;
     }
 
     public static final List<ContentEntry> getContent() {
