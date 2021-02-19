@@ -71,32 +71,9 @@ public class Utils {
         return sdf.parse(date);
     }
 
-    public static void parseArgs(String[] args) {
-        for (int iAr = 0; iAr < args.length; iAr++) {
-            if (args[iAr] == null || args[iAr].isEmpty()) {
-                continue;
-            }
-            String[] splitted = args[iAr].split("=");
-            if (splitted.length != 2) {
-                continue;
-            }
-
-            String param = splitted[0].toLowerCase().trim();
-            String value = splitted[1];
-            if (param.startsWith("parent")) {
-                JarStatus.setParent(new File(value));
-            } else if (param.startsWith("count")) {
-                int counter = Integer.parseInt(value);
-                JarStatus.setRebuildCount(counter);
-            } else {
-                throw new IllegalArgumentException("unrecognized input argument: " + param);
-            }
-        }
-    }
-
     public static void testLockFile(File testFile) throws SelfJarException {
 
-        try (RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
+        try ( RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
             FileLock lck = fis.getChannel().lock();
             lck.release();
         } catch (Exception ex) {

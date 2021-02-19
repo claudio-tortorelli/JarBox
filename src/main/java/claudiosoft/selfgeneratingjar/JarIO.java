@@ -1,15 +1,9 @@
 package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 /**
  *
@@ -21,28 +15,34 @@ public class JarIO {
 
     }
 
-    public static void toFS(File currentJar, List<ContentEntry> content, File baseFolder) throws IOException {
-        JarFile jar = new JarFile(currentJar);
-        Enumeration<? extends JarEntry> enumeration = jar.entries();
-        InputStream is = null;
-        FileOutputStream fos = null;
-        try {
-            while (enumeration.hasMoreElements()) {
-                ZipEntry zipEntry = enumeration.nextElement();
-                if (!zipEntry.isDirectory()) {
-                    is = jar.getInputStream(zipEntry);
-                    File outFile = new File(baseFolder.getAbsoluteFile() + File.separator + zipEntry.getName());
-                    fos = new FileOutputStream(outFile);
-                    Utils.inputToOutput(is, fos);
-                } else {
-                    File outFolder = new File(baseFolder.getAbsoluteFile() + File.separator + zipEntry.getName());
-                    Files.createDirectory(outFolder.toPath());
-                }
-            }
-        } finally {
-            Utils.closeQuietly(is);
-            Utils.closeQuietly(fos);
+    public static void toFS(JarContent jarContent, File baseFolder) throws IOException {
+
+        // build folder tree
+        List<ContentEntry> content = jarContent.getContent();
+        for (ContentEntry ent : content) {
+            File folder = new File(String.format("%s%s%s", baseFolder, File.separator, ent.getPath()));
+            Files.createDirectories(folder.toPath());
         }
+
+//        // export content to folders
+//        JarFile jar = new JarFile(id.getCurrentJar());
+//        Enumeration<? extends JarEntry> enumeration = jar.entries();
+//        InputStream is = null;
+//        FileOutputStream fos = null;
+//        try {
+//            while (enumeration.hasMoreElements()) {
+//                ZipEntry zipEntry = enumeration.nextElement();
+//                if (!zipEntry.isDirectory()) {
+//                    is = jar.getInputStream(zipEntry);
+//                    File outFile = new File(baseFolder.getAbsoluteFile() + File.separator + zipEntry.getName());
+//                    fos = new FileOutputStream(outFile);
+//                    Utils.inputToOutput(is, fos);
+//                }
+//            }
+//        } finally {
+//            Utils.closeQuietly(is);
+//            Utils.closeQuietly(fos);
+//        }
     }
 
     public static void fromFS(List<ContentEntry> content, File baseFolder, File nextJar) throws SelfJarException {
