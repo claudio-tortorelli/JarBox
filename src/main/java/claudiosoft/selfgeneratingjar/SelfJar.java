@@ -3,6 +3,7 @@ package claudiosoft.selfgeneratingjar;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 
 /**
@@ -53,9 +54,9 @@ public class SelfJar {
             logger.info(toString());
             // end initialization
 
-//            File baseFolder = new File(System.getProperty("java.io.tmpdir") + File.separator + Constants.TMP_BASEFOLDER);
-//            Files.createDirectories(baseFolder.toPath());
-//            JarIO.toFS(identity, baseFolder);
+            File baseFolder = new File(System.getProperty("java.io.tmpdir") + File.separator + Constants.TMP_BASEFOLDER);
+            Files.createDirectories(baseFolder.toPath());
+            io.toFS(content, baseFolder);
             //        if (JarIdentity.getIncarnationCount() < 3) {
             //            restartMySelf();
             //        }

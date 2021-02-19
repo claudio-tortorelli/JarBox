@@ -1,8 +1,11 @@
 package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.jar.JarFile;
 
 /**
  *
@@ -18,13 +21,33 @@ public class JarIO {
 
         // build folder tree
         List<ContentEntry> content = jarContent.getContent();
-        for (ContentEntry ent : content) {
-            File folder = new File(String.format("%s%s%s", baseFolder, File.separator, ent.getFullName()));
+        for (ContentEntry entry : content) {
+            if (!entry.isDirectory()) {
+                continue;
+            }
+            File folder = new File(String.format("%s%s%s", baseFolder, File.separator, entry.getFullName()));
             folder.mkdirs();
         }
 
         // export content to folders
-//        JarFile jar = new JarFile(id.getCurrentJar());
+        InputStream is = null;
+        FileOutputStream fos = null;
+        JarFile jar = new JarFile(jarContent.getJarFile());
+        for (ContentEntry entry : content) {
+            if (entry.isDirectory()) {
+                continue;
+            }
+            try {
+                is = jar.getInputStream(entry);
+                File outFile = new File(baseFolder.getAbsoluteFile() + File.separator + entry.getName());
+                fos = new FileOutputStream(outFile);
+                Utils.inputToOutput(is, fos);
+            } finally {
+                Utils.closeQuietly(is);
+                Utils.closeQuietly(fos);
+            }
+        }
+
 //        Enumeration<? extends JarEntry> enumeration = jar.entries();
 //        InputStream is = null;
 //        FileOutputStream fos = null;

@@ -34,6 +34,7 @@ public class JarContent {
     }
 
     private final List<ContentEntry> content;
+    private final File jarFile;
 
     public JarContent(File jar) throws SelfJarException {
         this(jar, true);
@@ -41,7 +42,8 @@ public class JarContent {
 
     public JarContent(File jar, boolean sort) throws SelfJarException {
         try {
-            content = new LinkedList<>();
+            this.jarFile = jar;
+            this.content = new LinkedList<>();
             JarFile jarFile = new JarFile(jar);
             Enumeration<? extends JarEntry> enumeration = jarFile.entries();
             InputStream is = null;
@@ -53,13 +55,13 @@ public class JarContent {
                         is = jarFile.getInputStream(zipEntry);
                         hash = Utils.getSHA256(is);
                     }
-                    content.add(new ContentEntry(zipEntry, hash));
+                    this.content.add(new ContentEntry(zipEntry, hash));
                 }
             } finally {
                 Utils.closeQuietly(is);
             }
 
-            Collections.sort(content, new Comparator<ContentEntry>() {
+            Collections.sort(this.content, new Comparator<ContentEntry>() {
                 @Override
                 public int compare(ContentEntry e1, ContentEntry e2) {
                     return e1.getFullName().compareTo(e2.getFullName());
@@ -72,6 +74,10 @@ public class JarContent {
 
     public final List<ContentEntry> getContent() {
         return content;
+    }
+
+    public File getJarFile() {
+        return jarFile;
     }
 
     /**
