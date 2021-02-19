@@ -2,7 +2,6 @@ package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -15,16 +14,16 @@ public class JarIO {
 
     }
 
-    public static void toFS(JarContent jarContent, File baseFolder) throws IOException {
+    public void toFS(JarContent jarContent, File baseFolder) throws IOException {
 
         // build folder tree
         List<ContentEntry> content = jarContent.getContent();
         for (ContentEntry ent : content) {
-            File folder = new File(String.format("%s%s%s", baseFolder, File.separator, ent.getPath()));
-            Files.createDirectories(folder.toPath());
+            File folder = new File(String.format("%s%s%s", baseFolder, File.separator, ent.getFullName()));
+            folder.mkdirs();
         }
 
-//        // export content to folders
+        // export content to folders
 //        JarFile jar = new JarFile(id.getCurrentJar());
 //        Enumeration<? extends JarEntry> enumeration = jar.entries();
 //        InputStream is = null;
@@ -45,7 +44,7 @@ public class JarIO {
 //        }
     }
 
-    public static void fromFS(List<ContentEntry> content, File baseFolder, File nextJar) throws SelfJarException {
+    public void fromFS(List<ContentEntry> content, File baseFolder, File nextJar) throws SelfJarException {
         if (nextJar.exists()) {
             throw new SelfJarException("target jar already exists");
         }

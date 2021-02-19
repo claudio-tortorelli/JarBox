@@ -53,7 +53,7 @@ public class JarContent {
                         is = jarFile.getInputStream(zipEntry);
                         hash = Utils.getSHA256(is);
                     }
-                    content.add(new ContentEntry(zipEntry.getName(), zipEntry.getSize(), zipEntry.isDirectory(), hash));
+                    content.add(new ContentEntry(zipEntry, hash));
                 }
             } finally {
                 Utils.closeQuietly(is);
@@ -62,7 +62,7 @@ public class JarContent {
             Collections.sort(content, new Comparator<ContentEntry>() {
                 @Override
                 public int compare(ContentEntry e1, ContentEntry e2) {
-                    return e1.getPath().compareTo(e2.getPath());
+                    return e1.getFullName().compareTo(e2.getFullName());
                 }
             });
         } catch (Exception ex) {
@@ -98,18 +98,18 @@ public class JarContent {
                 }
                 boolean found = false;
                 for (ContentEntry entry2 : otherContent) {
-                    if (entry.getPath().equals(entry2.getPath())) {
+                    if (entry.getFullName().equals(entry2.getFullName())) {
                         found = true;
                         if (mode.equals(CHECK_MODE.ADD_SUB_COHERENCE)) {
                             if (!Arrays.equals(entry.getHash(), entry2.getHash())) {
-                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getPath()));
+                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getFullName()));
                             }
                         }
                         break;
                     }
                 }
                 if (!found) {
-                    throw new SelfJarException(String.format("missing entry %s", entry.getPath()));
+                    throw new SelfJarException(String.format("missing entry %s", entry.getFullName()));
                 }
             }
         }
@@ -117,18 +117,18 @@ public class JarContent {
             for (ContentEntry entry : otherContent) {
                 boolean found = false;
                 for (ContentEntry entry2 : content) {
-                    if (entry.getPath().equals(entry2.getPath())) {
+                    if (entry.getFullName().equals(entry2.getFullName())) {
                         found = true;
                         if (mode.equals(CHECK_MODE.ADD_SUB_COHERENCE)) {
                             if (!Arrays.equals(entry.getHash(), entry2.getHash())) {
-                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getPath()));
+                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getFullName()));
                             }
                         }
                         break;
                     }
                 }
                 if (!found) {
-                    throw new SelfJarException(String.format("entry %s was added", entry.getPath()));
+                    throw new SelfJarException(String.format("entry %s was added", entry.getFullName()));
                 }
             }
         }
@@ -143,7 +143,7 @@ public class JarContent {
             if (entry.getHash() != null) {
                 hash = Utils.bytesToHex(entry.getHash());
             }
-            ret += String.format("  %s %s\n", hash, entry.getPath());
+            ret += String.format("  %s %s\n", hash, entry.getFullName());
         }
         return ret;
     }

@@ -1,71 +1,33 @@
 package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
+import java.util.zip.ZipEntry;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public class ContentEntry {
+public class ContentEntry extends ZipEntry {
 
-    private String name;
-    private String path;
     private byte[] hash;
-    private long size;
-    private boolean directory;
     private boolean core;
 
-    public ContentEntry() {
-
-    }
-
-    public ContentEntry(String path, long size, boolean isDir, byte[] hash) {
-        this.name = new File(path).getName();
-        this.path = path;
-        this.size = size;
-        this.directory = isDir;
-        this.core = CoreEntries.isCore(path);
+    public ContentEntry(ZipEntry entry, byte[] hash) {
+        super(entry);
+        this.core = CoreEntries.isCore(entry.getName());
         this.hash = hash;
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return new File(getFullName()).getName();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
+    public String getFullName() {
+        return getName();
     }
 
     public byte[] getHash() {
         return hash;
-    }
-
-    public void setHash(byte[] hash) {
-        this.hash = hash;
-    }
-
-    public long getSize() {
-        return size;
-    }
-
-    public void setSize(long size) {
-        this.size = size;
-    }
-
-    public boolean isDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(boolean isDirectory) {
-        this.directory = isDirectory;
     }
 
     public boolean isCore() {
@@ -74,7 +36,7 @@ public class ContentEntry {
 
     @Override
     public String toString() {
-        return "ContentEntry{" + "name=" + name + ", path=" + path + ", hash=" + hash + ", size=" + size + ", directory=" + directory + ", core=" + core + '}';
+        return "ContentEntry{" + "hash=" + hash + ", core=" + core + super.toString() + '}';
     }
 
 }
