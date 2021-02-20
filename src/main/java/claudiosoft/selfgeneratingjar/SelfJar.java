@@ -66,6 +66,9 @@ public class SelfJar {
             selfJarFolder.mkdirs();
 
             io.out(content, selfJarFolder);
+
+            File nextJar = io.in(selfJarFolder);
+            int a = 0;
             //        if (JarIdentity.getIncarnationCount() < 3) {
             //            restartMySelf();
             //        }
