@@ -10,6 +10,7 @@ public class JarContext {
 
     private File parent;
     private int rebuildCount;
+    private boolean verbose;
 
     public JarContext() {
         this.parent = null;
@@ -30,6 +31,14 @@ public class JarContext {
 
     public void setRebuildCount(int rebuildCount) {
         this.rebuildCount = rebuildCount;
+    }
+
+    public boolean isVerbose() {
+        return verbose;
+    }
+
+    public void setVerbose(boolean verbose) {
+        this.verbose = verbose;
     }
 
     @Override

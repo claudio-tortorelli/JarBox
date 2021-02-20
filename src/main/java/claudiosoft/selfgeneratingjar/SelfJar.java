@@ -49,10 +49,12 @@ public class SelfJar {
         File selfJarFolder = null;
         try {
             identity = new JarIdentity();
-            context = parseArgs(args);
             content = new JarContent(identity.getCurrentJar());
+            context = parseArgs(args);
             io = new JarIO();
-            logger.info(toString());
+            if (context.isVerbose()) {
+                logger.info(toString());
+            }
             // end initialization
 
             // TODO, use current date-time instead
@@ -118,6 +120,9 @@ public class SelfJar {
             } else if (param.startsWith("count")) {
                 int counter = Integer.parseInt(value);
                 context.setRebuildCount(counter);
+            } else if (param.startsWith("verbose")) {
+                if (Boolean.parseBoolean(value));
+                context.setVerbose(true);
             } else {
                 throw new IllegalArgumentException("unrecognized input argument: " + param);
             }
