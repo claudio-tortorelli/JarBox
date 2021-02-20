@@ -17,7 +17,7 @@ public class JarIO {
 
     }
 
-    public void toFS(JarContent jarContent, File baseFolder) throws IOException {
+    public void out(JarContent jarContent, File baseFolder) throws IOException {
 
         // build folder tree
         List<ContentEntry> content = jarContent.getContent();
@@ -47,27 +47,9 @@ public class JarIO {
                 Utils.closeQuietly(fos);
             }
         }
-
-//        Enumeration<? extends JarEntry> enumeration = jar.entries();
-//        InputStream is = null;
-//        FileOutputStream fos = null;
-//        try {
-//            while (enumeration.hasMoreElements()) {
-//                ZipEntry zipEntry = enumeration.nextElement();
-//                if (!zipEntry.isDirectory()) {
-//                    is = jar.getInputStream(zipEntry);
-//                    File outFile = new File(baseFolder.getAbsoluteFile() + File.separator + zipEntry.getName());
-//                    fos = new FileOutputStream(outFile);
-//                    Utils.inputToOutput(is, fos);
-//                }
-//            }
-//        } finally {
-//            Utils.closeQuietly(is);
-//            Utils.closeQuietly(fos);
-//        }
     }
 
-    public void fromFS(List<ContentEntry> content, File baseFolder, File nextJar) throws SelfJarException {
+    public void in(List<ContentEntry> content, File baseFolder, File nextJar) throws SelfJarException {
         if (nextJar.exists()) {
             throw new SelfJarException("target jar already exists");
         }

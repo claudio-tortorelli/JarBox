@@ -14,6 +14,6 @@ public class Constants {
     public static final int BUFFER_SIZE = 4096;
 
     public static final String INTERNAL_STATUS_NAME = "status.txt";
-    public static final String TMP_BASEFOLDER = "selfJar";
+    public static final String TMP_SELFJAR_FOLDER = "selfJar";
 
 }

@@ -100,6 +100,20 @@ public class Utils {
         lockFis.close();
     }
 
+    public static boolean deleteDirectory(File directoryToBeDeleted) throws SelfJarException {
+        if (!directoryToBeDeleted.getAbsolutePath().contains(Constants.TMP_SELFJAR_FOLDER)) {
+            // for safety
+            throw new SelfJarException("self jar folder only can be deleted");
+        }
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        return directoryToBeDeleted.delete();
+    }
+
     /**
      * Null safe close of the given {@link Closeable} suppressing any exception.
      *

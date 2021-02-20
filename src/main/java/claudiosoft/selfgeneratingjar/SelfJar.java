@@ -3,8 +3,8 @@ package claudiosoft.selfgeneratingjar;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
+import java.util.Random;
 
 /**
  *
@@ -46,6 +46,7 @@ public class SelfJar {
     public SelfJar(String[] args, BasicConsoleLogger logger) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException, SelfJarException {
         this.logger = logger;
 
+        File selfJarFolder = null;
         try {
             identity = new JarIdentity();
             context = parseArgs(args);
@@ -54,14 +55,24 @@ public class SelfJar {
             logger.info(toString());
             // end initialization
 
-            File baseFolder = new File(System.getProperty("java.io.tmpdir") + File.separator + Constants.TMP_BASEFOLDER);
-            Files.createDirectories(baseFolder.toPath());
-            io.toFS(content, baseFolder);
+            // TODO, use current date-time instead
+            Random rnd = new Random();
+            while (true) {
+                selfJarFolder = new File(String.format("%s%s%s%d", System.getProperty("java.io.tmpdir"), File.separator, Constants.TMP_SELFJAR_FOLDER, rnd.nextInt(10000)));
+                if (!selfJarFolder.exists()) {
+                    break;
+                }
+            }
+            selfJarFolder.mkdirs();
+
+            io.out(content, selfJarFolder);
             //        if (JarIdentity.getIncarnationCount() < 3) {
             //            restartMySelf();
             //        }
         } finally {
-
+            if (selfJarFolder != null) {
+                Utils.deleteDirectory(selfJarFolder);
+            }
         }
     }
 
