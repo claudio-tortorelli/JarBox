@@ -1,6 +1,8 @@
 package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.zip.ZipEntry;
 
 /**
@@ -11,11 +13,13 @@ public class ContentEntry extends ZipEntry {
 
     private byte[] hash;
     private boolean core;
+    private FileInputStream fis;
 
     public ContentEntry(ZipEntry entry, byte[] hash) {
         super(entry);
         this.core = CoreEntries.isCore(entry.getName());
         this.hash = hash;
+        this.fis = null;
     }
 
     public String getId() {
@@ -32,6 +36,14 @@ public class ContentEntry extends ZipEntry {
 
     public boolean isCore() {
         return core;
+    }
+
+    public FileInputStream getKeepOpen() {
+        return fis;
+    }
+
+    public void keepOpen(File fileToLock) throws FileNotFoundException {
+        this.fis = new FileInputStream(fileToLock);
     }
 
     @Override

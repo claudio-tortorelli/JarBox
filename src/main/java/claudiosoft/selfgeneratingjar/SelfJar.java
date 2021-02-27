@@ -79,6 +79,7 @@ public final class SelfJar {
             // start internal job
             // TODO
             // end internal job
+
             // create updated jar
             File nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dt));
             io.in(selfJarFolder, nextJar);
@@ -87,6 +88,9 @@ public final class SelfJar {
             // it requires the context of parent jar (will be inherited by child)
             invokeCharun(identity.getCurrentJar().getAbsolutePath(), nextJar.getAbsolutePath());
         } finally {
+            // unlock any open file
+            io.closeAll(content);
+
             // remove temp folder
             if (selfJarFolder != null) {
                 Utils.deleteDirectory(selfJarFolder);
@@ -100,7 +104,7 @@ public final class SelfJar {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void invokeCharun(String curJarPath, String nextJarPath) throws IOException, InterruptedException {
+    private void invokeCharun(String curJarPath, String nextJarPath) throws IOException, InterruptedException, SelfJarException {
 
         //TODO, call charun on right os platform
         OS os = Utils.getOperatingSystem();
@@ -111,12 +115,12 @@ public final class SelfJar {
         } else if (os.equals(OS.LINUX)) {
 
         } else {
-
+            throw new SelfJarException("unsupported os");
         }
         DaemonThread t1 = new DaemonThread("Charun", logger);
         t1.setDaemon(true);
         t1.start();
-        //t1.join();
+        //t1.join(); // not wait...
     }
 
     /**

@@ -54,6 +54,7 @@ public class JarContent {
                     if (!zipEntry.isDirectory()) {
                         is = jarFile.getInputStream(zipEntry);
                         hash = Utils.getSHA256(is);
+                        Utils.closeQuietly(is);
                     }
                     this.content.add(new ContentEntry(zipEntry, hash));
                 }

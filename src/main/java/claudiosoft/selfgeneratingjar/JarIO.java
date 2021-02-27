@@ -53,10 +53,25 @@ public class JarIO {
                 File outFile = new File(selfJarFolder.getAbsoluteFile() + File.separator + entry.getName());
                 fos = new FileOutputStream(outFile);
                 Utils.inputToOutput(is, fos);
+                // keep open the entry if not in workspace
+                if (!entry.getFullName().startsWith("workspace")) {
+                    entry.keepOpen(outFile);
+                }
+
             } finally {
                 Utils.closeQuietly(is);
                 Utils.closeQuietly(fos);
             }
+        }
+    }
+
+    public void closeAll(JarContent jarContent) {
+        List<ContentEntry> content = jarContent.getContent();
+        for (ContentEntry entry : content) {
+            if (entry.isDirectory()) {
+                continue;
+            }
+            Utils.closeQuietly(entry.getKeepOpen());
         }
     }
 
