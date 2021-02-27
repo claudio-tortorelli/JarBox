@@ -1,16 +1,18 @@
 package claudiosoft.selfgeneratingjar;
 
+import claudiosoft.selfgeneratingjar.Utils.OS;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Random;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
  * @author claudio.tortorelli
  */
-public class SelfJar {
+public final class SelfJar {
 
     private BasicConsoleLogger logger;
     private static final File FILE_LOCK = new File(System.getProperty("user.home") + File.separator + ".selfgenerating_lock");
@@ -19,6 +21,7 @@ public class SelfJar {
     private JarIdentity identity;
     private JarIO io;
     private JarContent content;
+    private boolean printInfo;
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
         BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.DEBUG, "SelfJar");
@@ -50,43 +53,70 @@ public class SelfJar {
         try {
             identity = new JarIdentity();
             content = new JarContent(identity.getCurrentJar());
-            context = parseArgs(args);
             io = new JarIO();
-            if (context.isVerbose()) {
-                logger.info(toString());
-            }
-            // end initialization
+            parseArgs(args);
 
-            // TODO, use current date-time instead
-            Random rnd = new Random();
-            while (true) {
-                selfJarFolder = new File(String.format("%s%s%s%d", System.getProperty("java.io.tmpdir"), File.separator, Constants.TMP_SELFJAR_FOLDER, rnd.nextInt(10000)));
-                if (!selfJarFolder.exists()) {
-                    break;
-                }
-            }
+            // use current date-time
+            SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT);
+            sdf.setTimeZone(Constants.DEFAULT_TIMEZONE);
+            String dt = sdf.format(new Date());
+
+            // create temp out folder
+            selfJarFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, Constants.TMP_SELFJAR_FOLDER, dt));
             selfJarFolder.mkdirs();
-
             io.out(content, selfJarFolder);
 
-            File nextJar = io.in(selfJarFolder);
-            int a = 0;
-            //        if (JarIdentity.getIncarnationCount() < 3) {
-            //            restartMySelf();
-            //        }
+            // update context file
+            context = new JarContext(selfJarFolder);
+            context.setExeCount(context.getExeCount() + 1);
+            context.update();
+
+            // end initialization
+            if (printInfo()) {
+                logger.info(toString());
+                return; // no more to do
+            }
+            // start internal job
+            // TODO
+            // end internal job
+            // create updated jar
+            File nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dt));
+            io.in(selfJarFolder, nextJar);
+
+            // start charun
+            // it requires the context of parent jar (will be inherited by child)
+            invokeCharun(identity.getCurrentJar().getAbsolutePath(), nextJar.getAbsolutePath());
         } finally {
+            // remove temp folder
             if (selfJarFolder != null) {
                 Utils.deleteDirectory(selfJarFolder);
             }
         }
     }
 
-    private void restartMySelf() throws IOException, InterruptedException {
-        DaemonThread t1 = new DaemonThread("666", logger);
+    /**
+     * call charun
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    private void invokeCharun(String curJarPath, String nextJarPath) throws IOException, InterruptedException {
+
+        //TODO, call charun on right os platform
+        OS os = Utils.getOperatingSystem();
+        if (os.equals(OS.WINDOWS)) {
+
+        } else if (os.equals(OS.OSX)) {
+
+        } else if (os.equals(OS.LINUX)) {
+
+        } else {
+
+        }
+        DaemonThread t1 = new DaemonThread("Charun", logger);
         t1.setDaemon(true);
         t1.start();
-        t1.join();
-        System.exit(0);
+        //t1.join();
     }
 
     /**
@@ -103,7 +133,6 @@ public class SelfJar {
     }
 
     public JarContext parseArgs(String[] args) throws SelfJarException {
-        JarContext context = new JarContext();
         for (int iAr = 0; iAr < args.length; iAr++) {
             if (args[iAr] == null || args[iAr].isEmpty()) {
                 continue;
@@ -115,19 +144,24 @@ public class SelfJar {
 
             String param = splitted[0].toLowerCase().trim();
             String value = splitted[1];
-            if (param.startsWith("parent")) {
-                context.setParent(new File(value));
-            } else if (param.startsWith("count")) {
-                int counter = Integer.parseInt(value);
-                context.setRebuildCount(counter);
-            } else if (param.startsWith("verbose")) {
-                if (Boolean.parseBoolean(value));
-                context.setVerbose(true);
+            if (param.startsWith("info")) {
+                if (Boolean.parseBoolean(value)) {
+                    setPrintInfo(true);
+                }
             } else {
+                // TODO, this will be updated when a job is defined
                 throw new IllegalArgumentException("unrecognized input argument: " + param);
             }
         }
         return context;
+    }
+
+    public boolean printInfo() {
+        return printInfo;
+    }
+
+    public void setPrintInfo(boolean printInfo) {
+        this.printInfo = printInfo;
     }
 
 }

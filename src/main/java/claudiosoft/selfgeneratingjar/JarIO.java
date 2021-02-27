@@ -21,6 +21,13 @@ public class JarIO {
 
     }
 
+    /**
+     * Extract jar content to folder
+     *
+     * @param jarContent
+     * @param selfJarFolder
+     * @throws IOException
+     */
     public void out(JarContent jarContent, File selfJarFolder) throws IOException {
 
         // build folder tree
@@ -53,16 +60,25 @@ public class JarIO {
         }
     }
 
-    // https://stackoverflow.com/questions/1281229/how-to-use-jaroutputstream-to-create-a-jar-file
+    /**
+     * Create a jar from folder
+     *
+     * @param selfJarFolder
+     * @param newJar
+     * @return
+     * @throws SelfJarException
+     * @throws IOException
+     *
+     * https://stackoverflow.com/questions/1281229/how-to-use-jaroutputstream-to-create-a-jar-file
+     */
     public File in(File selfJarFolder) throws SelfJarException, IOException {
+        return in(selfJarFolder, File.createTempFile("selfJar", ".jar"));
+    }
 
-        File nextJar = File.createTempFile("selfJar", ".jar");
+    public File in(File selfJarFolder, File nextJar) throws SelfJarException, IOException {
 
-//        Manifest manifest = new Manifest();
-//        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
         JarOutputStream target = null;
         try {
-            //target = new JarOutputStream(new FileOutputStream(nextJar), manifest);
             target = new JarOutputStream(new FileOutputStream(nextJar));
             for (File nestedFile : selfJarFolder.listFiles()) {
                 add(selfJarFolder.getAbsolutePath(), nestedFile, target);

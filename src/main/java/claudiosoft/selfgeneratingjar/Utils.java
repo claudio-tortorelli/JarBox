@@ -73,7 +73,7 @@ public class Utils {
 
     public static void testLockFile(File testFile) throws SelfJarException {
 
-        try ( RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
+        try (RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
             FileLock lck = fis.getChannel().lock();
             lck.release();
         } catch (Exception ex) {
@@ -163,5 +163,24 @@ public class Utils {
         while ((length = source.read(buf)) > 0) {
             target.write(buf, 0, length);
         }
+    }
+
+    public static enum OS {
+        WINDOWS,
+        LINUX,
+        OSX,
+        UNKNOWN
+    }
+
+    public static OS getOperatingSystem() {
+        String osName = System.getProperty("os.name").toLowerCase();
+        if (osName.startsWith("mac") || osName.startsWith("darwin")) {
+            return OS.OSX;
+        } else if (osName.startsWith("linux")) {
+            return OS.LINUX;
+        } else if (osName.startsWith("windows")) {
+            return OS.WINDOWS;
+        }
+        return OS.UNKNOWN;
     }
 }
