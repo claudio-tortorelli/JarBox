@@ -152,6 +152,7 @@ public class JarContent {
             }
             ret += String.format("  %s %s\n", hash, entry.getFullName());
         }
+        getContent().toString();
         return ret;
     }
 

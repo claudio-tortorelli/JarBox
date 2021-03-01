@@ -16,11 +16,8 @@ public class JarContext {
     private File contextFile;
     private long exeCount;
 
-    public JarContext(File selfJarFolder) throws SelfJarException, IOException {
-        this.contextFile = new File(String.format("%s%sinternal%s%s", selfJarFolder.getAbsolutePath(), File.separator, File.separator, Constants.CONTEXT_FILENAME));
-        if (!this.contextFile.exists()) {
-            throw new SelfJarException("no context file found at " + this.contextFile.getAbsolutePath());
-        }
+    public JarContext(File context) throws SelfJarException, IOException {
+        this.contextFile = context;
         parse();
     }
 
@@ -55,6 +52,10 @@ public class JarContext {
         } finally {
             Utils.closeQuietly(fos);
         }
+    }
+
+    public File getContextFile() {
+        return contextFile;
     }
 
     private void parse() throws IOException {

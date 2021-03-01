@@ -1,8 +1,10 @@
 package claudiosoft.selfgeneratingjar;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
 import java.util.zip.ZipEntry;
 
 /**
@@ -13,13 +15,15 @@ public class ContentEntry extends ZipEntry {
 
     private byte[] hash;
     private boolean core;
-    private FileInputStream fis;
+
+    private RandomAccessFile raf;
+    private FileLock lock;
 
     public ContentEntry(ZipEntry entry, byte[] hash) {
         super(entry);
         this.core = CoreEntries.isCore(entry.getName());
         this.hash = hash;
-        this.fis = null;
+        this.raf = null;
     }
 
     public String getId() {
@@ -38,12 +42,20 @@ public class ContentEntry extends ZipEntry {
         return core;
     }
 
-    public FileInputStream getKeepOpen() {
-        return fis;
+    public void lockOut() throws IOException {
+        if (lock != null) {
+            lock.release();
+            raf.close();
+        }
     }
 
-    public void keepOpen(File fileToLock) throws FileNotFoundException {
-        this.fis = new FileInputStream(fileToLock);
+    public void lockIn(File fileToLock) throws FileNotFoundException, SelfJarException {
+        this.raf = new RandomAccessFile(fileToLock, "rw");
+        try {
+            this.lock = this.raf.getChannel().lock();
+        } catch (IOException ex) {
+            throw new SelfJarException(String.format("%s cannot be locked", fileToLock.getAbsolutePath()), ex);
+        }
     }
 
     @Override

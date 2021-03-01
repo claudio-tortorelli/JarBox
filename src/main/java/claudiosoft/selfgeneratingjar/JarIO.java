@@ -3,6 +3,7 @@ package claudiosoft.selfgeneratingjar;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,8 +18,12 @@ import java.util.jar.JarOutputStream;
  */
 public class JarIO {
 
-    public JarIO() {
+    private JarContext context;
+    private ContentEntry contextEntry;
 
+    public JarIO() {
+        this.context = null;
+        this.contextEntry = null;
     }
 
     /**
@@ -28,7 +33,7 @@ public class JarIO {
      * @param selfJarFolder
      * @throws IOException
      */
-    public void out(JarContent jarContent, File selfJarFolder) throws IOException {
+    public void out(JarContent jarContent, File selfJarFolder) throws IOException, FileNotFoundException, SelfJarException {
 
         // build folder tree
         List<ContentEntry> content = jarContent.getContent();
@@ -55,23 +60,27 @@ public class JarIO {
                 Utils.inputToOutput(is, fos);
                 // keep open the entry if not in workspace
                 if (!entry.getFullName().startsWith("workspace")) {
-                    entry.keepOpen(outFile);
+                    entry.lockIn(outFile);
+                } else if (entry.getFullName().equals(Constants.CONTEXT_FILENAME)) {
+                    contextEntry = entry;
+                    context = new JarContext(outFile);
+                    contextEntry.lockIn(outFile);
                 }
-
             } finally {
                 Utils.closeQuietly(is);
                 Utils.closeQuietly(fos);
             }
         }
+
     }
 
-    public void closeAll(JarContent jarContent) {
+    public void closeAll(JarContent jarContent) throws IOException {
         List<ContentEntry> content = jarContent.getContent();
         for (ContentEntry entry : content) {
             if (entry.isDirectory()) {
                 continue;
             }
-            Utils.closeQuietly(entry.getKeepOpen());
+            entry.lockOut();
         }
     }
 
@@ -102,6 +111,16 @@ public class JarIO {
             Utils.closeQuietly(target);
         }
         return nextJar;
+    }
+
+    public JarContext getContext() {
+        return context;
+    }
+
+    public void updateContext() throws IOException, FileNotFoundException, SelfJarException {
+        contextEntry.lockOut();
+        context.update();
+        contextEntry.lockIn(context.getContextFile());
     }
 
     private void add(String basePath, File source, JarOutputStream target) throws IOException {
@@ -145,4 +164,5 @@ public class JarIO {
             Utils.closeQuietly(in);
         }
     }
+
 }

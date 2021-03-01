@@ -17,7 +17,6 @@ public final class SelfJar {
     private BasicConsoleLogger logger;
     private static final File FILE_LOCK = new File(System.getProperty("user.home") + File.separator + ".selfgenerating_lock");
 
-    private JarContext context;
     private JarIdentity identity;
     private JarIO io;
     private JarContent content;
@@ -67,9 +66,9 @@ public final class SelfJar {
             io.out(content, selfJarFolder);
 
             // update context file
-            context = new JarContext(selfJarFolder);
+            JarContext context = io.getContext();
             context.setExeCount(context.getExeCount() + 1);
-            context.update();
+            io.updateContext();
 
             // end initialization
             if (printInfo()) {
@@ -131,12 +130,11 @@ public final class SelfJar {
     public String toString() {
         String ret = "\n";
         ret += identity.toString() + "\n";
-        ret += context.toString() + "\n";
         ret += content.toString() + "\n";
         return ret;
     }
 
-    public JarContext parseArgs(String[] args) throws SelfJarException {
+    public void parseArgs(String[] args) throws SelfJarException {
         for (int iAr = 0; iAr < args.length; iAr++) {
             if (args[iAr] == null || args[iAr].isEmpty()) {
                 continue;
@@ -157,7 +155,6 @@ public final class SelfJar {
                 throw new IllegalArgumentException("unrecognized input argument: " + param);
             }
         }
-        return context;
     }
 
     public boolean printInfo() {
