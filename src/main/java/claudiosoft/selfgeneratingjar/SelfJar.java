@@ -79,6 +79,8 @@ public final class SelfJar {
             // TODO
             // end internal job
 
+            io.closeAll(content);
+
             // create updated jar
             File nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dt));
             io.in(selfJarFolder, nextJar);

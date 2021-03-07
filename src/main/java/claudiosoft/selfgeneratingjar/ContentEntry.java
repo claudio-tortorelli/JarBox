@@ -46,6 +46,7 @@ public class ContentEntry extends ZipEntry {
         if (lock != null) {
             lock.release();
             raf.close();
+            lock = null;
         }
     }
 

@@ -59,12 +59,12 @@ public class JarIO {
                 fos = new FileOutputStream(outFile);
                 Utils.inputToOutput(is, fos);
                 // keep open the entry if not in workspace
-                if (!entry.getFullName().startsWith("workspace")) {
-                    entry.lockIn(outFile);
-                } else if (entry.getFullName().equals(Constants.CONTEXT_FILENAME)) {
+                if (entry.getFullName().endsWith(Constants.CONTEXT_FILENAME)) {
                     contextEntry = entry;
                     context = new JarContext(outFile);
                     contextEntry.lockIn(outFile);
+                } else if (!entry.getFullName().startsWith("workspace")) {
+                    entry.lockIn(outFile);
                 }
             } finally {
                 Utils.closeQuietly(is);
