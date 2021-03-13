@@ -23,3 +23,7 @@
 hs_err_pid*
 nbactions.xml
 /target/
+charun/Charun/Debug/
+charun/Charun/Release/Charun.lastbuildstate
+charun/Charun/Release/
+charun/Charun.sdf
