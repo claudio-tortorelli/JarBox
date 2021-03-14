@@ -4,9 +4,12 @@ import claudiosoft.selfgeneratingjar.Utils.OS;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 
 /**
  *
@@ -24,18 +27,11 @@ public final class SelfJar {
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
         BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.DEBUG, "SelfJar");
-
         try {
             // avoid multiple instances
             Utils.testLockFile(FILE_LOCK);
             Utils.doLock(FILE_LOCK);
             logger.info("SelfJar started");
-            if (args.length == 0) {
-                ///////////////////////////////////////////////////////
-                args = new String[20];
-//            args[0] = "parent=c:\\canc\\metoo.jar";
-                ///////////////////////////////////////////////////////
-            }
             SelfJar selfJar = new SelfJar(args, logger);
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
@@ -49,6 +45,7 @@ public final class SelfJar {
         this.logger = logger;
 
         File selfJarFolder = null;
+        File nextJar = null;
         try {
             identity = new JarIdentity();
             content = new JarContent(identity.getCurrentJar());
@@ -63,30 +60,32 @@ public final class SelfJar {
             // create temp out folder
             selfJarFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, Constants.TMP_SELFJAR_FOLDER, dt));
             selfJarFolder.mkdirs();
+            logger.debug("jar expanding...");
             io.out(content, selfJarFolder);
 
             // update context file
+            logger.debug("context updating...");
             JarContext context = io.getContext();
             context.setExeCount(context.getExeCount() + 1);
             io.updateContext();
-
             // end initialization
+
             if (printInfo()) {
                 logger.info(toString());
-                return; // no more to do
             }
-            // start internal job
-            // TODO
-            // end internal job
 
+            // start internal job
+            logger.info("start internal job");
+            // TODO
+            logger.info("end internal job");
+            // end internal job
             io.closeAll(content);
 
             // create updated jar
-            File nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dt));
+            logger.debug("creating next jar...");
+            nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dt));
             io.in(selfJarFolder, nextJar);
 
-            // start charun
-            // it requires the context of parent jar (will be inherited by child)
             invokeCharun(identity.getCurrentJar().getAbsolutePath(), nextJar.getAbsolutePath());
         } finally {
             // unlock any open file
@@ -96,6 +95,7 @@ public final class SelfJar {
             if (selfJarFolder != null) {
                 Utils.deleteDirectory(selfJarFolder);
             }
+            logger.debug("closing");
         }
     }
 
@@ -107,21 +107,38 @@ public final class SelfJar {
      */
     private void invokeCharun(String curJarPath, String nextJarPath) throws IOException, InterruptedException, SelfJarException {
 
-        //TODO, call charun on right os platform
+        File foo = File.createTempFile("foo", ".tmp");
+        File charunOutFile = null;
+        File charunInFile = null;
+
+        logger.debug("starting Charun...");
+        //call charun on right  platform
         OS os = Utils.getOperatingSystem();
         if (os.equals(OS.WINDOWS)) {
-
+            charunInFile = Utils.getFileFromRes("charun/win/Charun.exe");
+            charunOutFile = new File(String.format("%s%sCharun.exe", foo.getParent(), File.separator));
+            foo.delete();
         } else if (os.equals(OS.OSX)) {
-
+            foo.delete();
         } else if (os.equals(OS.LINUX)) {
-
+            foo.delete();
         } else {
             throw new SelfJarException("unsupported os");
         }
-        DaemonThread t1 = new DaemonThread("Charun", logger);
-        t1.setDaemon(true);
-        t1.start();
-        //t1.join(); // not wait...
+
+        Files.copy(charunInFile.toPath(), charunOutFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        LinkedList<String> pbArgs = new LinkedList<>();
+        pbArgs.add(charunOutFile.getAbsolutePath());
+        pbArgs.add(nextJarPath);
+        pbArgs.add(curJarPath);
+
+        ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
+        Process insideProc = processBuilder.start();
+
+        // print charun output
+        Utils.inheritIO(insideProc.getInputStream(), System.out);
+        Utils.inheritIO(insideProc.getErrorStream(), System.err);
     }
 
     /**
@@ -132,6 +149,7 @@ public final class SelfJar {
     public String toString() {
         String ret = "\n";
         ret += identity.toString() + "\n";
+        ret += io.getContext().toString() + "\n";
         ret += content.toString() + "\n";
         return ret;
     }
@@ -142,16 +160,17 @@ public final class SelfJar {
                 continue;
             }
             String[] splitted = args[iAr].split("=");
-            if (splitted.length != 2) {
+            if (splitted.length > 2) {
                 continue;
             }
 
             String param = splitted[0].toLowerCase().trim();
-            String value = splitted[1];
+            String value = ""; // the switch argument may be present
+            if (splitted.length == 2) {
+                value = splitted[1];
+            }
             if (param.startsWith("info")) {
-                if (Boolean.parseBoolean(value)) {
-                    setPrintInfo(true);
-                }
+                setPrintInfo(true);
             } else {
                 // TODO, this will be updated when a job is defined
                 throw new IllegalArgumentException("unrecognized input argument: " + param);

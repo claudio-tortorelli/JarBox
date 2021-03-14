@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.RandomAccessFile;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -17,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.UUID;
 
@@ -73,7 +75,7 @@ public class Utils {
 
     public static void testLockFile(File testFile) throws SelfJarException {
 
-        try (RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
+        try ( RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
             FileLock lck = fis.getChannel().lock();
             lck.release();
         } catch (Exception ex) {
@@ -182,5 +184,16 @@ public class Utils {
             return OS.WINDOWS;
         }
         return OS.UNKNOWN;
+    }
+
+    public static void inheritIO(final InputStream src, final PrintStream dest) {
+        new Thread(new Runnable() {
+            public void run() {
+                Scanner sc = new Scanner(src);
+                while (sc.hasNextLine()) {
+                    dest.println(sc.nextLine());
+                }
+            }
+        }).start();
     }
 }
