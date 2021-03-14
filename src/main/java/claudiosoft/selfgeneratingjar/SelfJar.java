@@ -1,5 +1,6 @@
 package claudiosoft.selfgeneratingjar;
 
+import claudiosoft.selfgeneratingjar.BasicConsoleLogger.LogLevel;
 import claudiosoft.selfgeneratingjar.Utils.OS;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +27,7 @@ public final class SelfJar {
     private boolean printInfo;
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
-        BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.DEBUG, "SelfJar");
+        BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.NONE, "SelfJar");
         try {
             // avoid multiple instances
             Utils.testLockFile(FILE_LOCK);
@@ -171,6 +172,14 @@ public final class SelfJar {
             }
             if (param.startsWith("info")) {
                 setPrintInfo(true);
+            } else if (param.startsWith("loglevel")) {
+                if (value.equalsIgnoreCase("debug")) {
+                    logger = new BasicConsoleLogger(LogLevel.DEBUG, "SelfJar");
+                } else if (value.equalsIgnoreCase("info")) {
+                    logger = new BasicConsoleLogger(LogLevel.NORMAL, "SelfJar");
+                } else {
+                    logger = new BasicConsoleLogger(LogLevel.NONE, "SelfJar");
+                }
             } else {
                 // TODO, this will be updated when a job is defined
                 throw new IllegalArgumentException("unrecognized input argument: " + param);

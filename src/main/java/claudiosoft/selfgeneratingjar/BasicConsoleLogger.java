@@ -15,6 +15,7 @@ public class BasicConsoleLogger {
     }
 
     public enum LogLevel {
+        NONE,
         NORMAL,
         DEBUG
     }
@@ -26,12 +27,22 @@ public class BasicConsoleLogger {
     }
 
     public BasicConsoleLogger(LogLevel level) {
-        this(LogLevel.NORMAL, "Logger");
+        this(level, "Logger");
     }
 
     public BasicConsoleLogger(LogLevel level, String logName) {
         internalLogger = Logger.getLogger(logName);
-        internalLogger.setLevel(Level.FINER);
+        switch (level) {
+            case DEBUG:
+                internalLogger.setLevel(Level.ALL);
+                break;
+            case NORMAL:
+                internalLogger.setLevel(Level.INFO);
+                break;
+            default:
+                internalLogger.setLevel(Level.OFF);
+                break;
+        }
         this.level = level;
     }
 
