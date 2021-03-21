@@ -1,4 +1,4 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfgenerating.common;
 
 import java.io.Closeable;
 import java.io.File;

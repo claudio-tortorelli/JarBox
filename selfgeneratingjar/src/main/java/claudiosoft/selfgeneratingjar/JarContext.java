@@ -1,5 +1,8 @@
 package claudiosoft.selfgeneratingjar;
 
+import claudiosoft.selfgeneratinglib.SelfJarException;
+import claudiosoft.selfgeneratinglib.Constants;
+import claudiosoft.selfgeneratinglib.Utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

@@ -1,5 +1,7 @@
 package claudiosoft.selfgeneratingjar;
 
+import claudiosoft.selfgeneratinglib.SelfJarException;
+import claudiosoft.selfgeneratinglib.Utils;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfgenerating.common;
 
 import java.util.TimeZone;
 

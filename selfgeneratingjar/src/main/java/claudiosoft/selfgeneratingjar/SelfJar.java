@@ -1,7 +1,10 @@
 package claudiosoft.selfgeneratingjar;
 
 import claudiosoft.selfgeneratingjar.BasicConsoleLogger.LogLevel;
-import claudiosoft.selfgeneratingjar.Utils.OS;
+import claudiosoft.selfgeneratinglib.Constants;
+import claudiosoft.selfgeneratinglib.SelfJarException;
+import claudiosoft.selfgeneratinglib.Utils;
+import claudiosoft.selfgeneratinglib.Utils.OS;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
