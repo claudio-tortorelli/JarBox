@@ -1,23 +1,33 @@
-ATTENZIONE
-    il refactoring attuale è errato perchè la dipendenza dalla common mina l'autoconsistenza del selfgeneratingjar
-    copiare localmente le classi che servono (copia da common a selfjar in fase di build common)
-    rimuovere la dipendenza
-    ripristinare i test
-
 Gestire il passaggio parametri
     da prompt a selfjar
-        [SGJ]<key>=<value>
-        tutti quelli che non cominciano per [SGJ] sono passati al job così come sono
+        [SJ]<key>=<value>
+        tutti quelli che non cominciano per [SJ] sono passati al job così come sono
+
+supporto a job exe e jar
+
+ogni job deve essere pacchettizzato in uno zip
+l'installazione viene fatta con i parametri
+    [SJ]install=<path zip>
+    [SJ]main=<executable filename>
+    [SJ]install=CLEAN
+l'installazione viene annotata nel contesto
+
+nel contesto è possibile creare delle variabili di ambiente/parametri da passare sempre al job in avvio
+    [SJ]addvar=<env variable>
+    [SJ]delvar=<env variable>
+    [SJ]addpar=<parameter>
+    [SJ]delpar=<parameter>
+
+aggiungere la versione di selfjar
 
 Il selfjar estrae il job e lo avvia con i parametri
 
-Il job deve implementare la classe base (ok...)
-    deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
-    deve verificare se il workspace è popolato con dati
-    deve estrarre le risorse sempre fuori dal workspace
-    il workspace è solo per i dati da elaborare/mantenere
+Il job deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
+    ogni job installato deve far conto di scrivere i dati permanenti nel workspace
+    per il resto è libero di fare quel che vuole
 
-Aggiornamento...
-    Gestire installazione/disinstallazione job nel selfjar
-    Gestire import/export del workspace
+Gestire import/export del workspace
+    [SJ]export=<folder path>
+    [SJ]import=<file path>
+    [SJ]delete=<file path>
 

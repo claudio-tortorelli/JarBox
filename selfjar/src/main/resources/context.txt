@@ -1,2 +1,2 @@
-#TODO, could be a json file...
+#TODO, transform to json
 EXECOUNT=0
