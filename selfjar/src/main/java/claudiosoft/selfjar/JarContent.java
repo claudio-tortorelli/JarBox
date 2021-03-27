@@ -1,7 +1,7 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfjar;
 
-import claudiosoft.selfgeneratinglib.SelfJarException;
-import claudiosoft.selfgeneratinglib.Utils;
+import claudiosoft.selfjar.commons.SelfJarException;
+import claudiosoft.selfjar.commons.SelfUtils;
 import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -55,13 +55,13 @@ public class JarContent {
                     byte[] hash = null;
                     if (!zipEntry.isDirectory()) {
                         is = jarFile.getInputStream(zipEntry);
-                        hash = Utils.getSHA256(is);
-                        Utils.closeQuietly(is);
+                        hash = SelfUtils.getSHA256(is);
+                        SelfUtils.closeQuietly(is);
                     }
                     this.content.add(new ContentEntry(zipEntry, hash));
                 }
             } finally {
-                Utils.closeQuietly(is);
+                SelfUtils.closeQuietly(is);
             }
 
             Collections.sort(this.content, new Comparator<ContentEntry>() {
@@ -150,7 +150,7 @@ public class JarContent {
         for (ContentEntry entry : content) {
             String hash = "";
             if (entry.getHash() != null) {
-                hash = Utils.bytesToHex(entry.getHash());
+                hash = SelfUtils.bytesToHex(entry.getHash());
             }
             ret += String.format("  %s %s\n", hash, entry.getFullName());
         }

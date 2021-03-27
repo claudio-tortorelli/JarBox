@@ -1,4 +1,4 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfjar;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

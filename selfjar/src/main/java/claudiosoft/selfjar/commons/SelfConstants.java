@@ -1,4 +1,4 @@
-package claudiosoft.selfgenerating.common;
+package claudiosoft.selfjar.commons;
 
 import java.util.TimeZone;
 
@@ -6,7 +6,7 @@ import java.util.TimeZone;
  *
  * @author Claudio
  */
-public class Constants {
+public class SelfConstants {
 
     public static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static final String DATE_FORMAT_SHORT = "yyyyMMddHHmmss";

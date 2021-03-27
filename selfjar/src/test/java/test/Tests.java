@@ -4,7 +4,6 @@ import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
-import test.base.BaseJUnitTest;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Tests extends BaseJUnitTest {

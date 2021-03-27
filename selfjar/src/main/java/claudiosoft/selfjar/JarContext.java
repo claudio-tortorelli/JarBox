@@ -1,8 +1,8 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfjar;
 
-import claudiosoft.selfgeneratinglib.SelfJarException;
-import claudiosoft.selfgeneratinglib.Constants;
-import claudiosoft.selfgeneratinglib.Utils;
+import claudiosoft.selfjar.commons.SelfConstants;
+import claudiosoft.selfjar.commons.SelfJarException;
+import claudiosoft.selfjar.commons.SelfUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -44,16 +44,16 @@ public class JarContext {
         FileOutputStream fos = new FileOutputStream(contextFile);
         try {
             for (String line : lines) {
-                if (line.startsWith(Constants.CTX_COMMENT)) {
+                if (line.startsWith(SelfConstants.CTX_COMMENT)) {
                     fos.write(line.getBytes(Charset.forName("UTF-8")));
-                } else if (line.startsWith(Constants.CTX_COUNT)) {
-                    fos.write(String.format("%s=%d", Constants.CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
+                } else if (line.startsWith(SelfConstants.CTX_COUNT)) {
+                    fos.write(String.format("%s=%d", SelfConstants.CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
                 }
                 fos.write("\n".getBytes(Charset.forName("UTF-8")));
             }
 
         } finally {
-            Utils.closeQuietly(fos);
+            SelfUtils.closeQuietly(fos);
         }
     }
 
@@ -64,9 +64,9 @@ public class JarContext {
     private void parse() throws IOException {
         List<String> lines = Files.readAllLines(contextFile.toPath());
         for (String line : lines) {
-            if (line.startsWith(Constants.CTX_COMMENT)) {
+            if (line.startsWith(SelfConstants.CTX_COMMENT)) {
                 continue;
-            } else if (line.startsWith(Constants.CTX_COUNT)) {
+            } else if (line.startsWith(SelfConstants.CTX_COUNT)) {
                 exeCount = Integer.parseInt(line.split("=")[1]);
             }
         }

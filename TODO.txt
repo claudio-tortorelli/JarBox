@@ -1,0 +1,23 @@
+ATTENZIONE
+    il refactoring attuale è errato perchè la dipendenza dalla common mina l'autoconsistenza del selfgeneratingjar
+    copiare localmente le classi che servono (copia da common a selfjar in fase di build common)
+    rimuovere la dipendenza
+    ripristinare i test
+
+Gestire il passaggio parametri
+    da prompt a selfjar
+        [SGJ]<key>=<value>
+        tutti quelli che non cominciano per [SGJ] sono passati al job così come sono
+
+Il selfjar estrae il job e lo avvia con i parametri
+
+Il job deve implementare la classe base (ok...)
+    deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
+    deve verificare se il workspace è popolato con dati
+    deve estrarre le risorse sempre fuori dal workspace
+    il workspace è solo per i dati da elaborare/mantenere
+
+Aggiornamento...
+    Gestire installazione/disinstallazione job nel selfjar
+    Gestire import/export del workspace
+

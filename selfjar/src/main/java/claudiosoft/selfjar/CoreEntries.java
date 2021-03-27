@@ -1,4 +1,4 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfjar;
 
 import java.util.LinkedList;
 import java.util.List;

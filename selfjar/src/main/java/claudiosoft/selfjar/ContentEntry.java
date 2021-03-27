@@ -1,6 +1,6 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfjar;
 
-import claudiosoft.selfgeneratinglib.SelfJarException;
+import claudiosoft.selfjar.commons.SelfJarException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;

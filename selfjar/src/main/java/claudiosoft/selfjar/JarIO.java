@@ -1,8 +1,8 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfjar;
 
-import claudiosoft.selfgeneratinglib.SelfJarException;
-import claudiosoft.selfgeneratinglib.Constants;
-import claudiosoft.selfgeneratinglib.Utils;
+import claudiosoft.selfjar.commons.SelfConstants;
+import claudiosoft.selfjar.commons.SelfJarException;
+import claudiosoft.selfjar.commons.SelfUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,9 +60,9 @@ public class JarIO {
                 is = jar.getInputStream(entry);
                 File outFile = new File(selfJarFolder.getAbsoluteFile() + File.separator + entry.getName());
                 fos = new FileOutputStream(outFile);
-                Utils.inputToOutput(is, fos);
+                SelfUtils.inputToOutput(is, fos);
                 // keep open the entry if not in workspace
-                if (entry.getFullName().endsWith(Constants.CONTEXT_FILENAME)) {
+                if (entry.getFullName().endsWith(SelfConstants.CONTEXT_FILENAME)) {
                     contextEntry = entry;
                     context = new JarContext(outFile);
                     contextEntry.lockIn(outFile);
@@ -70,8 +70,8 @@ public class JarIO {
                     entry.lockIn(outFile);
                 }
             } finally {
-                Utils.closeQuietly(is);
-                Utils.closeQuietly(fos);
+                SelfUtils.closeQuietly(is);
+                SelfUtils.closeQuietly(fos);
             }
         }
 
@@ -111,7 +111,7 @@ public class JarIO {
                 add(selfJarFolder.getAbsolutePath(), nestedFile, target);
             }
         } finally {
-            Utils.closeQuietly(target);
+            SelfUtils.closeQuietly(target);
         }
         return nextJar;
     }
@@ -154,7 +154,7 @@ public class JarIO {
             target.putNextEntry(entry);
             in = new BufferedInputStream(new FileInputStream(source));
 
-            byte[] buffer = new byte[Constants.BUFFER_SIZE];
+            byte[] buffer = new byte[SelfConstants.BUFFER_SIZE];
             while (true) {
                 int count = in.read(buffer);
                 if (count == -1) {
@@ -164,7 +164,7 @@ public class JarIO {
             }
             target.closeEntry();
         } finally {
-            Utils.closeQuietly(in);
+            SelfUtils.closeQuietly(in);
         }
     }
 

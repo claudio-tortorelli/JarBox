@@ -1,10 +1,10 @@
-package claudiosoft.selfgeneratingjar;
+package claudiosoft.selfjar;
 
-import claudiosoft.selfgeneratingjar.BasicConsoleLogger.LogLevel;
-import claudiosoft.selfgeneratinglib.Constants;
-import claudiosoft.selfgeneratinglib.SelfJarException;
-import claudiosoft.selfgeneratinglib.Utils;
-import claudiosoft.selfgeneratinglib.Utils.OS;
+import claudiosoft.selfjar.commons.SelfConstants;
+import claudiosoft.selfjar.commons.SelfJarException;
+import claudiosoft.selfjar.commons.SelfUtils;
+import claudiosoft.selfjar.commons.SelfUtils.OS;
+import claudiosoft.selfjar.BasicConsoleLogger.LogLevel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -33,15 +33,15 @@ public final class SelfJar {
         BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.NONE, "SelfJar");
         try {
             // avoid multiple instances
-            Utils.testLockFile(FILE_LOCK);
-            Utils.doLock(FILE_LOCK);
+            SelfUtils.testLockFile(FILE_LOCK);
+            SelfUtils.doLock(FILE_LOCK);
             logger.info("SelfJar started");
             SelfJar selfJar = new SelfJar(args, logger);
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
-            System.exit(Constants.RET_CODE_ERR);
+            System.exit(SelfConstants.RET_CODE_ERR);
         } finally {
-            Utils.doUnlock();
+            SelfUtils.doUnlock();
         }
     }
 
@@ -57,12 +57,12 @@ public final class SelfJar {
             parseArgs(args);
 
             // use current date-time
-            SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT);
-            sdf.setTimeZone(Constants.DEFAULT_TIMEZONE);
+            SimpleDateFormat sdf = new SimpleDateFormat(SelfConstants.DATE_FORMAT_SHORT);
+            sdf.setTimeZone(SelfConstants.DEFAULT_TIMEZONE);
             String dt = sdf.format(new Date());
 
             // create temp out folder
-            selfJarFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, Constants.TMP_SELFJAR_FOLDER, dt));
+            selfJarFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, SelfConstants.TMP_SELFJAR_FOLDER, dt));
             selfJarFolder.mkdirs();
             logger.debug("jar expanding...");
             io.out(content, selfJarFolder);
@@ -97,7 +97,7 @@ public final class SelfJar {
 
             // remove temp folder
             if (selfJarFolder != null) {
-                Utils.deleteDirectory(selfJarFolder);
+                SelfUtils.deleteDirectory(selfJarFolder);
             }
             logger.debug("closing");
         }
@@ -117,9 +117,9 @@ public final class SelfJar {
 
         logger.debug("starting Charun...");
         //call charun on right  platform
-        OS os = Utils.getOperatingSystem();
+        OS os = SelfUtils.getOperatingSystem();
         if (os.equals(OS.WINDOWS)) {
-            charunInFile = Utils.getFileFromRes("charun/win/Charun.exe");
+            charunInFile = SelfUtils.getFileFromRes("charun/win/Charun.exe");
             charunOutFile = new File(String.format("%s%sCharun.exe", foo.getParent(), File.separator));
             foo.delete();
         } else if (os.equals(OS.OSX)) {
@@ -141,8 +141,8 @@ public final class SelfJar {
         Process insideProc = processBuilder.start();
 
         // print charun output
-        Utils.inheritIO(insideProc.getInputStream(), System.out);
-        Utils.inheritIO(insideProc.getErrorStream(), System.err);
+        SelfUtils.inheritIO(insideProc.getInputStream(), System.out);
+        SelfUtils.inheritIO(insideProc.getErrorStream(), System.err);
     }
 
     /**
@@ -159,6 +159,7 @@ public final class SelfJar {
     }
 
     public void parseArgs(String[] args) throws SelfJarException {
+
         for (int iAr = 0; iAr < args.length; iAr++) {
             if (args[iAr] == null || args[iAr].isEmpty()) {
                 continue;
