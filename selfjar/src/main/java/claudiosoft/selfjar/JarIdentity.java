@@ -18,6 +18,7 @@ public class JarIdentity {
     private final String javaRuntime;
 
     private final Class MAIN_CLASS = SelfJar.class;
+    private final String VERSION = "1.0.0";
 
     public JarIdentity() throws SelfJarException {
 
@@ -70,9 +71,14 @@ public class JarIdentity {
         return javaRuntime;
     }
 
+    public String getVersion() {
+        return VERSION;
+    }
+
     @Override
     public String toString() {
         String ret = "--- Jar Identity ---\n";
+        ret += "My version is " + getVersion() + "\n";
         ret += "My full name is " + getFullName() + "\n";
         ret += "My simple name is " + getClassName() + "\n";
         ret += "I'm contained into " + getCurrentJar().getAbsolutePath() + "\n";
