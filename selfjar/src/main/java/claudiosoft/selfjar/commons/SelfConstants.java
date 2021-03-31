@@ -20,6 +20,8 @@ public class SelfConstants {
     public static final String INTERNAL_STATUS_NAME = "status.txt";
     public static final String TMP_SELFJAR_FOLDER = "selfJar";
 
+    public static final String PARAM_PREFIX = "[sj]";
+
     public static final String CONTEXT_FILENAME = "context.txt";
     public static final String CTX_COMMENT = "#";
     public static final String CTX_COUNT = "EXECOUNT";

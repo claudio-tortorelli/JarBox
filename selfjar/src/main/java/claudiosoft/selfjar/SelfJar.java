@@ -1,10 +1,10 @@
 package claudiosoft.selfjar;
 
+import claudiosoft.selfjar.BasicConsoleLogger.LogLevel;
 import claudiosoft.selfjar.commons.SelfConstants;
 import claudiosoft.selfjar.commons.SelfJarException;
 import claudiosoft.selfjar.commons.SelfUtils;
 import claudiosoft.selfjar.commons.SelfUtils.OS;
-import claudiosoft.selfjar.BasicConsoleLogger.LogLevel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -158,37 +158,61 @@ public final class SelfJar {
         return ret;
     }
 
-    public void parseArgs(String[] args) throws SelfJarException {
+    public String parseArgs(String[] args) throws SelfJarException {
 
+        String jobArgs = "";
         for (int iAr = 0; iAr < args.length; iAr++) {
             if (args[iAr] == null || args[iAr].isEmpty()) {
                 continue;
             }
             String[] splitted = args[iAr].split("=");
-            if (splitted.length > 2) {
-                continue;
-            }
-
-            String param = splitted[0].toLowerCase().trim();
-            String value = ""; // the switch argument may be present
             if (splitted.length == 2) {
-                value = splitted[1];
-            }
-            if (param.startsWith("info")) {
-                setPrintInfo(true);
-            } else if (param.startsWith("loglevel")) {
-                if (value.equalsIgnoreCase("debug")) {
-                    logger = new BasicConsoleLogger(LogLevel.DEBUG, "SelfJar");
-                } else if (value.equalsIgnoreCase("info")) {
-                    logger = new BasicConsoleLogger(LogLevel.NORMAL, "SelfJar");
+                String param = splitted[0].toLowerCase().trim();
+                if (param.startsWith(SelfConstants.PARAM_PREFIX)) {
+                    param = param.substring(SelfConstants.PARAM_PREFIX.length());
+                    String value = splitted[1];
+                    if (param.startsWith("info") && value.equalsIgnoreCase("true")) {
+                        // enable internal info printing
+                        setPrintInfo(true);
+                    } else if (param.startsWith("loglevel")) {
+                        // set logger level
+                        if (value.equalsIgnoreCase("debug")) {
+                            logger = new BasicConsoleLogger(LogLevel.DEBUG, "SelfJar");
+                        } else if (value.equalsIgnoreCase("info")) {
+                            logger = new BasicConsoleLogger(LogLevel.NORMAL, "SelfJar");
+                        } else {
+                            logger = new BasicConsoleLogger(LogLevel.NONE, "SelfJar");
+                        }
+                    } else if (param.startsWith("install")) {
+                        // install or remove a job
+                    } else if (param.startsWith("main")) {
+                        // add a job main executable to context
+                    } else if (param.startsWith("addenv")) {
+                        // add an environment variable to context
+                    } else if (param.startsWith("delenv")) {
+                        // delete an environment variable to context
+                    } else if (param.startsWith("addpar")) {
+                        // add a job parameter to context
+                    } else if (param.startsWith("delpar")) {
+                        // delete a job parameter to context
+                    } else if (param.startsWith("export")) {
+                        // export workspace to folder
+                    } else if (param.startsWith("import")) {
+                        // import file into workspace
+                    } else if (param.startsWith("delete")) {
+                        // delete file from workspace
+                    } else {
+                        jobArgs += args[iAr] + " ";
+                    }
                 } else {
-                    logger = new BasicConsoleLogger(LogLevel.NONE, "SelfJar");
+                    jobArgs += args[iAr] + " ";
                 }
             } else {
-                // TODO, this will be updated when a job is defined
-                throw new IllegalArgumentException("unrecognized input argument: " + param);
+                jobArgs += args[iAr] + " ";
             }
         }
+        // all others may be parameters for job
+        return jobArgs.trim();
     }
 
     public boolean printInfo() {
