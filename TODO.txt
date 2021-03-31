@@ -18,8 +18,6 @@ nel contesto è possibile creare delle variabili di ambiente/parametri da passar
     [SJ]addpar=<parameter>
     [SJ]delpar=<parameter>
 
-aggiungere la versione di selfjar
-
 Il selfjar estrae il job e lo avvia con i parametri
 
 Il job deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
