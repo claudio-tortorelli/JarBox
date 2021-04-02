@@ -22,6 +22,8 @@ public class SelfConstants {
 
     public static final String PARAM_PREFIX = "[sj]";
 
+    public static final String LOGGER_NAME = "SelfJar";
+
     public static final String CONTEXT_FILENAME = "context.txt";
     public static final String CTX_COMMENT = "#";
     public static final String CTX_COUNT = "EXECOUNT";

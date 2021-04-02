@@ -3,6 +3,7 @@ package claudiosoft.selfjar;
 import claudiosoft.selfjar.BasicConsoleLogger.LogLevel;
 import claudiosoft.selfjar.commons.SelfConstants;
 import claudiosoft.selfjar.commons.SelfJarException;
+import claudiosoft.selfjar.commons.SelfParams;
 import claudiosoft.selfjar.commons.SelfUtils;
 import claudiosoft.selfjar.commons.SelfUtils.OS;
 import java.io.File;
@@ -28,6 +29,7 @@ public final class SelfJar {
     private JarIO io;
     private JarContent content;
     private boolean printInfo;
+    private SelfParams params;
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
         BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.NONE, "SelfJar");
@@ -51,9 +53,11 @@ public final class SelfJar {
         File selfJarFolder = null;
         File nextJar = null;
         try {
+            //////////// start initialization
             identity = new JarIdentity();
             content = new JarContent(identity.getCurrentJar());
             io = new JarIO();
+            params = new SelfParams();
             parseArgs(args);
 
             // use current date-time
@@ -72,7 +76,7 @@ public final class SelfJar {
             JarContext context = io.getContext();
             context.setExeCount(context.getExeCount() + 1);
             io.updateContext();
-            // end initialization
+            /////////// end initialization
 
             if (printInfo()) {
                 logger.info(toString());
@@ -177,38 +181,47 @@ public final class SelfJar {
                     } else if (param.startsWith("loglevel")) {
                         // set logger level
                         if (value.equalsIgnoreCase("debug")) {
-                            logger = new BasicConsoleLogger(LogLevel.DEBUG, "SelfJar");
+                            logger = new BasicConsoleLogger(LogLevel.DEBUG, SelfConstants.LOGGER_NAME);
                         } else if (value.equalsIgnoreCase("info")) {
-                            logger = new BasicConsoleLogger(LogLevel.NORMAL, "SelfJar");
+                            logger = new BasicConsoleLogger(LogLevel.NORMAL, SelfConstants.LOGGER_NAME);
                         } else {
-                            logger = new BasicConsoleLogger(LogLevel.NONE, "SelfJar");
+                            logger = new BasicConsoleLogger(LogLevel.NONE, SelfConstants.LOGGER_NAME);
                         }
-                    } else if (param.startsWith("install")) {
+                    } else if (param.startsWith(SelfParams.INSTALL)) {
                         // install or remove a job
-                    } else if (param.startsWith("main")) {
+                        params.setInstall(value);
+                    } else if (param.startsWith(SelfParams.MAIN)) {
                         // add a job main executable to context
-                    } else if (param.startsWith("addenv")) {
+                        params.setMain(value);
+                    } else if (param.startsWith(SelfParams.ADDENV)) {
                         // add an environment variable to context
-                    } else if (param.startsWith("delenv")) {
+                        params.addEnv().add(value);
+                    } else if (param.startsWith(SelfParams.DELENV)) {
                         // delete an environment variable to context
-                    } else if (param.startsWith("addpar")) {
+                        params.delEnv().add(value);
+                    } else if (param.startsWith(SelfParams.ADDPAR)) {
                         // add a job parameter to context
-                    } else if (param.startsWith("delpar")) {
+                        params.addPar().add(value);
+                    } else if (param.startsWith(SelfParams.DELPAR)) {
                         // delete a job parameter to context
-                    } else if (param.startsWith("export")) {
+                        params.delPar().add(value);
+                    } else if (param.startsWith(SelfParams.EXP)) {
                         // export workspace to folder
-                    } else if (param.startsWith("import")) {
+                        params.exp().add(value);
+                    } else if (param.startsWith(SelfParams.IMP)) {
                         // import file into workspace
-                    } else if (param.startsWith("delete")) {
+                        params.imp().add(value);
+                    } else if (param.startsWith(SelfParams.DEL)) {
                         // delete file from workspace
+                        params.del().add(value);
                     } else {
-                        jobArgs += args[iAr] + " ";
+                        params.jobArgs().add(args[iAr]);
                     }
                 } else {
-                    jobArgs += args[iAr] + " ";
+                    params.jobArgs().add(args[iAr]);
                 }
             } else {
-                jobArgs += args[iAr] + " ";
+                params.jobArgs().add(args[iAr]);
             }
         }
         // all others may be parameters for job
