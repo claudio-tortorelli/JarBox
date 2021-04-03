@@ -1,5 +1,7 @@
 package claudiosoft.selfjar;
 
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,17 +34,24 @@ public class BasicConsoleLogger {
 
     public BasicConsoleLogger(LogLevel level, String logName) {
         internalLogger = Logger.getLogger(logName);
+        Handler handlerObj = new ConsoleHandler();
+
         switch (level) {
             case DEBUG:
+                handlerObj.setLevel(Level.ALL);
                 internalLogger.setLevel(Level.ALL);
                 break;
             case NORMAL:
+                handlerObj.setLevel(Level.INFO);
                 internalLogger.setLevel(Level.INFO);
                 break;
             default:
+                handlerObj.setLevel(Level.OFF);
                 internalLogger.setLevel(Level.OFF);
                 break;
         }
+        internalLogger.addHandler(handlerObj);
+        internalLogger.setUseParentHandlers(false);
         this.level = level;
     }
 

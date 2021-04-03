@@ -30,3 +30,7 @@ Gestire import/export del workspace
     [SJ]delete=<file path>
 
 Ricompila charun per osx e linux
+
+charun deve prendere il switch per diventare silente
+
+
