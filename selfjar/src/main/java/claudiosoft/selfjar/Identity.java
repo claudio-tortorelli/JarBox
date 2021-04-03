@@ -1,6 +1,5 @@
 package claudiosoft.selfjar;
 
-import claudiosoft.selfjar.commons.SelfJarException;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -8,7 +7,7 @@ import java.io.FilenameFilter;
  *
  * @author Claudio
  */
-public class JarIdentity {
+public class Identity {
 
     private final String fullName;
     private final String className;
@@ -20,7 +19,17 @@ public class JarIdentity {
     private final Class MAIN_CLASS = SelfJar.class;
     private final String VERSION = "1.0.0";
 
-    public JarIdentity() throws SelfJarException {
+    private static Identity identity = null;
+
+    public static Identity get() throws SelfJarException {
+        if (identity != null) {
+            return identity;
+        }
+        identity = new Identity();
+        return identity;
+    }
+
+    private Identity() throws SelfJarException {
 
         try {
             this.fullName = MAIN_CLASS.getName();
@@ -28,7 +37,7 @@ public class JarIdentity {
             this.parentFolderJar = new File(MAIN_CLASS.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getAbsolutePath();
             String curName = new File(MAIN_CLASS.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getName();
             if (curName.equals("classes")) {
-                String[] list = new File(getParentFolderJar()).list(new FilenameFilter() {
+                String[] list = new File(parentFolderJar()).list(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
                         return name.toLowerCase().endsWith(".jar");
@@ -39,7 +48,7 @@ public class JarIdentity {
                 }
             }
             this.jarName = curName;
-            this.currentJar = new File(getParentFolderJar() + File.separator + getJarName());
+            this.currentJar = new File(parentFolderJar() + File.separator + jarName());
             this.javaRuntime = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
         } catch (Exception ex) {
             // wrap for convenience
@@ -47,42 +56,42 @@ public class JarIdentity {
         }
     }
 
-    public String getFullName() {
+    public String fullName() {
         return fullName;
     }
 
-    public String getClassName() {
+    public String className() {
         return className;
     }
 
-    public String getParentFolderJar() {
+    public String parentFolderJar() {
         return parentFolderJar;
     }
 
-    public String getJarName() {
+    public String jarName() {
         return jarName;
     }
 
-    public File getCurrentJar() {
+    public File currentJar() {
         return currentJar;
     }
 
-    public String getJavaRuntime() {
+    public String javaRuntime() {
         return javaRuntime;
     }
 
-    public String getVersion() {
+    public String version() {
         return VERSION;
     }
 
     @Override
     public String toString() {
         String ret = "--- Jar Identity ---\n";
-        ret += "My version is " + getVersion() + "\n";
-        ret += "My full name is " + getFullName() + "\n";
-        ret += "My simple name is " + getClassName() + "\n";
-        ret += "I'm contained into " + getCurrentJar().getAbsolutePath() + "\n";
-        ret += "I'm executing by JVM " + getJavaRuntime() + "\n";
+        ret += "My version is " + version() + "\n";
+        ret += "My full name is " + fullName() + "\n";
+        ret += "My simple name is " + className() + "\n";
+        ret += "I'm contained into " + currentJar().getAbsolutePath() + "\n";
+        ret += "I'm executing by JVM " + javaRuntime() + "\n";
         return ret;
     }
 }

@@ -1,19 +1,13 @@
 package claudiosoft.selfjar;
 
 import claudiosoft.selfjar.BasicConsoleLogger.LogLevel;
-import claudiosoft.selfjar.commons.SelfConstants;
-import claudiosoft.selfjar.commons.SelfJarException;
-import claudiosoft.selfjar.commons.SelfParams;
-import claudiosoft.selfjar.commons.SelfUtils;
-import claudiosoft.selfjar.commons.SelfUtils.OS;
+import claudiosoft.selfjar.SelfUtils.OS;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedList;
 
 /**
@@ -25,10 +19,6 @@ public final class SelfJar {
     private BasicConsoleLogger logger;
     private static final File FILE_LOCK = new File(System.getProperty("user.home") + File.separator + ".selfgenerating_lock");
 
-    private JarIdentity identity;
-    private JarIO io;
-    private JarContent content;
-    private boolean printInfo;
     private SelfParams params;
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
@@ -50,59 +40,40 @@ public final class SelfJar {
     public SelfJar(String[] args, BasicConsoleLogger logger) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException, SelfJarException {
         this.logger = logger;
 
-        File selfJarFolder = null;
-        File nextJar = null;
         try {
             //////////// start initialization
-            identity = new JarIdentity();
-            content = new JarContent(identity.getCurrentJar());
-            io = new JarIO();
-            params = new SelfParams();
             parseArgs(args);
 
-            // use current date-time
-            SimpleDateFormat sdf = new SimpleDateFormat(SelfConstants.DATE_FORMAT_SHORT);
-            sdf.setTimeZone(SelfConstants.DEFAULT_TIMEZONE);
-            String dt = sdf.format(new Date());
-
-            // create temp out folder
-            selfJarFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, SelfConstants.TMP_SELFJAR_FOLDER, dt));
-            selfJarFolder.mkdirs();
             logger.debug("jar expanding...");
-            io.out(content, selfJarFolder);
+            IO.get().out();
 
             // update context file
             logger.debug("context updating...");
-            JarContext context = io.getContext();
+
+            //TODO, update con il params
+            Context context = IO.get().getContext();
             context.setExeCount(context.getExeCount() + 1);
-            io.updateContext();
+            context.update();
             /////////// end initialization
 
-            if (printInfo()) {
+            if (params.info()) {
                 logger.info(toString());
             }
-
             // start internal job
             logger.info("start internal job");
             // TODO
             logger.info("end internal job");
             // end internal job
-            io.closeAll(content);
 
             // create updated jar
             logger.debug("creating next jar...");
-            nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dt));
-            io.in(selfJarFolder, nextJar);
+            File nextJar = IO.get().in();
 
-            invokeCharun(identity.getCurrentJar().getAbsolutePath(), nextJar.getAbsolutePath());
+            // invoke charun to bring nextJar as current
+            invokeCharun(nextJar.getAbsolutePath());
         } finally {
             // unlock any open file
-            io.closeAll(content);
-
-            // remove temp folder
-            if (selfJarFolder != null) {
-                SelfUtils.deleteDirectory(selfJarFolder);
-            }
+            IO.get().closeAll();
             logger.debug("closing");
         }
     }
@@ -113,7 +84,7 @@ public final class SelfJar {
      * @throws IOException
      * @throws InterruptedException
      */
-    private void invokeCharun(String curJarPath, String nextJarPath) throws IOException, InterruptedException, SelfJarException {
+    private void invokeCharun(String nextJarPath) throws IOException, InterruptedException, SelfJarException {
 
         File foo = File.createTempFile("foo", ".tmp");
         File charunOutFile = null;
@@ -139,7 +110,7 @@ public final class SelfJar {
         LinkedList<String> pbArgs = new LinkedList<>();
         pbArgs.add(charunOutFile.getAbsolutePath());
         pbArgs.add(nextJarPath);
-        pbArgs.add(curJarPath);
+        pbArgs.add(Identity.get().currentJar().getAbsolutePath());
 
         ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
         Process insideProc = processBuilder.start();
@@ -156,28 +127,32 @@ public final class SelfJar {
     @Override
     public String toString() {
         String ret = "\n";
-        ret += identity.toString() + "\n";
-        ret += io.getContext().toString() + "\n";
-        ret += content.toString() + "\n";
+        try {
+            ret += Identity.get().toString() + "\n";
+            ret += IO.get().toString() + "\n";
+        } catch (SelfJarException ex) {
+
+        }
         return ret;
     }
 
-    public String parseArgs(String[] args) throws SelfJarException {
+    public void parseArgs(String[] args) throws SelfJarException {
+        params = new SelfParams();
 
-        String jobArgs = "";
         for (int iAr = 0; iAr < args.length; iAr++) {
             if (args[iAr] == null || args[iAr].isEmpty()) {
                 continue;
             }
+
             String[] splitted = args[iAr].split("=");
             if (splitted.length == 2) {
                 String param = splitted[0].toLowerCase().trim();
                 if (param.startsWith(SelfConstants.PARAM_PREFIX)) {
                     param = param.substring(SelfConstants.PARAM_PREFIX.length());
                     String value = splitted[1];
-                    if (param.startsWith("info") && value.equalsIgnoreCase("true")) {
+                    if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
                         // enable internal info printing
-                        setPrintInfo(true);
+                        params.setPrintInfo(true);
                     } else if (param.startsWith("loglevel")) {
                         // set logger level
                         if (value.equalsIgnoreCase("debug")) {
@@ -224,16 +199,5 @@ public final class SelfJar {
                 params.jobArgs().add(args[iAr]);
             }
         }
-        // all others may be parameters for job
-        return jobArgs.trim();
     }
-
-    public boolean printInfo() {
-        return printInfo;
-    }
-
-    public void setPrintInfo(boolean printInfo) {
-        this.printInfo = printInfo;
-    }
-
 }

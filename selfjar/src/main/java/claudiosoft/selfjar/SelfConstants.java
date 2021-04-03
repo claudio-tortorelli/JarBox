@@ -1,4 +1,4 @@
-package claudiosoft.selfjar.commons;
+package claudiosoft.selfjar;
 
 import java.util.TimeZone;
 
@@ -24,7 +24,7 @@ public class SelfConstants {
 
     public static final String LOGGER_NAME = "SelfJar";
 
-    public static final String CONTEXT_FILENAME = "context.txt";
+    public static final String CONTEXT_FULLNAME = "context/context.txt";
     public static final String CTX_COMMENT = "#";
     public static final String CTX_COUNT = "EXECOUNT";
 

@@ -1,4 +1,4 @@
-package claudiosoft.selfjar.commons;
+package claudiosoft.selfjar;
 
 /**
  *

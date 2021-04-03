@@ -1,4 +1,4 @@
-package claudiosoft.selfjar.commons;
+package claudiosoft.selfjar;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +18,9 @@ public class SelfParams {
     public static final String EXP = "export";
     public static final String IMP = "import";
     public static final String DEL = "delete";
+    public static final String INFO = "info";
+
+    public static final String INSTALL_CLEAN = "clean";
 
     private String install;
     private String main;
@@ -28,6 +31,7 @@ public class SelfParams {
     private List<String> exp;
     private List<String> imp;
     private List<String> del;
+    private boolean info;
 
     private List<String> jobArgs;
 
@@ -40,6 +44,7 @@ public class SelfParams {
         this.delEnv = new LinkedList<>();
         this.addEnv = new LinkedList<>();
         this.jobArgs = new LinkedList<>();
+        this.info = false;
     }
 
     public String install() {
@@ -88,6 +93,14 @@ public class SelfParams {
 
     public List<String> jobArgs() {
         return jobArgs;
+    }
+
+    public boolean info() {
+        return info;
+    }
+
+    public void setPrintInfo(boolean info) {
+        this.info = info;
     }
 
 }

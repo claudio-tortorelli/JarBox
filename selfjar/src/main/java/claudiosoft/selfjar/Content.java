@@ -1,8 +1,5 @@
 package claudiosoft.selfjar;
 
-import claudiosoft.selfjar.commons.SelfJarException;
-import claudiosoft.selfjar.commons.SelfUtils;
-import java.io.File;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,9 +13,9 @@ import java.util.zip.ZipEntry;
 
 /**
  *
- * @author Claudio
+ * @author claudio.tortorelli
  */
-public class JarContent {
+public class Content {
 
     public static enum CHECK_MODE {
         SIZE,
@@ -36,17 +33,15 @@ public class JarContent {
     }
 
     private final List<ContentEntry> content;
-    private final File jarFile;
 
-    public JarContent(File jar) throws SelfJarException {
-        this(jar, true);
+    public Content() throws SelfJarException {
+        this(true);
     }
 
-    public JarContent(File jar, boolean sort) throws SelfJarException {
+    public Content(boolean sort) throws SelfJarException {
         try {
-            this.jarFile = jar;
             this.content = new LinkedList<>();
-            JarFile jarFile = new JarFile(jar);
+            JarFile jarFile = new JarFile(Identity.get().currentJar());
             Enumeration<? extends JarEntry> enumeration = jarFile.entries();
             InputStream is = null;
             try {
@@ -79,8 +74,17 @@ public class JarContent {
         return content;
     }
 
-    public File getJarFile() {
-        return jarFile;
+    public final ContentEntry getContentEntry(String entryFullName) throws SelfJarException {
+        for (ContentEntry entry : content) {
+            if (entry.getFullName().equals(entryFullName)) {
+                return entry;
+            }
+        }
+        throw new SelfJarException("no entry found with full name " + entryFullName);
+    }
+
+    public final ContentEntry getContext() throws SelfJarException {
+        return getContentEntry(SelfConstants.CONTEXT_FULLNAME);
     }
 
     /**
@@ -90,7 +94,7 @@ public class JarContent {
      * @param mode
      * @param target
      */
-    public void compareContents(JarContent other, CHECK_MODE mode, CHECK_TARGET target) throws SelfJarException {
+    public void compareContents(Content other, CHECK_MODE mode, CHECK_TARGET target) throws SelfJarException {
         List<ContentEntry> otherContent = other.getContent();
         if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.SIZE)) {
             if (otherContent.size() != content.size()) {

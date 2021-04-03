@@ -1,15 +1,13 @@
 package claudiosoft.selfjar;
 
-import claudiosoft.selfjar.commons.SelfConstants;
-import claudiosoft.selfjar.commons.SelfJarException;
-import claudiosoft.selfjar.commons.SelfUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -19,54 +17,66 @@ import java.util.jar.JarOutputStream;
  *
  * @author claudio.tortorelli
  */
-public class JarIO {
+public class IO {
 
-    private JarContext context;
-    private ContentEntry contextEntry;
+    private final File selfJarTmpFolder;
+    private final File nextJar;
+    private final Content content;
 
-    public JarIO() {
-        this.context = null;
-        this.contextEntry = null;
+    private static IO io = null;
+
+    public static IO get() throws SelfJarException {
+        if (io != null) {
+            return io;
+        }
+        io = new IO();
+        return io;
+    }
+
+    private IO() throws SelfJarException {
+        // use current date-time
+        SimpleDateFormat sdf = new SimpleDateFormat(SelfConstants.DATE_FORMAT_SHORT);
+        sdf.setTimeZone(SelfConstants.DEFAULT_TIMEZONE);
+        String dateTime = sdf.format(new Date());
+
+        // create temp out folder
+        this.selfJarTmpFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, SelfConstants.TMP_SELFJAR_FOLDER, dateTime));
+        this.nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dateTime));
+        this.content = new Content();
     }
 
     /**
      * Extract jar content to folder
      *
-     * @param jarContent
-     * @param selfJarFolder
      * @throws IOException
      */
-    public void out(JarContent jarContent, File selfJarFolder) throws IOException, FileNotFoundException, SelfJarException {
+    public void out() throws IOException, SelfJarException {
 
         // build folder tree
-        List<ContentEntry> content = jarContent.getContent();
+        List<ContentEntry> content = this.content.getContent();
         for (ContentEntry entry : content) {
             if (!entry.isDirectory()) {
                 continue;
             }
-            File folder = new File(String.format("%s%s%s", selfJarFolder, File.separator, entry.getFullName()));
+            File folder = new File(String.format("%s%s%s", selfJarTmpFolder, File.separator, entry.getFullName()));
             folder.mkdirs();
         }
 
         // export content to folders
         InputStream is = null;
         FileOutputStream fos = null;
-        JarFile jar = new JarFile(jarContent.getJarFile());
+        JarFile jar = new JarFile(Identity.get().currentJar());
         for (ContentEntry entry : content) {
             if (entry.isDirectory()) {
                 continue;
             }
             try {
                 is = jar.getInputStream(entry);
-                File outFile = new File(selfJarFolder.getAbsoluteFile() + File.separator + entry.getName());
+                File outFile = new File(selfJarTmpFolder.getAbsoluteFile() + File.separator + entry.getName());
                 fos = new FileOutputStream(outFile);
                 SelfUtils.inputToOutput(is, fos);
-                // keep open the entry if not in workspace
-                if (entry.getFullName().endsWith(SelfConstants.CONTEXT_FILENAME)) {
-                    contextEntry = entry;
-                    context = new JarContext(outFile);
-                    contextEntry.lockIn(outFile);
-                } else if (!entry.getFullName().startsWith("workspace")) {
+                // keep open entries in workspace
+                if (!entry.getFullName().startsWith("workspace")) {
                     entry.lockIn(outFile);
                 }
             } finally {
@@ -74,41 +84,23 @@ public class JarIO {
                 SelfUtils.closeQuietly(fos);
             }
         }
-
-    }
-
-    public void closeAll(JarContent jarContent) throws IOException {
-        List<ContentEntry> content = jarContent.getContent();
-        for (ContentEntry entry : content) {
-            if (entry.isDirectory()) {
-                continue;
-            }
-            entry.lockOut();
-        }
     }
 
     /**
      * Create a jar from folder
      *
-     * @param selfJarFolder
-     * @param newJar
      * @return
      * @throws SelfJarException
      * @throws IOException
      *
      * https://stackoverflow.com/questions/1281229/how-to-use-jaroutputstream-to-create-a-jar-file
      */
-    public File in(File selfJarFolder) throws SelfJarException, IOException {
-        return in(selfJarFolder, File.createTempFile("selfJar", ".jar"));
-    }
-
-    public File in(File selfJarFolder, File nextJar) throws SelfJarException, IOException {
-
+    public File in() throws SelfJarException, IOException {
         JarOutputStream target = null;
         try {
             target = new JarOutputStream(new FileOutputStream(nextJar));
-            for (File nestedFile : selfJarFolder.listFiles()) {
-                add(selfJarFolder.getAbsolutePath(), nestedFile, target);
+            for (File nestedFile : selfJarTmpFolder.listFiles()) {
+                addToNextJar(selfJarTmpFolder.getAbsolutePath(), nestedFile, target);
             }
         } finally {
             SelfUtils.closeQuietly(target);
@@ -116,17 +108,33 @@ public class JarIO {
         return nextJar;
     }
 
-    public JarContext getContext() {
-        return context;
+    public void closeAll() throws IOException, SelfJarException {
+        List<ContentEntry> content = this.content.getContent();
+        for (ContentEntry entry : content) {
+            if (entry.isDirectory()) {
+                continue;
+            }
+            entry.lockOut();
+        }
+        SelfUtils.deleteDirectory(selfJarTmpFolder);
     }
 
-    public void updateContext() throws IOException, FileNotFoundException, SelfJarException {
-        contextEntry.lockOut();
-        context.update();
-        contextEntry.lockIn(context.getContextFile());
+    public Context getContext() throws SelfJarException, IOException {
+        return new Context(content.getContext());
     }
 
-    private void add(String basePath, File source, JarOutputStream target) throws IOException {
+    @Override
+    public String toString() {
+        String ret = content.toString() + "\n";
+        try {
+            ret += getContext().toString() + "\n";
+        } catch (Exception ex) {
+
+        }
+        return ret;
+    }
+
+    private void addToNextJar(String basePath, File source, JarOutputStream target) throws IOException, SelfJarException {
         BufferedInputStream in = null;
         try {
             if (source.isDirectory()) {
@@ -142,16 +150,20 @@ public class JarIO {
                     target.closeEntry();
                 }
                 for (File nestedFile : source.listFiles()) {
-                    add(basePath, nestedFile, target);
+                    addToNextJar(basePath, nestedFile, target);
                 }
                 return;
             }
 
             String entryName = source.getPath().replace(basePath + File.separator, "");
             entryName = entryName.replace("\\", "/");
-            JarEntry entry = new JarEntry(entryName);
-            entry.setTime(source.lastModified());
-            target.putNextEntry(entry);
+
+            // now unlock the entry...
+            content.getContentEntry(entryName).lockOut();
+
+            JarEntry jarEntry = new JarEntry(entryName);
+            jarEntry.setTime(source.lastModified());
+            target.putNextEntry(jarEntry);
             in = new BufferedInputStream(new FileInputStream(source));
 
             byte[] buffer = new byte[SelfConstants.BUFFER_SIZE];

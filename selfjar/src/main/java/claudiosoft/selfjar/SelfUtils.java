@@ -1,4 +1,4 @@
-package claudiosoft.selfjar.commons;
+package claudiosoft.selfjar;
 
 import java.io.Closeable;
 import java.io.File;
@@ -103,6 +103,9 @@ public class SelfUtils {
     }
 
     public static boolean deleteDirectory(File directoryToBeDeleted) throws SelfJarException {
+        if (!directoryToBeDeleted.exists()) {
+            return true;
+        }
         if (!directoryToBeDeleted.getAbsolutePath().contains(SelfConstants.TMP_SELFJAR_FOLDER)) {
             // for safety
             throw new SelfJarException("self jar folder only can be deleted");

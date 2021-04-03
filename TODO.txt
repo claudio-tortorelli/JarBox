@@ -29,3 +29,4 @@ Gestire import/export del workspace
     [SJ]import=<file path>
     [SJ]delete=<file path>
 
+Ricompila charun per osx e linux
