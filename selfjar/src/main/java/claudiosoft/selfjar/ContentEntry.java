@@ -22,7 +22,7 @@ public class ContentEntry extends ZipEntry {
 
     public ContentEntry(ZipEntry entry, byte[] hash) {
         super(entry);
-        this.core = CoreEntries.isCore(entry.getName());
+        this.core = isCore(entry.getName());
         this.hash = hash;
         this.raf = null;
         this.tmpFile = null;
@@ -82,4 +82,13 @@ public class ContentEntry extends ZipEntry {
         return "ContentEntry{" + "hash=" + hash + ", core=" + core + super.toString() + '}';
     }
 
+    private boolean isCore(String entryPath) {
+        if (entryPath.startsWith("job")) {
+            return false;
+        }
+        if (entryPath.startsWith("context")) {
+            return false;
+        }
+        return true;
+    }
 }

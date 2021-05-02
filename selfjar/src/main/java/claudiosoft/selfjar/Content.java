@@ -32,7 +32,7 @@ public class Content {
         EXTRA_ONLY
     }
 
-    private final List<ContentEntry> content;
+    private final List<ContentEntry> contentEntries;
 
     public Content() throws SelfJarException {
         this(true);
@@ -40,7 +40,7 @@ public class Content {
 
     public Content(boolean sort) throws SelfJarException {
         try {
-            this.content = new LinkedList<>();
+            this.contentEntries = new LinkedList<>();
             JarFile jarFile = new JarFile(Identity.get().currentJar());
             Enumeration<? extends JarEntry> enumeration = jarFile.entries();
             InputStream is = null;
@@ -53,13 +53,13 @@ public class Content {
                         hash = SelfUtils.getSHA256(is);
                         SelfUtils.closeQuietly(is);
                     }
-                    this.content.add(new ContentEntry(zipEntry, hash));
+                    this.contentEntries.add(new ContentEntry(zipEntry, hash));
                 }
             } finally {
                 SelfUtils.closeQuietly(is);
             }
 
-            Collections.sort(this.content, new Comparator<ContentEntry>() {
+            Collections.sort(this.contentEntries, new Comparator<ContentEntry>() {
                 @Override
                 public int compare(ContentEntry e1, ContentEntry e2) {
                     return e1.getFullName().compareTo(e2.getFullName());
@@ -70,12 +70,12 @@ public class Content {
         }
     }
 
-    public final List<ContentEntry> getContent() {
-        return content;
+    public final List<ContentEntry> getContentEntries() {
+        return contentEntries;
     }
 
     public final ContentEntry getContentEntry(String entryFullName) throws SelfJarException {
-        for (ContentEntry entry : content) {
+        for (ContentEntry entry : contentEntries) {
             if (entry.getFullName().equals(entryFullName)) {
                 return entry;
             }
@@ -95,15 +95,15 @@ public class Content {
      * @param target
      */
     public void compareContents(Content other, CHECK_MODE mode, CHECK_TARGET target) throws SelfJarException {
-        List<ContentEntry> otherContent = other.getContent();
+        List<ContentEntry> otherContent = other.getContentEntries();
         if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.SIZE)) {
-            if (otherContent.size() != content.size()) {
-                throw new SelfJarException(String.format("actual content size is %d against %d expected", otherContent.size(), content.size()));
+            if (otherContent.size() != contentEntries.size()) {
+                throw new SelfJarException(String.format("actual content size is %d against %d expected", otherContent.size(), contentEntries.size()));
             }
         }
 
         if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.SUB) || mode.equals(CHECK_MODE.ADD_SUB)) {
-            for (ContentEntry entry : content) {
+            for (ContentEntry entry : contentEntries) {
                 if (target.equals(CHECK_TARGET.CORE_ONLY) && !entry.isCore()) {
                     continue;
                 } else if (target.equals(CHECK_TARGET.EXTRA_ONLY) && entry.isCore()) {
@@ -129,7 +129,7 @@ public class Content {
         if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.ADD) || mode.equals(CHECK_MODE.ADD_SUB)) {
             for (ContentEntry entry : otherContent) {
                 boolean found = false;
-                for (ContentEntry entry2 : content) {
+                for (ContentEntry entry2 : contentEntries) {
                     if (entry.getFullName().equals(entry2.getFullName())) {
                         found = true;
                         if (mode.equals(CHECK_MODE.ADD_SUB_COHERENCE)) {
@@ -151,14 +151,14 @@ public class Content {
     public String toString() {
         String ret = "--- Jar Content ---\n";
         ret += "I'm including following content" + "\n";
-        for (ContentEntry entry : content) {
+        for (ContentEntry entry : contentEntries) {
             String hash = "";
             if (entry.getHash() != null) {
                 hash = SelfUtils.bytesToHex(entry.getHash());
             }
             ret += String.format("  %s %s\n", hash, entry.getFullName());
         }
-        getContent().toString();
+        getContentEntries().toString();
         return ret;
     }
 

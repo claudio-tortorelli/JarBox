@@ -21,7 +21,7 @@ public class IO {
 
     private final File selfJarTmpFolder;
     private final File nextJar;
-    private final Content content;
+    private final Content contentEntries;
 
     private static IO io = null;
 
@@ -42,7 +42,7 @@ public class IO {
         // create temp out folder
         this.selfJarTmpFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, SelfConstants.TMP_SELFJAR_FOLDER, dateTime));
         this.nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dateTime));
-        this.content = new Content();
+        this.contentEntries = new Content();
     }
 
     /**
@@ -53,7 +53,7 @@ public class IO {
     public void out() throws IOException, SelfJarException {
 
         // build folder tree
-        List<ContentEntry> content = this.content.getContent();
+        List<ContentEntry> content = this.contentEntries.getContentEntries();
         for (ContentEntry entry : content) {
             if (!entry.isDirectory()) {
                 continue;
@@ -109,7 +109,7 @@ public class IO {
     }
 
     public void closeAll() throws IOException, SelfJarException {
-        List<ContentEntry> content = this.content.getContent();
+        List<ContentEntry> content = this.contentEntries.getContentEntries();
         for (ContentEntry entry : content) {
             if (entry.isDirectory()) {
                 continue;
@@ -120,12 +120,12 @@ public class IO {
     }
 
     public Context getContext() throws SelfJarException, IOException {
-        return new Context(content.getContext());
+        return new Context(contentEntries.getContext());
     }
 
     @Override
     public String toString() {
-        String ret = content.toString() + "\n";
+        String ret = contentEntries.toString() + "\n";
         try {
             ret += getContext().toString() + "\n";
         } catch (Exception ex) {
@@ -159,7 +159,7 @@ public class IO {
             entryName = entryName.replace("\\", "/");
 
             // now unlock the entry...
-            content.getContentEntry(entryName).lockOut();
+            contentEntries.getContentEntry(entryName).lockOut();
 
             JarEntry jarEntry = new JarEntry(entryName);
             jarEntry.setTime(source.lastModified());

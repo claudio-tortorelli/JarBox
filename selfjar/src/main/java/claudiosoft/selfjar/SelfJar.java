@@ -50,8 +50,8 @@ public final class SelfJar {
             // update context file
             logger.debug("context updating...");
 
-            //TODO, update con il params
             Context context = IO.get().getContext();
+            //TODO, update con i params eventuali
             context.setExeCount(context.getExeCount() + 1);
             context.update();
             /////////// end initialization
@@ -59,11 +59,10 @@ public final class SelfJar {
             if (params.info()) {
                 logger.info(toString());
             }
-            // start internal job
+
             logger.info("start internal job");
             // TODO
             logger.info("end internal job");
-            // end internal job
 
             // create updated jar
             logger.debug("creating next jar...");
@@ -98,8 +97,10 @@ public final class SelfJar {
             charunOutFile = new File(String.format("%s%sCharun.exe", foo.getParent(), File.separator));
             foo.delete();
         } else if (os.equals(OS.OSX)) {
+            //TODO
             foo.delete();
         } else if (os.equals(OS.LINUX)) {
+            //TODO
             foo.delete();
         } else {
             throw new SelfJarException("unsupported os");
@@ -143,60 +144,60 @@ public final class SelfJar {
             if (args[iAr] == null || args[iAr].isEmpty()) {
                 continue;
             }
-
             String[] splitted = args[iAr].split("=");
-            if (splitted.length == 2) {
-                String param = splitted[0].toLowerCase().trim();
-                if (param.startsWith(SelfConstants.PARAM_PREFIX)) {
-                    param = param.substring(SelfConstants.PARAM_PREFIX.length());
-                    String value = splitted[1];
-                    if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
-                        // enable internal info printing
-                        params.setPrintInfo(true);
-                    } else if (param.startsWith("loglevel")) {
-                        // set logger level
-                        if (value.equalsIgnoreCase("debug")) {
-                            logger = new BasicConsoleLogger(LogLevel.DEBUG, SelfConstants.LOGGER_NAME);
-                        } else if (value.equalsIgnoreCase("info")) {
-                            logger = new BasicConsoleLogger(LogLevel.NORMAL, SelfConstants.LOGGER_NAME);
-                        } else {
-                            logger = new BasicConsoleLogger(LogLevel.NONE, SelfConstants.LOGGER_NAME);
-                        }
-                    } else if (param.startsWith(SelfParams.INSTALL)) {
-                        // install or remove a job
-                        params.setInstall(value);
-                    } else if (param.startsWith(SelfParams.MAIN)) {
-                        // add a job main executable to context
-                        params.setMain(value);
-                    } else if (param.startsWith(SelfParams.ADDENV)) {
-                        // add an environment variable to context
-                        params.addEnv().add(value);
-                    } else if (param.startsWith(SelfParams.DELENV)) {
-                        // delete an environment variable to context
-                        params.delEnv().add(value);
-                    } else if (param.startsWith(SelfParams.ADDPAR)) {
-                        // add a job parameter to context
-                        params.addPar().add(value);
-                    } else if (param.startsWith(SelfParams.DELPAR)) {
-                        // delete a job parameter to context
-                        params.delPar().add(value);
-                    } else if (param.startsWith(SelfParams.EXP)) {
-                        // export workspace to folder
-                        params.exp().add(value);
-                    } else if (param.startsWith(SelfParams.IMP)) {
-                        // import file into workspace
-                        params.imp().add(value);
-                    } else if (param.startsWith(SelfParams.DEL)) {
-                        // delete file from workspace
-                        params.del().add(value);
-                    } else {
-                        params.jobArgs().add(args[iAr]);
-                    }
-                } else {
-                    params.jobArgs().add(args[iAr]);
-                }
-            } else {
+            if (splitted.length != 2) {
                 params.jobArgs().add(args[iAr]);
+                continue;
+            }
+            String param = splitted[0].toLowerCase().trim();
+            if (!param.startsWith(SelfConstants.PARAM_PREFIX)) {
+                params.jobArgs().add(args[iAr]);
+                continue;
+            }
+            param = param.substring(SelfConstants.PARAM_PREFIX.length());
+            String value = splitted[1];
+            if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
+                params.setPrintInfo(true);// enable internal info printing
+                continue;
+            }
+            if (param.startsWith("loglevel")) {
+                // set logger level
+                if (value.equalsIgnoreCase("debug")) {
+                    logger = new BasicConsoleLogger(LogLevel.DEBUG, SelfConstants.LOGGER_NAME);
+                } else if (value.equalsIgnoreCase("info")) {
+                    logger = new BasicConsoleLogger(LogLevel.NORMAL, SelfConstants.LOGGER_NAME);
+                } else {
+                    logger = new BasicConsoleLogger(LogLevel.NONE, SelfConstants.LOGGER_NAME);
+                }
+            } else if (param.startsWith(SelfParams.INSTALL)) {
+                // install or remove a job
+                params.setInstall(value);
+            } else if (param.startsWith(SelfParams.MAIN)) {
+                // add a job main executable to context
+                params.setMain(value);
+            } else if (param.startsWith(SelfParams.ADDENV)) {
+                // add an environment variable to context
+                params.addEnv().add(value);
+            } else if (param.startsWith(SelfParams.DELENV)) {
+                // delete an environment variable to context
+                params.delEnv().add(value);
+            } else if (param.startsWith(SelfParams.ADDPAR)) {
+                // add a job parameter to context
+                params.addPar().add(value);
+            } else if (param.startsWith(SelfParams.DELPAR)) {
+                // delete a job parameter to context
+                params.delPar().add(value);
+            } else if (param.startsWith(SelfParams.EXP)) {
+                // export workspace to folder
+                params.exp().add(value);
+            } else if (param.startsWith(SelfParams.IMP)) {
+                // import file into workspace
+                params.imp().add(value);
+            } else if (param.startsWith(SelfParams.DEL)) {
+                // delete file from workspace
+                params.del().add(value);
+            } else {
+                throw new SelfJarException("Invalid self jar parameter: " + param);
             }
         }
     }
