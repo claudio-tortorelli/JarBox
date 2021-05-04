@@ -49,13 +49,13 @@ public final class SelfJar {
 
             // update context file
             logger.debug("context updating...");
-
             Context context = IO.get().getContext();
-            //TODO, update con i params eventuali
-            context.setExeCount(context.getExeCount() + 1);
+            context.applyParams(params);
             context.update();
-            /////////// end initialization
 
+            logger.debug("job updating...");
+            //IO.get().applyParams(params); //TODO
+            /////////// end initialization
             if (params.info()) {
                 logger.info(toString());
             }

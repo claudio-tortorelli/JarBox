@@ -27,5 +27,8 @@ public class SelfConstants {
     public static final String CONTEXT_FULLNAME = "context/context.txt";
     public static final String CTX_COMMENT = "#";
     public static final String CTX_COUNT = "EXECOUNT";
-
+    public static final String CTX_INSTALLEDJOB = "JOB";
+    public static final String CTX_JOBPARAM = "JOBPAR";
+    public static final String CTX_ENVPARAM = "ENVPAR";
+    public static final String CTX_MAIN = "MAIN";
 }

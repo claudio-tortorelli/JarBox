@@ -4,7 +4,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -13,6 +15,8 @@ import java.util.List;
 public class Context {
 
     private ContentEntry contextEntry;
+    private HashMap<String, String> envEntries;
+    private HashMap<String, String> jobParamsEntries;
 
     private long exeCount;
 
@@ -21,44 +25,81 @@ public class Context {
             throw new SelfJarException("invalid context entry");
         }
         contextEntry = entry;
+        envEntries = new HashMap<>();
+        jobParamsEntries = new HashMap<>();
         parse();
-    }
-
-    public long getExeCount() {
-        return exeCount;
-    }
-
-    public void setExeCount(long exeCount) {
-        this.exeCount = exeCount;
     }
 
     @Override
     public String toString() {
         String ret = "--- Jar Context ---\n";
-        ret += "I was executed " + getExeCount() + " times\n";
+        ret += "I was executed " + exeCount + " times\n";
+
+        if (!envEntries.isEmpty()) {
+            ret += "There are environment variables:\n";
+            for (Map.Entry<String, String> set : envEntries.entrySet()) {
+                ret += String.format("%s=%s\n", set.getKey(), set.getValue());
+            }
+        }
+        if (!jobParamsEntries.isEmpty()) {
+            ret += "There are JVM variables:\n";
+            for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
+                ret += String.format("%s=%s\n", set.getKey(), set.getValue());
+            }
+        }
         return ret;
     }
 
     public void update() throws IOException, SelfJarException {
+        FileOutputStream fos = null;
         try {
-            contextEntry.lockOut();
-            List<String> lines = Files.readAllLines(contextEntry.getFile().toPath());
-            FileOutputStream fos = new FileOutputStream(contextEntry.getFile().getAbsolutePath());
-            try {
-                for (String line : lines) {
-                    if (line.startsWith(SelfConstants.CTX_COMMENT)) {
-                        fos.write(line.getBytes(Charset.forName("UTF-8")));
-                    } else if (line.startsWith(SelfConstants.CTX_COUNT)) {
-                        fos.write(String.format("%s=%d", SelfConstants.CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
-                    }
-                    fos.write("\n".getBytes(Charset.forName("UTF-8")));
-                }
+            exeCount++;
 
-            } finally {
-                SelfUtils.closeQuietly(fos);
+            contextEntry.lockOut();
+            fos = new FileOutputStream(contextEntry.getFile().getAbsolutePath());
+            fos.write(String.format("%s=%d", SelfConstants.CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
+            fos.write("\n".getBytes(Charset.forName("UTF-8")));
+            for (Map.Entry<String, String> set : envEntries.entrySet()) {
+                fos.write(String.format("%s%s=%s", SelfConstants.CTX_ENVPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
+            }
+            for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
+                fos.write(String.format("%s%s=%s", SelfConstants.CTX_JOBPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
             }
         } finally {
+            SelfUtils.closeQuietly(fos);
             contextEntry.lockIn(contextEntry.getFile());
+        }
+    }
+
+    public void applyParams(SelfParams params) {
+
+        for (String var : params.addEnv()) {
+            String[] splitted = var.split("=");
+            String key = splitted[0];
+            String value = "";
+            if (splitted.length > 1) {
+                value = splitted[1];
+            }
+            envEntries.put(key, value);
+        }
+        for (String var : params.addPar()) {
+            String[] splitted = var.split("=");
+            String key = splitted[0];
+            String value = "";
+            if (splitted.length > 1) {
+                value = splitted[1];
+            }
+            jobParamsEntries.put(key, value);
+        }
+        for (String var : params.delEnv()) {
+            if (envEntries.containsKey(var)) {
+                envEntries.remove(var);
+            }
+        }
+        for (String var : params.delEnv()) {
+            if (jobParamsEntries.containsKey(var)) {
+                jobParamsEntries.remove(var);
+            }
         }
     }
 
@@ -71,6 +112,24 @@ public class Context {
                     continue;
                 } else if (line.startsWith(SelfConstants.CTX_COUNT)) {
                     exeCount = Integer.parseInt(line.split("=")[1]);
+                } else if (line.startsWith(SelfConstants.CTX_ENVPARAM)) {
+                    String[] splitted = line.substring(SelfConstants.CTX_ENVPARAM.length()).split("=");
+                    String key = splitted[0];
+                    String value = "";
+                    if (splitted.length > 1) {
+                        value = splitted[1];
+                    }
+                    envEntries.put(key, value);
+                } else if (line.startsWith(SelfConstants.CTX_JOBPARAM)) {
+                    String[] splitted = line.substring(SelfConstants.CTX_JOBPARAM.length()).split("=");
+                    String key = splitted[0];
+                    String value = "";
+                    if (splitted.length > 1) {
+                        value = splitted[1];
+                    }
+                    jobParamsEntries.put(key, value);
+                } else {
+                    throw new SelfJarException("Invalid context entry");
                 }
             }
         } finally {
