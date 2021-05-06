@@ -19,6 +19,7 @@ public class SelfParams {
     public static final String IMP = "import";
     public static final String DEL = "delete";
     public static final String INFO = "info";
+    public static final String LOGLEVEL = "loglevel";
 
     public static final String INSTALL_CLEAN = "clean";
 

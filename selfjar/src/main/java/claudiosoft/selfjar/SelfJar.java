@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  *
@@ -60,9 +61,7 @@ public final class SelfJar {
                 logger.info(toString());
             }
 
-            logger.info("start internal job");
-            // TODO
-            logger.info("end internal job");
+            invokeJob();
 
             // create updated jar
             logger.debug("creating next jar...");
@@ -75,6 +74,35 @@ public final class SelfJar {
             IO.get().closeAll();
             logger.debug("closing");
         }
+    }
+
+    private void invokeJob() throws SelfJarException, IOException {
+        logger.info("start internal job");
+
+        if (true) { //TODO, check if a job is present
+            return;
+        }
+        Context context = IO.get().getContext();
+
+        // apply environment properties
+        for (Map.Entry<String, String> set : context.getEnvEntries().entrySet()) {
+            System.setProperty(set.getKey(), set.getValue());
+        }
+
+        // create params list
+        LinkedList<String> pbArgs = new LinkedList<>();
+        for (Map.Entry<String, String> set : context.getJobParamsEntries().entrySet()) {
+            pbArgs.add(String.format("%s=%s", set.getKey(), set.getValue()));
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
+        Process insideProc = processBuilder.start();
+
+        // print job outputs
+        SelfUtils.inheritIO(insideProc.getInputStream(), System.out);
+        SelfUtils.inheritIO(insideProc.getErrorStream(), System.err);
+
+        logger.info("end internal job");
     }
 
     /**
@@ -116,7 +144,7 @@ public final class SelfJar {
         ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
         Process insideProc = processBuilder.start();
 
-        // print charun output
+        // print charun outputs
         SelfUtils.inheritIO(insideProc.getInputStream(), System.out);
         SelfUtils.inheritIO(insideProc.getErrorStream(), System.err);
     }
@@ -145,7 +173,7 @@ public final class SelfJar {
                 continue;
             }
             String[] splitted = args[iAr].split("=");
-            if (splitted.length != 2) {
+            if (splitted.length != 2 && splitted.length != 3) {
                 params.jobArgs().add(args[iAr]);
                 continue;
             }
@@ -156,11 +184,12 @@ public final class SelfJar {
             }
             param = param.substring(SelfConstants.PARAM_PREFIX.length());
             String value = splitted[1];
-            if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
+            if (splitted.length > 2 && !splitted[2].isEmpty()) {
+                value = String.format("%s=%s", splitted[1], splitted[2]);
+            } else if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
                 params.setPrintInfo(true);// enable internal info printing
                 continue;
-            }
-            if (param.startsWith("loglevel")) {
+            } else if (param.startsWith(SelfParams.LOGLEVEL)) {
                 // set logger level
                 if (value.equalsIgnoreCase("debug")) {
                     logger = new BasicConsoleLogger(LogLevel.DEBUG, SelfConstants.LOGGER_NAME);

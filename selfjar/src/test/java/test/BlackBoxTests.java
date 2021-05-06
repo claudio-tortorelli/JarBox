@@ -23,6 +23,18 @@ public class BlackBoxTests extends BaseJUnitTest {
     }
 
     @Test
+    @Ignore
+    public void t01CommandLine() throws URISyntaxException, IOException, InterruptedException {
+        String[] args = new String[10];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        args[2] = "[sj]addenv=nItaliansToGenerate=3";
+        args[3] = "[sj]addpar=-noDisplay";
+        SelfJar.main(args);
+    }
+
+    @Test
+    @Ignore
     public void t01PrintInfo() throws URISyntaxException, IOException, InterruptedException {
         String[] args = new String[2];
         args[0] = "[sj]info=true";
@@ -31,11 +43,12 @@ public class BlackBoxTests extends BaseJUnitTest {
     }
 
     @Test
+    @Ignore
     public void t02AddEnv() throws URISyntaxException, IOException, InterruptedException {
         String[] args = new String[3];
         args[0] = "[sj]info=true";
         args[1] = "[sj]loglevel=debug";
-        args[2] = "[sj]addenv=-Djava.io.tmpdir=c:\\temp";
+        args[2] = "[sj]addenv=nItaliansToGenerate=3";
         SelfJar.main(args);
     }
 
@@ -45,7 +58,27 @@ public class BlackBoxTests extends BaseJUnitTest {
         String[] args = new String[3];
         args[0] = "[sj]info=true";
         args[1] = "[sj]loglevel=debug";
-        args[2] = "[sj]delenv=-Djava.io.tmpdir=";
+        args[2] = "[sj]delenv=nItaliansToGenerate";
+        SelfJar.main(args);
+    }
+
+    @Test
+    @Ignore
+    public void t04AddPar() throws URISyntaxException, IOException, InterruptedException {
+        String[] args = new String[3];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        args[2] = "[sj]addpar=-noDisplay";
+        SelfJar.main(args);
+    }
+
+    @Test
+    @Ignore
+    public void t05DelPar() throws URISyntaxException, IOException, InterruptedException {
+        String[] args = new String[3];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        args[2] = "[sj]delpar=-noDisplay";
         SelfJar.main(args);
     }
 

@@ -38,13 +38,22 @@ public class Context {
         if (!envEntries.isEmpty()) {
             ret += "There are environment variables:\n";
             for (Map.Entry<String, String> set : envEntries.entrySet()) {
-                ret += String.format("%s=%s\n", set.getKey(), set.getValue());
+                if (set.getValue().isEmpty()) {
+                    ret += String.format("%s\n", set.getKey());
+                } else {
+                    ret += String.format("%s=%s\n", set.getKey(), set.getValue());
+                }
+
             }
         }
         if (!jobParamsEntries.isEmpty()) {
             ret += "There are JVM variables:\n";
             for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
-                ret += String.format("%s=%s\n", set.getKey(), set.getValue());
+                if (set.getValue().isEmpty()) {
+                    ret += String.format("%s\n", set.getKey());
+                } else {
+                    ret += String.format("%s=%s\n", set.getKey(), set.getValue());
+                }
             }
         }
         return ret;
@@ -60,10 +69,21 @@ public class Context {
             fos.write(String.format("%s=%d", SelfConstants.CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
             fos.write("\n".getBytes(Charset.forName("UTF-8")));
             for (Map.Entry<String, String> set : envEntries.entrySet()) {
-                fos.write(String.format("%s%s=%s", SelfConstants.CTX_ENVPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
+                if (set.getValue().isEmpty()) {
+                    fos.write(String.format("%s%s\n", SelfConstants.CTX_ENVPARAM, set.getKey()).getBytes(Charset.forName("UTF-8")));
+                } else {
+                    fos.write(String.format("%s%s=%s\n", SelfConstants.CTX_ENVPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
+                }
+                fos.write("\n".getBytes(Charset.forName("UTF-8")));
             }
             for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
-                fos.write(String.format("%s%s=%s", SelfConstants.CTX_JOBPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
+                if (set.getValue().isEmpty()) {
+                    fos.write(String.format("%s%s\n", SelfConstants.CTX_JOBPARAM, set.getKey()).getBytes(Charset.forName("UTF-8")));
+                } else {
+                    fos.write(String.format("%s%s=%s\n", SelfConstants.CTX_JOBPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
+                }
+
+                fos.write("\n".getBytes(Charset.forName("UTF-8")));
             }
         } finally {
             SelfUtils.closeQuietly(fos);
@@ -96,11 +116,23 @@ public class Context {
                 envEntries.remove(var);
             }
         }
-        for (String var : params.delEnv()) {
+        for (String var : params.delPar()) {
             if (jobParamsEntries.containsKey(var)) {
                 jobParamsEntries.remove(var);
             }
         }
+    }
+
+    public final HashMap<String, String> getEnvEntries() {
+        return envEntries;
+    }
+
+    public final HashMap<String, String> getJobParamsEntries() {
+        return jobParamsEntries;
+    }
+
+    public long getExeCount() {
+        return exeCount;
     }
 
     private void parse() throws IOException, SelfJarException {
@@ -108,7 +140,7 @@ public class Context {
             contextEntry.lockOut();
             List<String> lines = Files.readAllLines(contextEntry.getFile().toPath());
             for (String line : lines) {
-                if (line.startsWith(SelfConstants.CTX_COMMENT)) {
+                if (line.startsWith(SelfConstants.CTX_COMMENT) || line.isEmpty()) {
                     continue;
                 } else if (line.startsWith(SelfConstants.CTX_COUNT)) {
                     exeCount = Integer.parseInt(line.split("=")[1]);
