@@ -17,6 +17,8 @@ public class Context {
     private ContentEntry contextEntry;
     private HashMap<String, String> envEntries;
     private HashMap<String, String> jobParamsEntries;
+    private boolean jobInstalled;
+    private String main;
 
     private long exeCount;
 
@@ -24,6 +26,8 @@ public class Context {
         if (!entry.getFullName().equals(SelfConstants.CONTEXT_FULLNAME)) {
             throw new SelfJarException("invalid context entry");
         }
+        jobInstalled = false;
+        main = "";
         contextEntry = entry;
         envEntries = new HashMap<>();
         jobParamsEntries = new HashMap<>();
@@ -56,6 +60,12 @@ public class Context {
                 }
             }
         }
+        if (jobInstalled) {
+            ret += "A job is installed\n";
+        }
+        if (!main.isEmpty()) {
+            ret += String.format("The main executable is %s\n", main);
+        }
         return ret;
     }
 
@@ -84,6 +94,14 @@ public class Context {
                 }
 
                 fos.write("\n".getBytes(Charset.forName("UTF-8")));
+            }
+            if (jobInstalled) {
+                fos.write(String.format("%strue\n", SelfConstants.CTX_INSTALLJOB).getBytes(Charset.forName("UTF-8")));
+            } else {
+                fos.write(String.format("%sfalse\n", SelfConstants.CTX_INSTALLJOB).getBytes(Charset.forName("UTF-8")));
+            }
+            if (!main.isEmpty()) {
+                fos.write(String.format("%s%s\n", SelfConstants.CTX_MAIN, main).getBytes(Charset.forName("UTF-8")));
             }
         } finally {
             SelfUtils.closeQuietly(fos);
@@ -135,6 +153,22 @@ public class Context {
         return exeCount;
     }
 
+    public boolean isJobInstalled() {
+        return jobInstalled;
+    }
+
+    public void setJobInstalled(boolean jobInstalled) {
+        this.jobInstalled = jobInstalled;
+    }
+
+    public String getMain() {
+        return main;
+    }
+
+    public void setMain(String main) {
+        this.main = main;
+    }
+
     private void parse() throws IOException, SelfJarException {
         try {
             contextEntry.lockOut();
@@ -160,6 +194,12 @@ public class Context {
                         value = splitted[1];
                     }
                     jobParamsEntries.put(key, value);
+                } else if (line.startsWith(SelfConstants.CTX_INSTALLJOB)) {
+                    if (line.substring(SelfConstants.CTX_JOBPARAM.length()).equals("true")) {
+                        jobInstalled = true;
+                    }
+                } else if (line.startsWith(SelfConstants.CTX_MAIN)) {
+                    main = line;
                 } else {
                     throw new SelfJarException("Invalid context entry");
                 }

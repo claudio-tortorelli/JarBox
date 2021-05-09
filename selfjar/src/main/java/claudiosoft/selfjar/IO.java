@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -134,6 +135,37 @@ public class IO {
         return ret;
     }
 
+    public void applyParams(SelfParams params) throws SelfJarException, IOException {
+
+        Context context = getContext();
+
+        if (!params.main().isEmpty()) {
+            // update context
+            context.setMain(params.main());
+        }
+
+        if (!params.install().isEmpty()) {
+
+            File destJobFile = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, "job", File.separator, "job.zip"));
+            if (params.install().equals(SelfParams.INSTALL_CLEAN)) {
+                destJobFile.delete();
+                return;
+            }
+
+            File jobZipFile = new File(params.install());
+            if (!jobZipFile.exists()) {
+                throw new SelfJarException("job archive not found at " + params.install());
+            }
+
+            // install job
+            destJobFile.delete();
+            Files.copy(jobZipFile.toPath(), destJobFile.toPath());
+
+            // update context
+            context.setJobInstalled(true);
+        }
+    }
+
     private void addToNextJar(String basePath, File source, JarOutputStream target) throws IOException, SelfJarException {
         BufferedInputStream in = null;
         try {
@@ -179,5 +211,4 @@ public class IO {
             SelfUtils.closeQuietly(in);
         }
     }
-
 }

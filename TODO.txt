@@ -1,24 +1,19 @@
-Gestire il passaggio parametri
-    da prompt a selfjar
-        [SJ]<key>=<value>
-        tutti quelli che non cominciano per [SJ] sono passati al job così come sono
-
 supporto a job exe e jar
 
 gli unit test non sopportano la concorrenza
 
+finire integrazione bundle plugin e autostart doppio click
+
+spiegazione generale progetto
+    simile ad uber-jar ma...dinamico
+
 ogni job deve essere pacchettizzato in uno zip
+
 l'installazione viene fatta con i parametri
     [SJ]install=<path zip>
     [SJ]main=<executable filename>
     [SJ]install=CLEAN
 l'installazione viene annotata nel contesto
-
-nel contesto è possibile creare delle variabili di ambiente/parametri da passare sempre al job in avvio
-    [SJ]addvar=<env variable>
-    [SJ]delvar=<env variable>
-    [SJ]addpar=<parameter>
-    [SJ]delpar=<parameter>
 
 Il selfjar estrae il job e lo avvia con i parametri
 
@@ -36,3 +31,14 @@ Ricompila charun per osx e linux
 charun deve prendere il switch per diventare silente
 
 
+--------
+Gestire il passaggio parametri
+    da prompt a selfjar
+        [SJ]<key>=<value>
+        tutti quelli che non cominciano per [SJ] sono passati al job così come sono
+
+nel contesto è possibile creare delle variabili di ambiente/parametri da passare sempre al job in avvio
+    [SJ]addvar=<env variable>
+    [SJ]delvar=<env variable>
+    [SJ]addpar=<parameter>
+    [SJ]delpar=<parameter>
