@@ -199,7 +199,7 @@ public class Context {
                         jobInstalled = true;
                     }
                 } else if (line.startsWith(SelfConstants.CTX_MAIN)) {
-                    main = line;
+                    main = line.substring(SelfConstants.CTX_MAIN.length());
                 } else {
                     throw new SelfJarException("Invalid context entry");
                 }

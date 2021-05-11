@@ -82,4 +82,25 @@ public class BlackBoxTests extends BaseJUnitTest {
         SelfJar.main(args);
     }
 
+    @Test
+    @Ignore
+    public void t6Install() throws URISyntaxException, IOException, InterruptedException {
+        String[] args = new String[4];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        args[2] = "[sj]install=../MoreItalians/target/MoreItalians.zip";
+        args[3] = "[sj]main=claudiosoft.moreitalians.GenerateItalians";
+        SelfJar.main(args);
+    }
+
+    @Test
+    @Ignore
+    public void t7InstallClean() throws URISyntaxException, IOException, InterruptedException {
+        String[] args = new String[4];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        args[2] = "[sj]install=clean";
+        SelfJar.main(args);
+    }
+
 }

@@ -55,7 +55,9 @@ public final class SelfJar {
             context.update();
 
             logger.debug("job updating...");
-            IO.get().applyParams(params); //TODO
+            IO.get().applyParams(params);
+
+            // workspace update //TODO
             /////////// end initialization
             if (params.info()) {
                 logger.info(toString());

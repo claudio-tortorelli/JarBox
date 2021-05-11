@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.jar.JarOutputStream;
 public class IO {
 
     private final File selfJarTmpFolder;
+    private final File jobZipFilePath;
     private final File nextJar;
     private final Content contentEntries;
 
@@ -42,6 +44,7 @@ public class IO {
 
         // create temp out folder
         this.selfJarTmpFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, SelfConstants.TMP_SELFJAR_FOLDER, dateTime));
+        this.jobZipFilePath = new File(String.format("%s%s%s", this.selfJarTmpFolder, File.separator, SelfConstants.JOB_ENTRY));
         this.nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dateTime));
         this.contentEntries = new Content();
     }
@@ -139,30 +142,38 @@ public class IO {
 
         Context context = getContext();
 
-        if (!params.main().isEmpty()) {
-            // update context
-            context.setMain(params.main());
-        }
-
-        if (!params.install().isEmpty()) {
-
-            File destJobFile = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, "job", File.separator, "job.zip"));
-            if (params.install().equals(SelfParams.INSTALL_CLEAN)) {
-                destJobFile.delete();
-                return;
+        try {
+            if (params.main() != null && !params.main().isEmpty()) {
+                // update context
+                context.setMain(params.main());
             }
+            if (params.install() != null && !params.install().isEmpty()) {
+                ContentEntry entry = contentEntries.getContentEntry(SelfConstants.JOB_ENTRY);
+                if (entry != null && entry.isLocked()) {
+                    entry.lockOut();
+                }
+                if (params.install().equals(SelfParams.INSTALL_CLEAN)) {
+                    jobZipFilePath.delete();
+                    context.setJobInstalled(false);
+                    context.setMain("");
+                    return;
+                }
 
-            File jobZipFile = new File(params.install());
-            if (!jobZipFile.exists()) {
-                throw new SelfJarException("job archive not found at " + params.install());
+                File jobZipFile = new File(params.install());
+                if (!jobZipFile.exists()) {
+                    throw new SelfJarException("job archive not found at " + params.install());
+                }
+
+                // install job
+                Files.copy(jobZipFile.toPath(), jobZipFilePath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                if (entry != null) {
+                    entry.lockIn(jobZipFilePath);
+                }
+                // update context
+                context.setJobInstalled(true);
             }
-
-            // install job
-            destJobFile.delete();
-            Files.copy(jobZipFile.toPath(), destJobFile.toPath());
-
-            // update context
-            context.setJobInstalled(true);
+        } finally {
+            context.update();
         }
     }
 
@@ -191,7 +202,13 @@ public class IO {
             entryName = entryName.replace("\\", "/");
 
             // now unlock the entry...
-            contentEntries.getContentEntry(entryName).lockOut();
+            ContentEntry entry = null;
+            try {
+                entry = contentEntries.getContentEntry(entryName);
+                entry.lockOut();
+            } catch (SelfJarException ex) {
+                // no entry yet
+            }
 
             JarEntry jarEntry = new JarEntry(entryName);
             jarEntry.setTime(source.lastModified());

@@ -30,7 +30,9 @@ Ricompila charun per osx e linux
 
 charun deve prendere il switch per diventare silente
 
+se interessante, a fini di prestazioni, possibilità di rendere la temp folder persistente
 
+check con file nel workspace grossi
 --------
 Gestire il passaggio parametri
     da prompt a selfjar
