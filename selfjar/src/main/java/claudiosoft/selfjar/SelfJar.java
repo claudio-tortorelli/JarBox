@@ -180,11 +180,11 @@ public final class SelfJar {
                 continue;
             }
             String param = splitted[0].toLowerCase().trim();
-            if (!param.startsWith(SelfConstants.PARAM_PREFIX)) {
+            if (!param.startsWith(SelfParams.PARAM_PREFIX)) {
                 params.jobArgs().add(args[iAr]);
                 continue;
             }
-            param = param.substring(SelfConstants.PARAM_PREFIX.length());
+            param = param.substring(SelfParams.PARAM_PREFIX.length());
             String value = splitted[1];
             if (splitted.length > 2 && !splitted[2].isEmpty()) {
                 value = String.format("%s=%s", splitted[1], splitted[2]);

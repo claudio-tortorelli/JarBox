@@ -84,7 +84,7 @@ public class Content {
     }
 
     public final ContentEntry getContext() throws SelfJarException {
-        return getContentEntry(SelfConstants.CONTEXT_FULLNAME);
+        return getContentEntry(Context.CONTEXT_FULLNAME);
     }
 
     /**

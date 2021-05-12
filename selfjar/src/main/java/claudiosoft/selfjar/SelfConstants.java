@@ -17,19 +17,9 @@ public class SelfConstants {
 
     public static final int BUFFER_SIZE = 4096;
 
-    public static final String INTERNAL_STATUS_NAME = "status.txt";
     public static final String TMP_SELFJAR_FOLDER = "selfJar";
     public static final String JOB_ENTRY = "job/job.zip";
 
-    public static final String PARAM_PREFIX = "[sj]";
-
     public static final String LOGGER_NAME = "SelfJar";
 
-    public static final String CONTEXT_FULLNAME = "context/context.txt";
-    public static final String CTX_COMMENT = "#";
-    public static final String CTX_COUNT = "EXECOUNT";
-    public static final String CTX_INSTALLJOB = "JOB";
-    public static final String CTX_JOBPARAM = "JOBPAR";
-    public static final String CTX_ENVPARAM = "ENVPAR";
-    public static final String CTX_MAIN = "MAIN";
 }

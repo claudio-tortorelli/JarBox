@@ -9,6 +9,8 @@ import java.util.List;
  */
 public class SelfParams {
 
+    public static final String PARAM_PREFIX = "[sj]";
+
     public static final String INSTALL = "install";
     public static final String MAIN = "main";
     public static final String ADDENV = "addenv";

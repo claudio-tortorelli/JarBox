@@ -22,8 +22,15 @@ public class Context {
 
     private long exeCount;
 
+    public static final String CONTEXT_FULLNAME = "context/context.txt";
+    public static final String CTX_COUNT = "EXECOUNT:";
+    public static final String CTX_INSTALLJOB = "JOB:";
+    public static final String CTX_JOBPARAM = "JOBPAR:";
+    public static final String CTX_ENVPARAM = "ENVPAR:";
+    public static final String CTX_MAIN = "MAIN:";
+
     public Context(ContentEntry entry) throws SelfJarException, IOException {
-        if (!entry.getFullName().equals(SelfConstants.CONTEXT_FULLNAME)) {
+        if (!entry.getFullName().equals(CONTEXT_FULLNAME)) {
             throw new SelfJarException("invalid context entry");
         }
         jobInstalled = false;
@@ -76,32 +83,32 @@ public class Context {
 
             contextEntry.lockOut();
             fos = new FileOutputStream(contextEntry.getFile().getAbsolutePath());
-            fos.write(String.format("%s=%d", SelfConstants.CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
+            fos.write(String.format("%s%d", CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
             fos.write("\n".getBytes(Charset.forName("UTF-8")));
             for (Map.Entry<String, String> set : envEntries.entrySet()) {
                 if (set.getValue().isEmpty()) {
-                    fos.write(String.format("%s%s\n", SelfConstants.CTX_ENVPARAM, set.getKey()).getBytes(Charset.forName("UTF-8")));
+                    fos.write(String.format("%s%s\n", CTX_ENVPARAM, set.getKey()).getBytes(Charset.forName("UTF-8")));
                 } else {
-                    fos.write(String.format("%s%s=%s\n", SelfConstants.CTX_ENVPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
+                    fos.write(String.format("%s%s=%s\n", CTX_ENVPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
                 }
                 fos.write("\n".getBytes(Charset.forName("UTF-8")));
             }
             for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
                 if (set.getValue().isEmpty()) {
-                    fos.write(String.format("%s%s\n", SelfConstants.CTX_JOBPARAM, set.getKey()).getBytes(Charset.forName("UTF-8")));
+                    fos.write(String.format("%s%s\n", CTX_JOBPARAM, set.getKey()).getBytes(Charset.forName("UTF-8")));
                 } else {
-                    fos.write(String.format("%s%s=%s\n", SelfConstants.CTX_JOBPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
+                    fos.write(String.format("%s%s=%s\n", CTX_JOBPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
                 }
 
                 fos.write("\n".getBytes(Charset.forName("UTF-8")));
             }
             if (jobInstalled) {
-                fos.write(String.format("%strue\n", SelfConstants.CTX_INSTALLJOB).getBytes(Charset.forName("UTF-8")));
+                fos.write(String.format("%strue\n", CTX_INSTALLJOB).getBytes(Charset.forName("UTF-8")));
             } else {
-                fos.write(String.format("%sfalse\n", SelfConstants.CTX_INSTALLJOB).getBytes(Charset.forName("UTF-8")));
+                fos.write(String.format("%sfalse\n", CTX_INSTALLJOB).getBytes(Charset.forName("UTF-8")));
             }
             if (!main.isEmpty()) {
-                fos.write(String.format("%s%s\n", SelfConstants.CTX_MAIN, main).getBytes(Charset.forName("UTF-8")));
+                fos.write(String.format("%s%s\n", CTX_MAIN, main).getBytes(Charset.forName("UTF-8")));
             }
         } finally {
             SelfUtils.closeQuietly(fos);
@@ -174,32 +181,30 @@ public class Context {
             contextEntry.lockOut();
             List<String> lines = Files.readAllLines(contextEntry.getFile().toPath());
             for (String line : lines) {
-                if (line.startsWith(SelfConstants.CTX_COMMENT) || line.isEmpty()) {
-                    continue;
-                } else if (line.startsWith(SelfConstants.CTX_COUNT)) {
-                    exeCount = Integer.parseInt(line.split("=")[1]);
-                } else if (line.startsWith(SelfConstants.CTX_ENVPARAM)) {
-                    String[] splitted = line.substring(SelfConstants.CTX_ENVPARAM.length()).split("=");
+                if (line.startsWith(CTX_COUNT)) {
+                    exeCount = Integer.parseInt(line.substring(CTX_COUNT.length()));
+                } else if (line.startsWith(CTX_ENVPARAM)) {
+                    String[] splitted = line.substring(CTX_ENVPARAM.length()).split("=");
                     String key = splitted[0];
                     String value = "";
                     if (splitted.length > 1) {
                         value = splitted[1];
                     }
                     envEntries.put(key, value);
-                } else if (line.startsWith(SelfConstants.CTX_JOBPARAM)) {
-                    String[] splitted = line.substring(SelfConstants.CTX_JOBPARAM.length()).split("=");
+                } else if (line.startsWith(CTX_JOBPARAM)) {
+                    String[] splitted = line.substring(CTX_JOBPARAM.length()).split("=");
                     String key = splitted[0];
                     String value = "";
                     if (splitted.length > 1) {
                         value = splitted[1];
                     }
                     jobParamsEntries.put(key, value);
-                } else if (line.startsWith(SelfConstants.CTX_INSTALLJOB)) {
-                    if (line.substring(SelfConstants.CTX_JOBPARAM.length()).equals("true")) {
+                } else if (line.startsWith(CTX_INSTALLJOB)) {
+                    if (line.substring(CTX_JOBPARAM.length()).equals("true")) {
                         jobInstalled = true;
                     }
-                } else if (line.startsWith(SelfConstants.CTX_MAIN)) {
-                    main = line.substring(SelfConstants.CTX_MAIN.length());
+                } else if (line.startsWith(CTX_MAIN)) {
+                    main = line.substring(CTX_MAIN.length());
                 } else {
                     throw new SelfJarException("Invalid context entry");
                 }
