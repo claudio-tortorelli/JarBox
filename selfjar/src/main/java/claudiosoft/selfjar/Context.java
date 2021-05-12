@@ -181,7 +181,9 @@ public class Context {
             contextEntry.lockOut();
             List<String> lines = Files.readAllLines(contextEntry.getFile().toPath());
             for (String line : lines) {
-                if (line.startsWith(CTX_COUNT)) {
+                if (line.startsWith("#") || line.isEmpty()) {
+                    continue;
+                } else if (line.startsWith(CTX_COUNT)) {
                     exeCount = Integer.parseInt(line.substring(CTX_COUNT.length()));
                 } else if (line.startsWith(CTX_ENVPARAM)) {
                     String[] splitted = line.substring(CTX_ENVPARAM.length()).split("=");
@@ -206,7 +208,7 @@ public class Context {
                 } else if (line.startsWith(CTX_MAIN)) {
                     main = line.substring(CTX_MAIN.length());
                 } else {
-                    throw new SelfJarException("Invalid context entry");
+                    throw new SelfJarException("Invalid context entry: " + line);
                 }
             }
         } finally {

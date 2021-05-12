@@ -34,7 +34,6 @@ public class BlackBoxTests extends BaseJUnitTest {
     }
 
     @Test
-    @Ignore
     public void t01PrintInfo() throws URISyntaxException, IOException, InterruptedException {
         String[] args = new String[2];
         args[0] = "[sj]info=true";
