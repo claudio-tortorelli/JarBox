@@ -79,12 +79,15 @@ public final class SelfJar {
     }
 
     private void invokeJob() throws SelfJarException, IOException {
-        logger.info("start internal job");
 
-        if (true) { //TODO, check if a job is present
+        Context context = IO.get().getContext();
+        if (!context.isJobInstalled()) {
             return;
         }
-        Context context = IO.get().getContext();
+        logger.info("start internal job");
+
+        // extract the job archive
+        String curJobFolder = IO.get().extractJob();
 
         // apply environment properties
         for (Map.Entry<String, String> set : context.getEnvEntries().entrySet()) {
@@ -93,6 +96,10 @@ public final class SelfJar {
 
         // create params list
         LinkedList<String> pbArgs = new LinkedList<>();
+        pbArgs.add("java");
+        pbArgs.add("-jar");
+        pbArgs.add(String.format("%s%s%s", curJobFolder, File.separator, params.main()));
+
         for (Map.Entry<String, String> set : context.getJobParamsEntries().entrySet()) {
             pbArgs.add(String.format("%s=%s", set.getKey(), set.getValue()));
         }

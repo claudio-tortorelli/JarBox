@@ -19,6 +19,7 @@ public class SelfConstants {
 
     public static final String TMP_SELFJAR_FOLDER = "selfJar";
     public static final String JOB_ENTRY = "job/job.zip";
+    public static final String WS_ENTRY = "job/workspace/";
 
     public static final String LOGGER_NAME = "SelfJar";
 

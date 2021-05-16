@@ -2,6 +2,8 @@ supporto a job exe e jar
 
 gli unit test non sopportano la concorrenza
 
+run dopo aver installato
+
 finire integrazione bundle plugin e autostart doppio click
 
 spiegazione generale progetto

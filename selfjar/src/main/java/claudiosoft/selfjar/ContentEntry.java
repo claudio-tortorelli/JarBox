@@ -60,13 +60,23 @@ public class ContentEntry extends ZipEntry {
         lock = null;
     }
 
+    public void lockIn() throws FileNotFoundException, SelfJarException {
+        this.lockIn(null);
+    }
+
     public void lockIn(File fileToLock) throws FileNotFoundException, SelfJarException {
-        this.tmpFile = fileToLock;
-        this.raf = new RandomAccessFile(fileToLock, "rw");
+        if (fileToLock != null) {
+            tmpFile = fileToLock;
+        }
+        if (tmpFile == null) {
+            throw new SelfJarException("no file to lock is specified for content entry " + getName());
+        }
+
+        raf = new RandomAccessFile(tmpFile, "rw");
         try {
-            this.lock = this.raf.getChannel().lock();
+            lock = raf.getChannel().lock();
         } catch (IOException ex) {
-            throw new SelfJarException(String.format("%s cannot be locked", fileToLock.getAbsolutePath()), ex);
+            throw new SelfJarException(String.format("%s cannot be locked", tmpFile.getAbsolutePath()), ex);
         }
     }
 

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  *
@@ -22,7 +24,7 @@ import java.util.jar.JarOutputStream;
 public class IO {
 
     private final File selfJarTmpFolder;
-    private final File jobZipFilePath;
+    private final File jobZipFile;
     private final File nextJar;
     private final Content contentEntries;
 
@@ -44,7 +46,7 @@ public class IO {
 
         // create temp out folder
         this.selfJarTmpFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, SelfConstants.TMP_SELFJAR_FOLDER, dateTime));
-        this.jobZipFilePath = new File(String.format("%s%s%s", this.selfJarTmpFolder, File.separator, SelfConstants.JOB_ENTRY));
+        this.jobZipFile = new File(String.format("%s%s%s", this.selfJarTmpFolder, File.separator, SelfConstants.JOB_ENTRY));
         this.nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dateTime));
         this.contentEntries = new Content();
     }
@@ -148,12 +150,17 @@ public class IO {
                 context.setMain(params.main());
             }
             if (params.install() != null && !params.install().isEmpty()) {
-                ContentEntry entry = contentEntries.getContentEntry(SelfConstants.JOB_ENTRY);
+                ContentEntry entry = null;
+                try {
+                    entry = contentEntries.getContentEntry(SelfConstants.JOB_ENTRY);
+                } catch (SelfJarException ex) {
+                    // not installed
+                }
                 if (entry != null && entry.isLocked()) {
                     entry.lockOut();
                 }
                 if (params.install().equals(SelfParams.INSTALL_CLEAN)) {
-                    jobZipFilePath.delete();
+                    jobZipFile.delete();
                     context.setJobInstalled(false);
                     context.setMain("");
                     return;
@@ -165,9 +172,10 @@ public class IO {
                 }
 
                 // install job
-                Files.copy(jobZipFile.toPath(), jobZipFilePath.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                File destJobFile = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, "job", File.separator, "job.zip"));
+                Files.copy(jobZipFile.toPath(), destJobFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 if (entry != null) {
-                    entry.lockIn(jobZipFilePath);
+                    entry.lockIn(jobZipFile);
                 }
                 // update context
                 context.setJobInstalled(true);
@@ -177,17 +185,76 @@ public class IO {
         }
     }
 
+    public String extractJob() throws SelfJarException, IOException {
+        File jobDir = new File(String.format("%s%sjob%sjob", selfJarTmpFolder, File.separator, File.separator));
+        if (!jobDir.exists()) {
+            jobDir.mkdirs();
+        }
+
+        String curJobFolder = jobDir.getAbsolutePath();
+
+        ContentEntry entry = null;
+        try {
+            entry = contentEntries.getContentEntry(SelfConstants.JOB_ENTRY);
+        } catch (SelfJarException ex) {
+            // not installed
+        }
+        if (entry != null && entry.isLocked()) {
+            entry.lockOut();
+        }
+
+        byte[] buffer = new byte[SelfConstants.BUFFER_SIZE];
+        int len;
+        FileInputStream fis = null;
+        ZipInputStream zis = null;
+        try {
+            fis = new FileInputStream(jobZipFile);
+            zis = new ZipInputStream(fis);
+
+            ZipEntry zen = zis.getNextEntry();
+            //we should check whether it is corrupted zip file or not. if corrupted then zip entry will be null
+            while (zen != null) {
+                String fileName = zen.getName();
+                File newFile = new File(jobDir + File.separator + fileName);
+
+                new File(newFile.getParent()).mkdirs();
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(newFile);
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                } finally {
+                    SelfUtils.closeQuietly(fos);
+                    zis.closeEntry();
+                    zen = zis.getNextEntry();
+                }
+            }
+        } finally {
+            zis.closeEntry();
+            SelfUtils.closeQuietly(zis);
+            SelfUtils.closeQuietly(fis);
+
+            if (entry != null) {
+                entry.lockIn();
+            }
+        }
+        return curJobFolder;
+    }
+
     private void addToNextJar(String basePath, File source, JarOutputStream target) throws IOException, SelfJarException {
+
+        String entryName = source.getPath().replace(basePath + File.separator, "");
+        entryName = entryName.replace("\\", "/");
+
         BufferedInputStream in = null;
         try {
             if (source.isDirectory()) {
-                String name = source.getPath().replace(basePath + File.separator, "");
-                name = name.replace("\\", "/");
-                if (!name.isEmpty()) {
-                    if (!name.endsWith("/")) {
-                        name += "/";
+                if (!entryName.isEmpty()) {
+                    if (!entryName.endsWith("/")) {
+                        entryName += "/";
                     }
-                    JarEntry entry = new JarEntry(name);
+                    JarEntry entry = new JarEntry(entryName);
                     entry.setTime(source.lastModified());
                     target.putNextEntry(entry);
                     target.closeEntry();
@@ -198,16 +265,22 @@ public class IO {
                 return;
             }
 
-            String entryName = source.getPath().replace(basePath + File.separator, "");
-            entryName = entryName.replace("\\", "/");
-
             // now unlock the entry...
+            boolean newEntry = false;
             ContentEntry entry = null;
             try {
                 entry = contentEntries.getContentEntry(entryName);
                 entry.lockOut();
             } catch (SelfJarException ex) {
                 // no entry yet
+                newEntry = true;
+            }
+
+            if (newEntry) {
+                // new entries allowed inside workspace or job.zip only
+                if (!entryName.equals(SelfConstants.JOB_ENTRY) && !entryName.startsWith(SelfConstants.WS_ENTRY)) {
+                    return;
+                }
             }
 
             JarEntry jarEntry = new JarEntry(entryName);

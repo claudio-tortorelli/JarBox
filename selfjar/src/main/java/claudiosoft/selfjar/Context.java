@@ -202,7 +202,7 @@ public class Context {
                     }
                     jobParamsEntries.put(key, value);
                 } else if (line.startsWith(CTX_INSTALLJOB)) {
-                    if (line.substring(CTX_JOBPARAM.length()).equals("true")) {
+                    if (line.substring(CTX_INSTALLJOB.length()).equals("true")) {
                         jobInstalled = true;
                     }
                 } else if (line.startsWith(CTX_MAIN)) {

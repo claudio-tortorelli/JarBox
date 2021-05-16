@@ -24,20 +24,21 @@ public class BlackBoxTests extends BaseJUnitTest {
 
     @Test
     @Ignore
+    public void t01PrintInfo() throws URISyntaxException, IOException, InterruptedException {
+        String[] args = new String[2];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        SelfJar.main(args);
+    }
+
+    @Test
+    @Ignore
     public void t01CommandLine() throws URISyntaxException, IOException, InterruptedException {
         String[] args = new String[10];
         args[0] = "[sj]info=true";
         args[1] = "[sj]loglevel=debug";
         args[2] = "[sj]addenv=nItaliansToGenerate=3";
         args[3] = "[sj]addpar=-noDisplay";
-        SelfJar.main(args);
-    }
-
-    @Test
-    public void t01PrintInfo() throws URISyntaxException, IOException, InterruptedException {
-        String[] args = new String[2];
-        args[0] = "[sj]info=true";
-        args[1] = "[sj]loglevel=debug";
         SelfJar.main(args);
     }
 
@@ -82,13 +83,13 @@ public class BlackBoxTests extends BaseJUnitTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void t6Install() throws URISyntaxException, IOException, InterruptedException {
-        String[] args = new String[4];
+        String[] args = new String[5];
         args[0] = "[sj]info=true";
         args[1] = "[sj]loglevel=debug";
         args[2] = "[sj]install=../MoreItalians/target/MoreItalians.zip";
-        args[3] = "[sj]main=claudiosoft.moreitalians.GenerateItalians";
+        args[3] = "[sj]main=MoreItalians-1.0.0-SNAPSHOT.jar";
         SelfJar.main(args);
     }
 
