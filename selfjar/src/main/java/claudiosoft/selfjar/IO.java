@@ -82,7 +82,7 @@ public class IO {
                 fos = new FileOutputStream(outFile);
                 SelfUtils.inputToOutput(is, fos);
                 // keep open entries in workspace
-                if (!entry.getFullName().startsWith("workspace")) {
+                if (!entry.getFullName().startsWith("job/workspace")) {
                     entry.lockIn(outFile);
                 }
             } finally {
@@ -172,7 +172,9 @@ public class IO {
                 }
 
                 // install job
-                File destJobFile = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, "job", File.separator, "job.zip"));
+                File destJobFolder = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, "job"));
+                destJobFolder.mkdirs();
+                File destJobFile = new File(String.format("%s%s%s", destJobFolder.getAbsolutePath(), File.separator, "job.zip"));
                 Files.copy(jobZipFile.toPath(), destJobFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 if (entry != null) {
                     entry.lockIn(jobZipFile);

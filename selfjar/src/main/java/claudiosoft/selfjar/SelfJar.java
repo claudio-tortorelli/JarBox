@@ -78,7 +78,7 @@ public final class SelfJar {
         }
     }
 
-    private void invokeJob() throws SelfJarException, IOException {
+    private void invokeJob() throws SelfJarException, IOException, InterruptedException {
 
         Context context = IO.get().getContext();
         if (!context.isJobInstalled()) {
@@ -96,9 +96,11 @@ public final class SelfJar {
 
         // create params list
         LinkedList<String> pbArgs = new LinkedList<>();
-        pbArgs.add("java");
-        pbArgs.add("-jar");
-        pbArgs.add(String.format("%s%s%s", curJobFolder, File.separator, params.main()));
+        if (context.getMain().toLowerCase().endsWith(".jar")) {
+            pbArgs.add("java");
+            pbArgs.add("-jar");
+        }
+        pbArgs.add(String.format("%s%s%s", curJobFolder, File.separator, context.getMain()));
 
         for (Map.Entry<String, String> set : context.getJobParamsEntries().entrySet()) {
             pbArgs.add(String.format("%s=%s", set.getKey(), set.getValue()));
@@ -110,6 +112,8 @@ public final class SelfJar {
         // print job outputs
         SelfUtils.inheritIO(insideProc.getInputStream(), System.out);
         SelfUtils.inheritIO(insideProc.getErrorStream(), System.err);
+
+        insideProc.waitFor();
 
         logger.info("end internal job");
     }
@@ -156,6 +160,8 @@ public final class SelfJar {
         // print charun outputs
         SelfUtils.inheritIO(insideProc.getInputStream(), System.out);
         SelfUtils.inheritIO(insideProc.getErrorStream(), System.err);
+
+        insideProc.waitFor();
     }
 
     /**

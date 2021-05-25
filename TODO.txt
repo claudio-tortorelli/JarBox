@@ -1,23 +1,22 @@
+rivedere aggiornamento context e passaggio parametri come da test
+
 supporto a job exe e jar
-
-gli unit test non sopportano la concorrenza
-
-run dopo aver installato
 
 finire integrazione bundle plugin e autostart doppio click
 
+revisionare commenti
+
+eliminare codice morto inutile
+
+avvio con doppio click
+
 spiegazione generale progetto
     simile ad uber-jar ma...dinamico
-
-ogni job deve essere pacchettizzato in uno zip
-
-l'installazione viene fatta con i parametri
-    [SJ]install=<path zip>
-    [SJ]main=<executable filename>
-    [SJ]install=CLEAN
-l'installazione viene annotata nel contesto
-
-Il selfjar estrae il job e lo avvia con i parametri
+    non ci sono dipendenze
+    minimo payload
+    multi platform
+    autoconsistente
+    aggiornabile
 
 Il job deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
     ogni job installato deve far conto di scrivere i dati permanenti nel workspace
@@ -30,12 +29,27 @@ Gestire import/export del workspace
 
 Ricompila charun per osx e linux
 
-charun deve prendere il switch per diventare silente
+charun deve prendere lo switch per diventare silente
 
 se interessante, a fini di prestazioni, possibilità di rendere la temp folder persistente
 
 check con file nel workspace grossi
 --------
+i test non possono funzionare se il jar non è ancora stato creato (IOException)
+gli unit test non sopportano la concorrenza
+
+
+ogni job deve essere pacchettizzato in uno zip
+l'installazione viene fatta con i parametri
+    [SJ]install=<path zip>
+    [SJ]main=<executable filename>
+    [SJ]install=CLEAN
+l'installazione viene annotata nel contesto
+
+Il selfjar estrae il job e lo avvia con i parametri
+
+run dopo aver installato
+
 Gestire il passaggio parametri
     da prompt a selfjar
         [SJ]<key>=<value>

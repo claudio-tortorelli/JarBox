@@ -23,23 +23,10 @@ import org.junit.rules.TestName;
  * It setups the test's base truststore needed to accomplish network connections
  * over SSL
  *
- * @author marco.pancioni
  * @author claudio.tortorelli
  */
 public class BaseJUnitTest {
 
-    // you can define a different buildDirectory different than standard "./target" using following maven plugin into project pom
-    // example:
-    //    <plugin>
-    //        <groupId>org.apache.maven.plugins</groupId>
-    //        <artifactId>maven-surefire-plugin</artifactId>
-    //        <version>2.21.0</version>
-    //        <configuration>
-    //            <systemPropertyVariables>
-    //                <buildDirectory>${project.build.directory}</buildDirectory>
-    //            </systemPropertyVariables>
-    //        </configuration>
-    //    </plugin>
     private static final String outFolder = String.format("%s/test-output", System.getProperty("buildDirectory", "./target"));
     private static boolean cleanFolder = true;
     private static long startTime = 0;
@@ -56,12 +43,9 @@ public class BaseJUnitTest {
     }
 
     public BaseJUnitTest(boolean cleanFolder, boolean checkTestName) {
-        // richiede che la classe di test abbia l'annotazione FixMethodOrder
         Assert.assertNotNull("missing FixMethodOrder annotation", this.getClass().getAnnotation(FixMethodOrder.class));
         if (checkTestName) {
-            // richiede che la classe di test abbia la parola 'Test' nel nome, in modo da poter essere eseguita in automatico
-            // non utile per le classi da includere nelle test suite
-            Assert.assertTrue("missing 'Test' in class name", this.getClass().getName().contains("Test")||this.getClass().getName().endsWith("IT"));
+            Assert.assertTrue("missing 'Test' in class name", this.getClass().getName().contains("Test") || this.getClass().getName().endsWith("IT"));
         }
         this.cleanFolder = cleanFolder;
     }

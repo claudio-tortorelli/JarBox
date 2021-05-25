@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Claudio
+ * @author claudio.tortorelli
  */
 public class BasicConsoleLogger {
 

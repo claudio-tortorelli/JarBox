@@ -46,7 +46,7 @@ public final class GenerateItalians {
         this.nameDB = new LinkedList<>();
         this.surnameDB = new LinkedList<>();
         try {
-            this.workspaceFolder = new File(MAIN_CLASS.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getAbsolutePath() + File.separator + "workspace";
+            this.workspaceFolder = new File(MAIN_CLASS.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getAbsolutePath() + File.separator + ".." + File.separator + "workspace";
             new File(workspaceFolder).mkdirs();
 
             loadResources();

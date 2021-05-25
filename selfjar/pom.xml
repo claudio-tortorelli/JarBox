@@ -9,6 +9,7 @@
     <groupId>claudiosoft</groupId>
     <artifactId>SelfJar</artifactId>
     <packaging>jar</packaging>
+    <name>SelfJar</name>
     <dependencies>
         <dependency>
             <groupId>claudiosoft</groupId>
@@ -46,16 +47,17 @@
                     </execution>
                 </executions>
             </plugin>-->
-            <plugin>
+            <!--            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.21.0</version>
+
                 <configuration>
                     <systemPropertyVariables>
                         <buildDirectory>${project.build.directory}</buildDirectory>
                     </systemPropertyVariables>
                 </configuration>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -88,5 +90,4 @@
             </plugin>
         </plugins>
     </build>
-    <name>SelfJar</name>
 </project>
