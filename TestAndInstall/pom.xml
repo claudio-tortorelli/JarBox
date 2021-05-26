@@ -9,6 +9,13 @@
     <groupId>claudiosoft</groupId>
     <artifactId>TestAndInstall</artifactId>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>claudiosoft</groupId>
+            <artifactId>SelfJar</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
