@@ -89,21 +89,30 @@ public final class SelfJar {
         // extract the job archive
         String curJobFolder = IO.get().extractJob();
 
-        // apply environment properties
-        for (Map.Entry<String, String> set : context.getEnvEntries().entrySet()) {
-            System.setProperty(set.getKey(), set.getValue());
-        }
-
         // create params list
         LinkedList<String> pbArgs = new LinkedList<>();
         if (context.getMain().toLowerCase().endsWith(".jar")) {
             pbArgs.add("java");
             pbArgs.add("-jar");
         }
+
+        // apply environment properties
+        for (Map.Entry<String, String> set : context.getEnvEntries().entrySet()) {
+            String env = set.getKey();
+            if (!set.getValue().isEmpty()) {
+                env = String.format("%s=%s", set.getKey(), set.getValue());
+            }
+            pbArgs.add(String.format("-D%s", env));
+        }
+
         pbArgs.add(String.format("%s%s%s", curJobFolder, File.separator, context.getMain()));
 
         for (Map.Entry<String, String> set : context.getJobParamsEntries().entrySet()) {
-            pbArgs.add(String.format("%s=%s", set.getKey(), set.getValue()));
+            if (set.getValue().isEmpty()) {
+                pbArgs.add(String.format("%s", set.getKey()));
+            } else {
+                pbArgs.add(String.format("%s=%s", set.getKey(), set.getValue()));
+            }
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
@@ -201,7 +210,9 @@ public final class SelfJar {
             String value = splitted[1];
             if (splitted.length > 2 && !splitted[2].isEmpty()) {
                 value = String.format("%s=%s", splitted[1], splitted[2]);
-            } else if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
+            }
+
+            if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
                 params.setPrintInfo(true);// enable internal info printing
                 continue;
             } else if (param.startsWith(SelfParams.LOGLEVEL)) {

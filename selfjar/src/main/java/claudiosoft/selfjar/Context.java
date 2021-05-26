@@ -58,7 +58,7 @@ public class Context {
             }
         }
         if (!jobParamsEntries.isEmpty()) {
-            ret += "There are JVM variables:\n";
+            ret += "There are job parameters:\n";
             for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
                 if (set.getValue().isEmpty()) {
                     ret += String.format("%s\n", set.getKey());
@@ -83,15 +83,13 @@ public class Context {
 
             contextEntry.lockOut();
             fos = new FileOutputStream(contextEntry.getFile().getAbsolutePath());
-            fos.write(String.format("%s%d", CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
-            fos.write("\n".getBytes(Charset.forName("UTF-8")));
+            fos.write(String.format("%s%d\n", CTX_COUNT, exeCount).getBytes(Charset.forName("UTF-8")));
             for (Map.Entry<String, String> set : envEntries.entrySet()) {
                 if (set.getValue().isEmpty()) {
                     fos.write(String.format("%s%s\n", CTX_ENVPARAM, set.getKey()).getBytes(Charset.forName("UTF-8")));
                 } else {
                     fos.write(String.format("%s%s=%s\n", CTX_ENVPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
                 }
-                fos.write("\n".getBytes(Charset.forName("UTF-8")));
             }
             for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
                 if (set.getValue().isEmpty()) {
@@ -99,8 +97,6 @@ public class Context {
                 } else {
                     fos.write(String.format("%s%s=%s\n", CTX_JOBPARAM, set.getKey(), set.getValue()).getBytes(Charset.forName("UTF-8")));
                 }
-
-                fos.write("\n".getBytes(Charset.forName("UTF-8")));
             }
             if (jobInstalled) {
                 fos.write(String.format("%strue\n", CTX_INSTALLJOB).getBytes(Charset.forName("UTF-8")));
