@@ -10,13 +10,6 @@
     <artifactId>SelfJar</artifactId>
     <packaging>jar</packaging>
     <name>SelfJar</name>
-    <dependencies>
-        <dependency>
-            <groupId>claudiosoft</groupId>
-            <artifactId>SelfGeneratingCommon</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>
