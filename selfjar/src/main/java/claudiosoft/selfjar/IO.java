@@ -146,7 +146,6 @@ public class IO {
 
         try {
             if (params.main() != null && !params.main().isEmpty()) {
-                // update context
                 context.setMain(params.main());
             }
             if (params.install() != null && !params.install().isEmpty()) {
@@ -166,21 +165,38 @@ public class IO {
                     return;
                 }
 
-                File jobZipFile = new File(params.install());
-                if (!jobZipFile.exists()) {
+                File jobZipToInstallFile = new File(params.install());
+                if (!jobZipToInstallFile.exists()) {
                     throw new SelfJarException("job archive not found at " + params.install());
                 }
 
                 // install job
-                File destJobFolder = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, "job"));
+                File destJobFolder = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.JOB_FOLDER));
                 destJobFolder.mkdirs();
-                File destJobFile = new File(String.format("%s%s%s", destJobFolder.getAbsolutePath(), File.separator, "job.zip"));
-                Files.copy(jobZipFile.toPath(), destJobFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                File destJobFile = new File(String.format("%s%sjob.zip", destJobFolder.getAbsolutePath(), File.separator));
+                Files.copy(jobZipToInstallFile.toPath(), destJobFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 if (entry != null) {
-                    entry.lockIn(jobZipFile);
+                    entry.lockIn(jobZipToInstallFile);
                 }
-                // update context
                 context.setJobInstalled(true);
+            }
+            if (!params.del().isEmpty()) {
+                for (String curRelPath : params.del()) {
+                    String fullPath = String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, curRelPath);
+                    File toDel = new File(fullPath);
+                    if (toDel.exists()) {
+                        toDel.delete();
+                    }
+                }
+            }
+            if (!params.imp().isEmpty()) {
+                //TODO, each imported file must be with the relative workspace path
+                throw new SelfJarException("Not implemented yet");
+            }
+            if (!params.exp().isEmpty()) {
+                File src = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER));
+                File dst = new File(params.exp());
+                SelfUtils.copyFolder(src, dst);
             }
         } finally {
             context.update();
@@ -280,7 +296,7 @@ public class IO {
 
             if (newEntry) {
                 // new entries allowed inside workspace or job.zip only
-                if (!entryName.equals(SelfConstants.JOB_ENTRY) && !entryName.startsWith(SelfConstants.WS_ENTRY)) {
+                if (!entryName.equals(SelfConstants.JOB_ENTRY) && !entryName.startsWith(SelfConstants.WS_ENTRY_FOLDER)) {
                     return;
                 }
             }

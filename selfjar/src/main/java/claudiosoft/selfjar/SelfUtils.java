@@ -2,7 +2,9 @@ package claudiosoft.selfjar;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -102,9 +104,9 @@ public class SelfUtils {
         lockFis.close();
     }
 
-    public static boolean deleteDirectory(File directoryToBeDeleted) throws SelfJarException {
+    public static void deleteDirectory(File directoryToBeDeleted) throws SelfJarException {
         if (!directoryToBeDeleted.exists()) {
-            return true;
+            return;
         }
         if (!directoryToBeDeleted.getAbsolutePath().contains(SelfConstants.TMP_SELFJAR_FOLDER)) {
             // for safety
@@ -113,17 +115,48 @@ public class SelfUtils {
         File[] allContents = directoryToBeDeleted.listFiles();
         if (allContents != null) {
             for (File file : allContents) {
-                deleteDirectory(file);
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
             }
         }
-        return directoryToBeDeleted.delete();
+        directoryToBeDeleted.delete();
     }
 
-    /**
-     * Null safe close of the given {@link Closeable} suppressing any exception.
-     *
-     * @param closeable to be closed
-     */
+    public static void copyFolder(File source, File destination) throws FileNotFoundException, IOException {
+        if (source.isDirectory()) {
+            if (!destination.exists()) {
+                destination.mkdirs();
+            }
+            String files[] = source.list();
+            for (String file : files) {
+                File srcFile = new File(source, file);
+                File destFile = new File(destination, file);
+                copyFolder(srcFile, destFile);
+            }
+        } else {
+            InputStream in = null;
+            OutputStream out = null;
+
+            try {
+                in = new FileInputStream(source);
+                out = new FileOutputStream(destination);
+
+                byte[] buffer = new byte[SelfConstants.BUFFER_SIZE];
+
+                int length;
+                while ((length = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+            } finally {
+                closeQuietly(in);
+                closeQuietly(out);
+            }
+        }
+    }
+
     public static void closeQuietly(Closeable closeable) {
         try {
             if (closeable != null) {

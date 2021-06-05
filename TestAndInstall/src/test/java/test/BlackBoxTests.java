@@ -1,6 +1,8 @@
 package test;
 
+import java.io.File;
 import java.io.IOException;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -59,11 +61,27 @@ public class BlackBoxTests extends BaseJUnitTest {
     }
 
     @Test
-    public void t100Final() throws IOException, InterruptedException {
-        String[] args = new String[2];
-        args[0] = "[sj]install=../MoreItalians/target/MoreItalians.zip";
-        args[1] = "[sj]main=MoreItalians-1.0.0-SNAPSHOT.jar";
+    public void t05ExportWS() throws InterruptedException, IOException {
+        String[] args = new String[4];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        args[2] = "[sj]export=./workspace";
         SelfJarInstance.start(args);
+        Assert.assertTrue(new File("./workspace/anagraphic.txt").exists());
+        new File("./workspace/anagraphic.txt").delete();
+        new File("./workspace").delete();
+    }
+
+    @Test
+    public void t06DeleteFile() throws InterruptedException, IOException {
+        String[] args = new String[4];
+        args[0] = "[sj]info=true";
+        args[1] = "[sj]loglevel=debug";
+        args[2] = "[sj]delete=anagraphic.txt";
+        args[3] = "[sj]export=./workspace";
+        SelfJarInstance.start(args);
+        Assert.assertTrue(!new File("./workspace/anagraphic.txt").exists());
+        new File("./workspace").delete();
     }
 
 }

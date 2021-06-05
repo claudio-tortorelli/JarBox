@@ -31,7 +31,7 @@ public class SelfParams {
     private List<String> delEnv;
     private List<String> addPar;
     private List<String> delPar;
-    private List<String> exp;
+    private String exp;
     private List<String> imp;
     private List<String> del;
     private boolean info;
@@ -41,7 +41,7 @@ public class SelfParams {
     public SelfParams() {
         this.del = new LinkedList<>();
         this.imp = new LinkedList<>();
-        this.exp = new LinkedList<>();
+        this.exp = "";
         this.delPar = new LinkedList<>();
         this.addPar = new LinkedList<>();
         this.delEnv = new LinkedList<>();
@@ -54,7 +54,7 @@ public class SelfParams {
         return install;
     }
 
-    public void setInstall(String install) {
+    public void install(String install) {
         this.install = install;
     }
 
@@ -62,7 +62,7 @@ public class SelfParams {
         return main;
     }
 
-    public void setMain(String main) {
+    public void main(String main) {
         this.main = main;
     }
 
@@ -82,8 +82,12 @@ public class SelfParams {
         return delPar;
     }
 
-    public List<String> exp() {
+    public String exp() {
         return exp;
+    }
+
+    public void exp(String exportDir) {
+        exp = exportDir;
     }
 
     public List<String> imp() {
@@ -102,7 +106,7 @@ public class SelfParams {
         return info;
     }
 
-    public void setPrintInfo(boolean info) {
+    public void info(boolean info) {
         this.info = info;
     }
 

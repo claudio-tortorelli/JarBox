@@ -3,3 +3,5 @@
 /SelfGeneratingCommon/target/
 /TestAndRebuild/target/
 /TestAndInstall/target/
+selfjar/workspace/
+TestAndInstall/workspace/

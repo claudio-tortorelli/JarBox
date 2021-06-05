@@ -1,10 +1,21 @@
-rivedere aggiornamento context e passaggio parametri come da test
+Gestire import/export del workspace
+    [SJ]export=<folder path>
+    [SJ]import=<file path>
+    [SJ]delete=<file relative path>
+
+charun deve prendere lo switch per diventare silente
+
+Ricompila charun per osx e linux
+
+verificare con jdk "vecchie" 1.7 >=
 
 supporto a job exe e jar
 
 finire integrazione bundle plugin e autostart doppio click
 
-revisionare commenti
+trasformare BasicConsoleLogger in statica singleton richiamabile da altre classi
+
+revisionare commenti/TODO
 
 eliminare codice morto inutile
 
@@ -18,26 +29,18 @@ spiegazione generale progetto
     autoconsistente
     aggiornabile
 
-Il job deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
-    ogni job installato deve far conto di scrivere i dati permanenti nel workspace
-    per il resto è libero di fare quel che vuole
-
-Gestire import/export del workspace
-    [SJ]export=<folder path>
-    [SJ]import=<file path>
-    [SJ]delete=<file path>
-
-Ricompila charun per osx e linux
-
-charun deve prendere lo switch per diventare silente
-
 se interessante, a fini di prestazioni, possibilità di rendere la temp folder persistente
 
 check con file nel workspace grossi
 --------
+Il job deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
+    ogni job installato deve far conto di scrivere i dati permanenti nel workspace
+    per il resto è libero di fare quel che vuole
+
+rivedere aggiornamento context e passaggio parametri come da test
+
 i test non possono funzionare se il jar non è ancora stato creato (IOException)
 gli unit test non sopportano la concorrenza
-
 
 ogni job deve essere pacchettizzato in uno zip
 l'installazione viene fatta con i parametri

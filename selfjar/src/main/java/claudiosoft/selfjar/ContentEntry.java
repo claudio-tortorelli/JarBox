@@ -93,10 +93,10 @@ public class ContentEntry extends ZipEntry {
     }
 
     private boolean isCore(String entryPath) {
-        if (entryPath.startsWith("job")) {
+        if (entryPath.startsWith(SelfConstants.JOB_FOLDER)) {
             return false;
         }
-        if (entryPath.startsWith("context")) {
+        if (entryPath.startsWith(SelfConstants.CONTEXT_FOLDER)) {
             return false;
         }
         return true;

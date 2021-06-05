@@ -54,10 +54,9 @@ public final class SelfJar {
             context.applyParams(params);
             context.update();
 
-            logger.debug("job updating...");
+            logger.debug("job and workspace updating...");
             IO.get().applyParams(params);
 
-            // workspace update //TODO
             /////////// end initialization
             if (params.info()) {
                 logger.info(toString());
@@ -136,6 +135,9 @@ public final class SelfJar {
     private void invokeCharun(String nextJarPath) throws IOException, InterruptedException, SelfJarException {
 
         File foo = File.createTempFile("foo", ".tmp");
+        String parentFolder = foo.getParent();
+        foo.delete();
+
         File charunOutFile = null;
         File charunInFile = null;
 
@@ -144,15 +146,13 @@ public final class SelfJar {
         OS os = SelfUtils.getOperatingSystem();
         if (os.equals(OS.WINDOWS)) {
             charunInFile = SelfUtils.getFileFromRes("charun/win/Charun.exe");
-            charunOutFile = new File(String.format("%s%sCharun.exe", foo.getParent(), File.separator));
-            foo.delete();
+            charunOutFile = new File(String.format("%s%sCharun.exe", parentFolder, File.separator));
         } else if (os.equals(OS.OSX)) {
-            //TODO
-            foo.delete();
+            //TODO...rebuild charun
         } else if (os.equals(OS.LINUX)) {
-            //TODO
-            foo.delete();
-        } else {
+            //TODO...rebuild charun
+        }
+        if (charunInFile == null || !charunInFile.exists()) {
             throw new SelfJarException("unsupported os");
         }
 
@@ -213,7 +213,7 @@ public final class SelfJar {
             }
 
             if (param.startsWith(SelfParams.INFO) && value.equalsIgnoreCase("true")) {
-                params.setPrintInfo(true);// enable internal info printing
+                params.info(true);// enable internal info printing
                 continue;
             } else if (param.startsWith(SelfParams.LOGLEVEL)) {
                 // set logger level
@@ -226,10 +226,10 @@ public final class SelfJar {
                 }
             } else if (param.startsWith(SelfParams.INSTALL)) {
                 // install or remove a job
-                params.setInstall(value);
+                params.install(value);
             } else if (param.startsWith(SelfParams.MAIN)) {
                 // add a job main executable to context
-                params.setMain(value);
+                params.main(value);
             } else if (param.startsWith(SelfParams.ADDENV)) {
                 // add an environment variable to context
                 params.addEnv().add(value);
@@ -244,7 +244,7 @@ public final class SelfJar {
                 params.delPar().add(value);
             } else if (param.startsWith(SelfParams.EXP)) {
                 // export workspace to folder
-                params.exp().add(value);
+                params.exp(value);
             } else if (param.startsWith(SelfParams.IMP)) {
                 // import file into workspace
                 params.imp().add(value);
