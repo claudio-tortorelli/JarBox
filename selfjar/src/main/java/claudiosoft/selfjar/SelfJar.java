@@ -162,6 +162,9 @@ public final class SelfJar {
         pbArgs.add(charunOutFile.getAbsolutePath());
         pbArgs.add(nextJarPath);
         pbArgs.add(Identity.get().currentJar().getAbsolutePath());
+        if (params.info()) {
+            pbArgs.add("-verbose");
+        }
 
         ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
         Process insideProc = processBuilder.start();
@@ -181,8 +184,8 @@ public final class SelfJar {
     public String toString() {
         String ret = "\n";
         try {
-            ret += Identity.get().toString() + "\n";
-            ret += IO.get().toString() + "\n";
+            ret += Identity.get().toString();
+            ret += IO.get().toString();
         } catch (SelfJarException ex) {
 
         }

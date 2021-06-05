@@ -7,6 +7,7 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>MoreItalians</artifactId>
+    <name>MoreItalians</name>
     <packaging>jar</packaging>
     <dependencies>
     </dependencies>
@@ -35,6 +36,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>

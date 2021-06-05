@@ -1,17 +1,12 @@
-Gestire import/export del workspace
-    [SJ]export=<folder path>
-    [SJ]import=<file path>
-    [SJ]delete=<file relative path>
+finire integrazione bundle plugin e autostart doppio click
 
-charun deve prendere lo switch per diventare silente
+supporto a job exe e jar
 
 Ricompila charun per osx e linux
 
 verificare con jdk "vecchie" 1.7 >=
 
-supporto a job exe e jar
-
-finire integrazione bundle plugin e autostart doppio click
+implementare import di file nel workspace
 
 trasformare BasicConsoleLogger in statica singleton richiamabile da altre classi
 
@@ -33,6 +28,13 @@ se interessante, a fini di prestazioni, possibilità di rendere la temp folder p
 
 check con file nel workspace grossi
 --------
+charun deve prendere lo switch per diventare silente
+
+Gestire import/export del workspace
+    [SJ]export=<folder path>
+    [SJ]import=<file path>
+    [SJ]delete=<file relative path>
+
 Il job deve dare per scontato di trovarsi dentro il path del selfjar (quindi dovrebbe ricavarsi il path del workspace in autonomia)
     ogni job installato deve far conto di scrivere i dati permanenti nel workspace
     per il resto è libero di fare quel che vuole

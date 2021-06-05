@@ -5,3 +5,7 @@
 /TestAndInstall/target/
 selfjar/workspace/
 TestAndInstall/workspace/
+charun/Charun/Release/
+charun/Charun/Debug/
+charun/Charun.opensdf
+charun/Charun.sdf

@@ -9,6 +9,7 @@
     <groupId>claudiosoft</groupId>
     <artifactId>TestAndInstall</artifactId>
     <packaging>jar</packaging>
+    <name>TestAndInstall</name>
     <dependencies>
         <dependency>
             <groupId>claudiosoft</groupId>
@@ -31,5 +32,5 @@
             </plugin>
         </plugins>
     </build>
-    <name>TestAndInstall</name>
+
 </project>

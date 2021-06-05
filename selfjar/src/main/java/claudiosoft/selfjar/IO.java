@@ -133,7 +133,7 @@ public class IO {
     public String toString() {
         String ret = contentEntries.toString() + "\n";
         try {
-            ret += getContext().toString() + "\n";
+            ret += getContext().toString();
         } catch (Exception ex) {
 
         }

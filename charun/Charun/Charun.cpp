@@ -10,46 +10,47 @@
 #include <stdio.h>
 #include <fstream>   
 
-const char* VERSION="1.0.0";
+const char* VERSION="1.0.1";
 
-/**
- * this is Charun, a SelfGeneratingJar tool
- */
 int main(int argc, char** argv)
 {
-	printf("Charun ");
-	printf(VERSION);
-	printf("\n");
+	char* pSrc = NULL;
+	if (argc >= 2)
+		pSrc = *(argv+1);
 
-	// some checks on arguments...
-	if (argc != 3) {
-		printf("invalid argument numbers\n");
+	char* pDst = NULL;
+	if (argc >= 3)
+		pDst =  *(argv+2);
+
+	bool bVerbose = false;
+	if (argc >= 4)
+		bVerbose = true;
+
+	if (!pSrc || !pDst)
 		return 1;
-	}
 
-	// swap two jars (father is replaced by child...that's life!
+	if (bVerbose)
+		printf("Charun %s\n", VERSION);
+
 	char buf[BUFSIZ];
     size_t size;
 
-    FILE* source = fopen(argv[1], "rb");
+    FILE* source = fopen(pSrc, "rb");
 	if (!source) {
-		printf("first argument is invalid or not found\n");
+		if (bVerbose)
+			printf("first argument is invalid or not found\n");
 		return 1;
 	}
 
-    FILE* dest = fopen(argv[2], "wb");	    
+    FILE* dest = fopen(pDst, "wb");	    
 	if (!dest) {
-		printf("second argument is invalid or not found\n");
+		if (bVerbose)
+			printf("second argument is invalid or not found\n");
 		fclose(source);
 		return 1;
 	}
-	printf("replacing ");
-	printf(argv[2]);
-	printf("\n");
-
-	printf("with ");
-	printf(argv[1]);
-	printf("\n");
+	if (bVerbose)
+		printf("replacing %s with %s\n", pDst, pSrc);
 
     while (size = fread(buf, 1, BUFSIZ, source)) {
         fwrite(buf, 1, size, dest);
@@ -58,10 +59,12 @@ int main(int argc, char** argv)
     fclose(dest);
 
 	if (std::ferror(source) || std::ferror(dest)) {		
-		printf("error\n");
+		if (bVerbose)
+			printf("error\n");
 		return 1;
 	}
-	printf("done\n");
+	if (bVerbose)
+		printf("done\n");
 	return 0;
 }
 
