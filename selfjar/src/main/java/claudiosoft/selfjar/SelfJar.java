@@ -23,13 +23,11 @@ public final class SelfJar {
     private SelfParams params;
 
     public static void main(String[] args) throws URISyntaxException, IOException, InterruptedException {
-        BasicConsoleLogger logger = new BasicConsoleLogger(BasicConsoleLogger.LogLevel.NONE, "SelfJar");
         try {
             // avoid multiple instances
             SelfUtils.testLockFile(FILE_LOCK);
             SelfUtils.doLock(FILE_LOCK);
-            logger.info("SelfJar started");
-            new SelfJar(args, logger);
+            new SelfJar(args);
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
             System.exit(SelfConstants.RET_CODE_ERR);
@@ -38,20 +36,20 @@ public final class SelfJar {
         }
     }
 
-    public SelfJar(String[] args, BasicConsoleLogger logger) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException, SelfJarException {
-        this.logger = logger;
+    public SelfJar(String[] args) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException, SelfJarException {
 
         try {
             //////////// start initialization
             parseArgs(args);
+            logger.info("SelfJar started");
 
             logger.debug("jar expanding...");
             IO.get().out();
 
             logger.debug("apply parameters...");
             IO.get().applyParams(params);
-
             /////////// end initialization
+
             if (params.info()) {
                 logger.info(toString());
             }
@@ -215,11 +213,11 @@ public final class SelfJar {
             } else if (param.startsWith(SelfParams.LOGLEVEL)) {
                 // set logger level
                 if (value.equalsIgnoreCase("debug")) {
-                    logger = new BasicConsoleLogger(LogLevel.DEBUG, SelfConstants.LOGGER_NAME);
+                    logger = BasicConsoleLogger.get(LogLevel.DEBUG, SelfConstants.LOGGER_NAME);
                 } else if (value.equalsIgnoreCase("info")) {
-                    logger = new BasicConsoleLogger(LogLevel.NORMAL, SelfConstants.LOGGER_NAME);
+                    logger = BasicConsoleLogger.get(LogLevel.NORMAL, SelfConstants.LOGGER_NAME);
                 } else {
-                    logger = new BasicConsoleLogger(LogLevel.NONE, SelfConstants.LOGGER_NAME);
+                    logger = BasicConsoleLogger.get(LogLevel.NONE, SelfConstants.LOGGER_NAME);
                 }
             } else if (param.startsWith(SelfParams.INSTALL)) {
                 // install or remove a job

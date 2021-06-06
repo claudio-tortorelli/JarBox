@@ -21,18 +21,27 @@ public class BasicConsoleLogger {
         NORMAL,
         DEBUG
     }
-    private Logger internalLogger = null;
+    private static Logger internalLogger = null;
     private LogLevel level = LogLevel.NORMAL;
 
-    public BasicConsoleLogger() {
-        this(LogLevel.NORMAL);
+    private static BasicConsoleLogger logger;
+
+    public static BasicConsoleLogger get() {
+        return get(LogLevel.NORMAL);
     }
 
-    public BasicConsoleLogger(LogLevel level) {
-        this(level, "Logger");
+    public static BasicConsoleLogger get(LogLevel level) {
+        return get(level, "Logger");
     }
 
-    public BasicConsoleLogger(LogLevel level, String logName) {
+    public static BasicConsoleLogger get(LogLevel level, String logName) {
+        if (logger == null) {
+            logger = new BasicConsoleLogger(level, logName);
+        }
+        return logger;
+    }
+
+    private BasicConsoleLogger(LogLevel level, String logName) {
         internalLogger = Logger.getLogger(logName);
         Handler handlerObj = new ConsoleHandler();
 

@@ -1,14 +1,11 @@
 implementare l'import nel workspace
     [sj]import=<local file path>|<relative file path>|([true|false)), finale replace=true default
-eliminare codice morto inutile
 
 Ricompila charun per osx e linux
 
 verificare con jdk "vecchie" 1.7 >=
 
 implementare import di file nel workspace
-
-trasformare BasicConsoleLogger in statica singleton richiamabile da altre classi
 
 versione selfjar da pom
 
@@ -30,11 +27,14 @@ spiegazione generale progetto readme.md
     descrizione del flusso
     diagramma uml delle classi
 
-
 se interessante, a fini di prestazioni, possibilità di rendere la temp folder persistente
 
 check con file nel workspace grossi
 --------
+eliminare codice morto inutile
+
+trasformare BasicConsoleLogger in statica singleton richiamabile da altre classi
+
 charun deve prendere lo switch per diventare silente
 
 Gestire import/export del workspace
