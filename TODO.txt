@@ -1,6 +1,6 @@
-finire integrazione bundle plugin e autostart doppio click
-
-supporto a job exe e jar
+implementare l'import nel workspace
+    [sj]import=<local file path>|<relative file path>|([true|false)), finale replace=true default
+eliminare codice morto inutile
 
 Ricompila charun per osx e linux
 
@@ -10,19 +10,26 @@ implementare import di file nel workspace
 
 trasformare BasicConsoleLogger in statica singleton richiamabile da altre classi
 
+versione selfjar da pom
+
+finire integrazione bundle plugin e autostart doppio click
+
 revisionare commenti/TODO
+    commento header classi
 
-eliminare codice morto inutile
+supporto a job exe
 
-avvio con doppio click
-
-spiegazione generale progetto
+spiegazione generale progetto readme.md
     simile ad uber-jar ma...dinamico
-    non ci sono dipendenze
+    non ci sono dipendenze, solo java core
     minimo payload
     multi platform
     autoconsistente
     aggiornabile
+    supporto java 1.7 o superiore
+    descrizione del flusso
+    diagramma uml delle classi
+
 
 se interessante, a fini di prestazioni, possibilità di rendere la temp folder persistente
 

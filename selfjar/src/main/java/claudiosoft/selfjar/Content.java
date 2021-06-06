@@ -1,7 +1,6 @@
 package claudiosoft.selfjar;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -87,69 +86,11 @@ public class Content {
         return getContentEntry(Context.CONTEXT_FULLNAME);
     }
 
-    /**
-     * suppose two list are sorted in same way
-     *
-     * @param other
-     * @param mode
-     * @param target
-     */
-    public void compareContents(Content other, CHECK_MODE mode, CHECK_TARGET target) throws SelfJarException {
-        List<ContentEntry> otherContent = other.getContentEntries();
-        if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.SIZE)) {
-            if (otherContent.size() != contentEntries.size()) {
-                throw new SelfJarException(String.format("actual content size is %d against %d expected", otherContent.size(), contentEntries.size()));
-            }
-        }
-
-        if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.SUB) || mode.equals(CHECK_MODE.ADD_SUB)) {
-            for (ContentEntry entry : contentEntries) {
-                if (target.equals(CHECK_TARGET.CORE_ONLY) && !entry.isCore()) {
-                    continue;
-                } else if (target.equals(CHECK_TARGET.EXTRA_ONLY) && entry.isCore()) {
-                    continue;
-                }
-                boolean found = false;
-                for (ContentEntry entry2 : otherContent) {
-                    if (entry.getFullName().equals(entry2.getFullName())) {
-                        found = true;
-                        if (mode.equals(CHECK_MODE.ADD_SUB_COHERENCE)) {
-                            if (!Arrays.equals(entry.getHash(), entry2.getHash())) {
-                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getFullName()));
-                            }
-                        }
-                        break;
-                    }
-                }
-                if (!found) {
-                    throw new SelfJarException(String.format("missing entry %s", entry.getFullName()));
-                }
-            }
-        }
-        if (mode.equals(CHECK_MODE.ALL) || mode.equals(CHECK_MODE.ADD) || mode.equals(CHECK_MODE.ADD_SUB)) {
-            for (ContentEntry entry : otherContent) {
-                boolean found = false;
-                for (ContentEntry entry2 : contentEntries) {
-                    if (entry.getFullName().equals(entry2.getFullName())) {
-                        found = true;
-                        if (mode.equals(CHECK_MODE.ADD_SUB_COHERENCE)) {
-                            if (!Arrays.equals(entry.getHash(), entry2.getHash())) {
-                                throw new SelfJarException(String.format("incoherent jar entry: %s", entry.getFullName()));
-                            }
-                        }
-                        break;
-                    }
-                }
-                if (!found) {
-                    throw new SelfJarException(String.format("entry %s was added", entry.getFullName()));
-                }
-            }
-        }
-    }
-
     @Override
     public String toString() {
-        String ret = "--- Jar Content ---\n";
+        String ret = "=================\n"
+                + "|   [CONTENT]   |\n"
+                + "=================\n";
         ret += "I'm including following content" + "\n";
         for (ContentEntry entry : contentEntries) {
             String hash = "";
@@ -159,7 +100,7 @@ public class Content {
             ret += String.format("  %s %s\n", hash, entry.getFullName());
         }
         getContentEntries().toString();
-        return ret;
+        return ret + "\n";
     }
 
 }

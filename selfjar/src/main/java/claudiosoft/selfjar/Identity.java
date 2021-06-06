@@ -17,7 +17,7 @@ public class Identity {
     private final String javaRuntime;
 
     private final Class MAIN_CLASS = SelfJar.class;
-    private final String VERSION = "1.0.0";
+    private final String VERSION;
 
     private static Identity identity = null;
 
@@ -32,6 +32,7 @@ public class Identity {
     private Identity() throws SelfJarException {
 
         try {
+            this.VERSION = MAIN_CLASS.getPackage().getImplementationVersion();
             this.fullName = MAIN_CLASS.getName();
             this.className = MAIN_CLASS.getSimpleName();
             this.parentFolderJar = new File(MAIN_CLASS.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile().getAbsolutePath();
@@ -86,12 +87,14 @@ public class Identity {
 
     @Override
     public String toString() {
-        String ret = "--- Jar Identity ---\n";
+        String ret = "==================\n"
+                + "|   [IDENTITY]   |\n"
+                + "==================\n";
         ret += "My version is " + version() + "\n";
         ret += "My full name is " + fullName() + "\n";
         ret += "My simple name is " + className() + "\n";
         ret += "I'm contained into " + currentJar().getAbsolutePath() + "\n";
         ret += "I'm executing by JVM " + javaRuntime() + "\n";
-        return ret;
+        return ret + "\n";
     }
 }

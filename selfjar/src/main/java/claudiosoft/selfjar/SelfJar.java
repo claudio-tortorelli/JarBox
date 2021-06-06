@@ -29,7 +29,7 @@ public final class SelfJar {
             SelfUtils.testLockFile(FILE_LOCK);
             SelfUtils.doLock(FILE_LOCK);
             logger.info("SelfJar started");
-            SelfJar selfJar = new SelfJar(args, logger);
+            new SelfJar(args, logger);
         } catch (Exception ex) {
             ex.printStackTrace(System.out);
             System.exit(SelfConstants.RET_CODE_ERR);
@@ -48,13 +48,7 @@ public final class SelfJar {
             logger.debug("jar expanding...");
             IO.get().out();
 
-            // update context file
-            logger.debug("context updating...");
-            Context context = IO.get().getContext();
-            context.applyParams(params);
-            context.update();
-
-            logger.debug("job and workspace updating...");
+            logger.debug("apply parameters...");
             IO.get().applyParams(params);
 
             /////////// end initialization

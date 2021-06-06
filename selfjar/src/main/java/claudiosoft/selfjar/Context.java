@@ -20,7 +20,7 @@ public class Context {
     private boolean jobInstalled;
     private String main;
 
-    private long exeCount;
+    private long exeCount = -1;
 
     public static final String CONTEXT_FULLNAME = "context/context.txt";
     public static final String CTX_COUNT = "EXECOUNT:";
@@ -39,41 +39,6 @@ public class Context {
         envEntries = new HashMap<>();
         jobParamsEntries = new HashMap<>();
         parse();
-    }
-
-    @Override
-    public String toString() {
-        String ret = "--- Jar Context ---\n";
-        ret += "I was executed " + exeCount + " times\n";
-
-        if (!envEntries.isEmpty()) {
-            ret += "There are environment variables:\n";
-            for (Map.Entry<String, String> set : envEntries.entrySet()) {
-                if (set.getValue().isEmpty()) {
-                    ret += String.format("%s\n", set.getKey());
-                } else {
-                    ret += String.format("%s=%s\n", set.getKey(), set.getValue());
-                }
-
-            }
-        }
-        if (!jobParamsEntries.isEmpty()) {
-            ret += "There are job parameters:\n";
-            for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
-                if (set.getValue().isEmpty()) {
-                    ret += String.format("%s\n", set.getKey());
-                } else {
-                    ret += String.format("%s=%s\n", set.getKey(), set.getValue());
-                }
-            }
-        }
-        if (jobInstalled) {
-            ret += "A job is installed\n";
-        }
-        if (!main.isEmpty()) {
-            ret += String.format("The main executable is %s\n", main);
-        }
-        return ret;
     }
 
     public void update() throws IOException, SelfJarException {
@@ -210,5 +175,42 @@ public class Context {
         } finally {
             contextEntry.lockIn(contextEntry.getFile());
         }
+    }
+
+    @Override
+    public String toString() {
+        String ret = "=====================\n"
+                + "|   [CONTEXT DATA]   |\n"
+                + "=====================\n";
+        ret += "I was executed " + exeCount + " times\n";
+
+        if (!envEntries.isEmpty()) {
+            ret += "There are environment variables:\n";
+            for (Map.Entry<String, String> set : envEntries.entrySet()) {
+                if (set.getValue().isEmpty()) {
+                    ret += String.format("  %s\n", set.getKey());
+                } else {
+                    ret += String.format("  %s=%s\n", set.getKey(), set.getValue());
+                }
+
+            }
+        }
+        if (!jobParamsEntries.isEmpty()) {
+            ret += "There are job parameters:\n";
+            for (Map.Entry<String, String> set : jobParamsEntries.entrySet()) {
+                if (set.getValue().isEmpty()) {
+                    ret += String.format("  %s\n", set.getKey());
+                } else {
+                    ret += String.format("  %s=%s\n", set.getKey(), set.getValue());
+                }
+            }
+        }
+        if (jobInstalled) {
+            ret += "A job is installed\n";
+        }
+        if (!main.isEmpty()) {
+            ret += String.format("The main executable is %s\n", main);
+        }
+        return ret + "\n";
     }
 }

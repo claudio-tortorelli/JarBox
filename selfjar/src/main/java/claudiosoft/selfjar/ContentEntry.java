@@ -13,8 +13,8 @@ import java.util.zip.ZipEntry;
  */
 public class ContentEntry extends ZipEntry {
 
-    private byte[] hash;
-    private boolean core;
+    private final byte[] hash;
+    private final boolean core;
 
     private RandomAccessFile raf;
     private FileLock lock;
@@ -81,10 +81,7 @@ public class ContentEntry extends ZipEntry {
     }
 
     public boolean isLocked() {
-        if (lock == null) {
-            return false;
-        }
-        return true;
+        return lock != null;
     }
 
     @Override

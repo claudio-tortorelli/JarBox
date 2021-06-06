@@ -131,9 +131,11 @@ public class IO {
 
     @Override
     public String toString() {
-        String ret = contentEntries.toString() + "\n";
+        String ret = "";
         try {
             ret += getContext().toString();
+            ret += contentEntries.toString();
+
         } catch (Exception ex) {
 
         }
@@ -145,6 +147,8 @@ public class IO {
         Context context = getContext();
 
         try {
+            context.applyParams(params);
+
             if (params.main() != null && !params.main().isEmpty()) {
                 context.setMain(params.main());
             }
