@@ -143,7 +143,7 @@ public final class SelfJar {
             //TODO...rebuild charun
         } else if (os.equals(OS.LINUX)) {
             if (!System.getProperty("os.arch").equals("x86")) {
-                charunInFile = SelfUtils.getFileFromRes("charun/win/CharunX64");
+                charunInFile = SelfUtils.getFileFromRes("charun/linux/CharunX64");
                 charunOutFile = new File(String.format("%s%sCharunX64", parentFolder, File.separator));
             } else {
                 //TODO
@@ -254,6 +254,9 @@ public final class SelfJar {
             } else {
                 throw new SelfJarException("Invalid self jar parameter: " + param);
             }
+        }
+        if (logger == null) {
+            logger = BasicConsoleLogger.get(LogLevel.NONE, SelfConstants.LOGGER_NAME); // default
         }
     }
 }
