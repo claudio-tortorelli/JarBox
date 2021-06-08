@@ -142,7 +142,12 @@ public final class SelfJar {
         } else if (os.equals(OS.OSX)) {
             //TODO...rebuild charun
         } else if (os.equals(OS.LINUX)) {
-            //TODO...rebuild charun
+            if (!System.getProperty("os.arch").equals("x86")) {
+                charunInFile = SelfUtils.getFileFromRes("charun/win/CharunX64");
+                charunOutFile = new File(String.format("%s%sCharunX64", parentFolder, File.separator));
+            } else {
+                //TODO
+            }
         }
         if (charunInFile == null || !charunInFile.exists()) {
             throw new SelfJarException("unsupported os");
