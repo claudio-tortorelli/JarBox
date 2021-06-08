@@ -83,6 +83,10 @@ public class TestResource {
             String destPath = String.format("%s%s%s", destFolder, File.separator, fileName);
 
             retFile = new File(destPath);
+            if (!retFile.exists()) {
+                retFile.createNewFile();
+            }
+
             fos = new FileOutputStream(retFile);
             byte[] buffer = new byte[4096];
             int byteRead = is.read(buffer);

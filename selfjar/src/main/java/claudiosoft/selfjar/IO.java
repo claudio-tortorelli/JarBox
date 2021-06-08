@@ -184,23 +184,40 @@ public class IO {
                 }
                 context.setJobInstalled(true);
             }
-            if (!params.del().isEmpty()) {
-                for (String curRelPath : params.del()) {
-                    String fullPath = String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, curRelPath);
-                    File toDel = new File(fullPath);
-                    if (toDel.exists()) {
-                        toDel.delete();
-                    }
-                }
-            }
-            if (!params.imp().isEmpty()) {
-                //TODO, each imported file must be with the relative workspace path
-                throw new SelfJarException("Not implemented yet");
-            }
             if (!params.exp().isEmpty()) {
                 File src = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER));
                 File dst = new File(params.exp());
                 SelfUtils.copyFolder(src, dst);
+            }
+            for (String curRelPath : params.del()) {
+                File toDel = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, curRelPath));
+                if (toDel.isFile()) {
+                    toDel.delete();
+                } else {
+                    SelfUtils.deleteDirectory(toDel);
+                }
+            }
+            for (String value : params.imp()) {
+                String[] data = value.split(";");
+                if (data.length < 2 || data.length > 3) {
+                    continue;
+                }
+                String externalPath = data[0].trim();
+                String relativeWSPath = data[1].trim();
+                boolean overwrite = true;
+                if (data.length == 3) {
+                    overwrite = data[2].trim().equalsIgnoreCase("true");
+                }
+                File src = new File(externalPath);
+                if (!src.exists()) {
+                    throw new SelfJarException(String.format("%s not found", src.getAbsolutePath()));
+                }
+                File dst = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, relativeWSPath));
+                if (!overwrite && dst.exists()) {
+                    throw new SelfJarException(String.format("%s already exists", dst.getAbsolutePath()));
+                }
+                new File(dst.getParent()).mkdirs(); // create folders into ws
+                Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
         } finally {
             context.update();

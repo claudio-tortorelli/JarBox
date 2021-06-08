@@ -1,7 +1,6 @@
 package test;
 
 import java.io.File;
-import java.io.IOException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -65,17 +64,6 @@ public class BaseJUnitTest {
                 }
             }
         }
-
-        // needed to have truststore available into tests
-        File sdkTrustStore = null;
-        try {
-            // cacerts for TSL ssl connection and Aruba TSA
-            sdkTrustStore = TestResource.extractToFile("base/truststore/cacerts_test");
-        } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-        Assert.assertTrue("truststore not found", sdkTrustStore != null && sdkTrustStore.exists());
-        System.setProperty("javax.net.ssl.trustStore", sdkTrustStore.getAbsolutePath());
     }
 
     @AfterClass

@@ -1,25 +1,15 @@
 package test;
 
+import claudiosoft.selfjar.SelfJarException;
 import java.io.File;
 import java.io.IOException;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class BlackBoxTests extends BaseJUnitTest {
-
-    @BeforeClass
-    public static void setUpClass() {
-        try {
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new ExceptionInInitializerError("Setup Error");
-        }
-    }
 
     @Test
     public void t01UpdateContext() throws InterruptedException, IOException {
@@ -61,27 +51,53 @@ public class BlackBoxTests extends BaseJUnitTest {
     }
 
     @Test
-    public void t05ExportWS() throws InterruptedException, IOException {
+    public void t05ImportInWS() throws InterruptedException, IOException {
+        File testFile = TestResource.extractToFile("test/anagraphic_2000.txt");
+        String[] args = new String[4];
+        args[0] = "[sj]loglevel=debug";
+        args[1] = String.format("[sj]import=%s;pippo/anagraphic.txt;true", testFile.getAbsolutePath());
+        SelfJarInstance.start(args);
+    }
+
+    @Test
+    public void t06ExportWS() throws InterruptedException, IOException, SelfJarException {
         String[] args = new String[4];
         args[0] = "[sj]info=true";
         args[1] = "[sj]loglevel=debug";
         args[2] = "[sj]export=./workspace";
         SelfJarInstance.start(args);
-        Assert.assertTrue(new File("./workspace/anagraphic.txt").exists());
-        new File("./workspace/anagraphic.txt").delete();
-        new File("./workspace").delete();
+        Assert.assertTrue(new File("./workspace/pippo/anagraphic.txt").exists());
+        deleteDirectory(new File("./workspace"));
     }
 
     @Test
-    public void t06DeleteFile() throws InterruptedException, IOException {
-        String[] args = new String[4];
-        args[0] = "[sj]info=true";
-        args[1] = "[sj]loglevel=debug";
-        args[2] = "[sj]delete=anagraphic.txt";
+    public void t07DeleteFiles() throws InterruptedException, IOException, SelfJarException {
+        String[] args = new String[10];
+        args[0] = "[sj]loglevel=debug";
+        args[1] = "[sj]delete=anagraphic.txt";
+        args[2] = "[sj]delete=pippo/anagraphic.txt";
+        args[2] = "[sj]delete=pippo";
         args[3] = "[sj]export=./workspace";
         SelfJarInstance.start(args);
         Assert.assertTrue(!new File("./workspace/anagraphic.txt").exists());
-        new File("./workspace").delete();
+        Assert.assertTrue(!new File("./workspace/pippo/anagraphic.txt").exists());
+        deleteDirectory(new File("./workspace"));
     }
 
+    private void deleteDirectory(File directoryToBeDeleted) throws SelfJarException {
+        if (!directoryToBeDeleted.exists()) {
+            return;
+        }
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                if (file.isDirectory()) {
+                    deleteDirectory(file);
+                } else {
+                    file.delete();
+                }
+            }
+        }
+        directoryToBeDeleted.delete();
+    }
 }

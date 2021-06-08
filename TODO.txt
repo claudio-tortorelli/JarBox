@@ -1,20 +1,16 @@
 implementare l'import nel workspace
     [sj]import=<local file path>|<relative file path>|([true|false)), finale replace=true default
 
-Ricompila charun per osx e linux
+incrementare il logger dentro le classi
 
-verificare con jdk "vecchie" 1.7 >=
+Ricompila charun per osx e linux 32
 
-implementare import di file nel workspace
-
-versione selfjar da pom
+test su linux (errore)
 
 finire integrazione bundle plugin e autostart doppio click
 
 revisionare commenti/TODO
     commento header classi
-
-supporto a job exe
 
 spiegazione generale progetto readme.md
     simile ad uber-jar ma...dinamico
@@ -27,10 +23,17 @@ spiegazione generale progetto readme.md
     descrizione del flusso
     diagramma uml delle classi
 
+supporto a job exe
+
 se interessante, a fini di prestazioni, possibilità di rendere la temp folder persistente
 
 check con file nel workspace grossi
 --------
+verificare con jdk "vecchie" 1.7 >=
+    necessaria build con 1.7
+
+versione selfjar da pom
+
 eliminare codice morto inutile
 
 trasformare BasicConsoleLogger in statica singleton richiamabile da altre classi
