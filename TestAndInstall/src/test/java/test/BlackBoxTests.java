@@ -66,8 +66,9 @@ public class BlackBoxTests extends BaseJUnitTest {
         args[1] = "[sj]loglevel=debug";
         args[2] = "[sj]export=./workspace";
         SelfJarInstance.start(args);
-        Assert.assertTrue(new File("./workspace/pippo/anagraphic.txt").exists());
+        boolean exist = new File("./workspace/pippo/anagraphic.txt").exists();
         deleteDirectory(new File("./workspace"));
+        Assert.assertTrue(exist);
     }
 
     @Test
@@ -76,12 +77,14 @@ public class BlackBoxTests extends BaseJUnitTest {
         args[0] = "[sj]loglevel=debug";
         args[1] = "[sj]delete=anagraphic.txt";
         args[2] = "[sj]delete=pippo/anagraphic.txt";
-        args[2] = "[sj]delete=pippo";
-        args[3] = "[sj]export=./workspace";
+        args[3] = "[sj]delete=pippo";
+        args[4] = "[sj]export=./workspace";
         SelfJarInstance.start(args);
-        Assert.assertTrue(!new File("./workspace/anagraphic.txt").exists());
-        Assert.assertTrue(!new File("./workspace/pippo/anagraphic.txt").exists());
+        boolean exist1 = !new File("./workspace/anagraphic.txt").exists();
+        boolean exist2 = !new File("./workspace/pippo/anagraphic.txt").exists();
         deleteDirectory(new File("./workspace"));
+        Assert.assertTrue(exist1);
+        Assert.assertTrue(exist2);
     }
 
     private void deleteDirectory(File directoryToBeDeleted) throws SelfJarException {

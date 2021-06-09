@@ -184,11 +184,6 @@ public class IO {
                 }
                 context.setJobInstalled(true);
             }
-            if (!params.exp().isEmpty()) {
-                File src = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER));
-                File dst = new File(params.exp());
-                SelfUtils.copyFolder(src, dst);
-            }
             for (String curRelPath : params.del()) {
                 File toDel = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, curRelPath));
                 if (toDel.isFile()) {
@@ -218,6 +213,11 @@ public class IO {
                 }
                 new File(dst.getParent()).mkdirs(); // create folders into ws
                 Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
+            if (!params.exp().isEmpty()) {
+                File src = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER));
+                File dst = new File(params.exp());
+                SelfUtils.copyFolder(src, dst);
             }
         } finally {
             context.update();

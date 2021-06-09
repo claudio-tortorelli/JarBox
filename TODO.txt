@@ -1,5 +1,6 @@
-implementare l'import nel workspace
-    [sj]import=<local file path>|<relative file path>|([true|false)), finale replace=true default
+sistemare i test di unità
+
+aggiungere i test di performances / stress
 
 incrementare il logger dentro le classi
 
@@ -22,6 +23,7 @@ spiegazione generale progetto readme.md
     supporto java 1.7 o superiore
     descrizione del flusso
     diagramma uml delle classi
+    ordine eseguito: del, import, exp
 
 supporto a job exe
 
@@ -29,6 +31,10 @@ se interessante, a fini di prestazioni, possibilità di rendere la temp folder p
 
 check con file nel workspace grossi
 --------
+implementare l'import nel workspace
+    [sj]import=<local file path>|<relative file path>|([true|false)), finale replace=true default
+  
+
 verificare con jdk "vecchie" 1.7 >=
     necessaria build con 1.7
 
