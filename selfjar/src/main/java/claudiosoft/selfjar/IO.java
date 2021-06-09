@@ -166,23 +166,22 @@ public class IO {
                     jobZipFile.delete();
                     context.setJobInstalled(false);
                     context.setMain("");
-                    return;
-                }
+                } else {
+                    File jobZipToInstallFile = new File(params.install());
+                    if (!jobZipToInstallFile.exists()) {
+                        throw new SelfJarException("job archive not found at " + params.install());
+                    }
 
-                File jobZipToInstallFile = new File(params.install());
-                if (!jobZipToInstallFile.exists()) {
-                    throw new SelfJarException("job archive not found at " + params.install());
+                    // install job
+                    File destJobFolder = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.JOB_FOLDER));
+                    destJobFolder.mkdirs();
+                    File destJobFile = new File(String.format("%s%sjob.zip", destJobFolder.getAbsolutePath(), File.separator));
+                    Files.copy(jobZipToInstallFile.toPath(), destJobFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    if (entry != null) {
+                        entry.lockIn(jobZipToInstallFile);
+                    }
+                    context.setJobInstalled(true);
                 }
-
-                // install job
-                File destJobFolder = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.JOB_FOLDER));
-                destJobFolder.mkdirs();
-                File destJobFile = new File(String.format("%s%sjob.zip", destJobFolder.getAbsolutePath(), File.separator));
-                Files.copy(jobZipToInstallFile.toPath(), destJobFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                if (entry != null) {
-                    entry.lockIn(jobZipToInstallFile);
-                }
-                context.setJobInstalled(true);
             }
             for (String curRelPath : params.del()) {
                 File toDel = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, curRelPath));

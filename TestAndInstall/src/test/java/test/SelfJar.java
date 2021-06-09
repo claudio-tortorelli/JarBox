@@ -35,4 +35,8 @@ public class SelfJar {
         return sfInstance;
     }
 
+    public static float size() {
+        return sfInstance.length() / (float) (1024 * 1024);
+    }
+
 }

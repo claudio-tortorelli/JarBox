@@ -1,14 +1,8 @@
-sistemare i test di unità
-
-aggiungere i test di performances / stress
-
 incrementare il logger dentro le classi
 
 Ricompila charun per osx e linux 32
 
 test su linux (errore)
-
-finire integrazione bundle plugin e autostart doppio click
 
 revisionare commenti/TODO
     commento header classi
@@ -31,9 +25,12 @@ se interessante, a fini di prestazioni, possibilità di rendere la temp folder p
 
 check con file nel workspace grossi
 --------
+aggiungere i test di performances / stress
+
+finire integrazione bundle plugin e autostart doppio click
+
 implementare l'import nel workspace
     [sj]import=<local file path>|<relative file path>|([true|false)), finale replace=true default
-  
 
 verificare con jdk "vecchie" 1.7 >=
     necessaria build con 1.7
