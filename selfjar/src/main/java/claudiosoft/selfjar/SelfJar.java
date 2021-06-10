@@ -30,7 +30,7 @@ public final class SelfJar {
     public SelfJar(String[] args) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException, SelfJarException {
 
         try {
-            //////////// start initialization
+            // initialization
             Params.get().parseArgs(args);
             BasicConsoleLogger.get().info("SelfJar started");
 
@@ -39,7 +39,6 @@ public final class SelfJar {
 
             BasicConsoleLogger.get().debug("apply parameters...");
             IO.get().applyParams();
-            /////////// end initialization
 
             if (Params.get().info()) {
                 BasicConsoleLogger.get().info(toString());
