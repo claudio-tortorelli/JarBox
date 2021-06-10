@@ -38,7 +38,17 @@ public class Params {
 
     private List<String> jobArgs;
 
-    public Params() {
+    private static Params params = null;
+
+    public static Params get() throws SelfJarException {
+        if (params != null) {
+            return params;
+        }
+        params = new Params();
+        return params;
+    }
+
+    private Params() {
         this.del = new LinkedList<>();
         this.imp = new LinkedList<>();
         this.exp = "";
@@ -108,6 +118,77 @@ public class Params {
 
     public void info(boolean info) {
         this.info = info;
+    }
+
+    public void parseArgs(String[] args) throws SelfJarException {
+        boolean loggerCreated = false;
+        for (int iAr = 0; iAr < args.length; iAr++) {
+            if (args[iAr] == null || args[iAr].isEmpty()) {
+                continue;
+            }
+            String[] splitted = args[iAr].split("=");
+            if (splitted.length != 2 && splitted.length != 3) {
+                params.jobArgs().add(args[iAr]);
+                continue;
+            }
+            String param = splitted[0].toLowerCase().trim();
+            if (!param.startsWith(Params.PARAM_PREFIX)) {
+                params.jobArgs().add(args[iAr]);
+                continue;
+            }
+            param = param.substring(Params.PARAM_PREFIX.length());
+            String value = splitted[1];
+            if (splitted.length > 2 && !splitted[2].isEmpty()) {
+                value = String.format("%s=%s", splitted[1], splitted[2]);
+            }
+
+            if (param.startsWith(Params.INFO) && value.equalsIgnoreCase("true")) {
+                params.info(true);// enable internal info printing
+                continue;
+            } else if (param.startsWith(Params.LOGLEVEL)) {
+                loggerCreated = true;
+                // set logger level
+                if (value.equalsIgnoreCase("debug")) {
+                    BasicConsoleLogger.get(BasicConsoleLogger.LogLevel.DEBUG, Constants.LOGGER_NAME);
+                } else if (value.equalsIgnoreCase("info")) {
+                    BasicConsoleLogger.get(BasicConsoleLogger.LogLevel.NORMAL, Constants.LOGGER_NAME);
+                } else {
+                    BasicConsoleLogger.get(BasicConsoleLogger.LogLevel.NONE, Constants.LOGGER_NAME);
+                }
+            } else if (param.startsWith(Params.INSTALL)) {
+                // install or remove a job
+                params.install(value);
+            } else if (param.startsWith(Params.MAIN)) {
+                // add a job main executable to context
+                params.main(value);
+            } else if (param.startsWith(Params.ADDENV)) {
+                // add an environment variable to context
+                params.addEnv().add(value);
+            } else if (param.startsWith(Params.DELENV)) {
+                // delete an environment variable to context
+                params.delEnv().add(value);
+            } else if (param.startsWith(Params.ADDPAR)) {
+                // add a job parameter to context
+                params.addPar().add(value);
+            } else if (param.startsWith(Params.DELPAR)) {
+                // delete a job parameter to context
+                params.delPar().add(value);
+            } else if (param.startsWith(Params.EXP)) {
+                // export workspace to folder
+                params.exp(value);
+            } else if (param.startsWith(Params.IMP)) {
+                // import file into workspace
+                params.imp().add(value);
+            } else if (param.startsWith(Params.DEL)) {
+                // delete file from workspace
+                params.del().add(value);
+            } else {
+                throw new SelfJarException("Invalid self jar parameter: " + param);
+            }
+        }
+        if (!loggerCreated) {
+            BasicConsoleLogger.get(BasicConsoleLogger.LogLevel.NONE, Constants.LOGGER_NAME); // default
+        }
     }
 
 }

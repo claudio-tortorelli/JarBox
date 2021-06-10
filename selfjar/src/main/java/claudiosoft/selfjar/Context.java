@@ -76,7 +76,9 @@ public class Context {
         }
     }
 
-    public void applyParams(Params params) {
+    public void applyParams() throws SelfJarException {
+
+        Params params = Params.get();
 
         for (String var : params.addEnv()) {
             String[] splitted = var.split("=");

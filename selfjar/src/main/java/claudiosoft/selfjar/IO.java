@@ -1,5 +1,6 @@
 package claudiosoft.selfjar;
 
+import claudiosoft.selfjar.Utils.OS;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,7 +11,9 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -27,6 +30,8 @@ public class IO {
     private final File jobZipFile;
     private final File nextJar;
     private final Content contentEntries;
+
+    private static BasicConsoleLogger logger = BasicConsoleLogger.get();
 
     private static IO io = null;
 
@@ -142,12 +147,13 @@ public class IO {
         return ret;
     }
 
-    public void applyParams(Params params) throws SelfJarException, IOException {
+    public void applyParams() throws SelfJarException, IOException {
 
+        Params params = Params.get();
         Context context = getContext();
 
         try {
-            context.applyParams(params);
+            context.applyParams();
 
             if (params.main() != null && !params.main().isEmpty()) {
                 context.setMain(params.main());
@@ -338,5 +344,109 @@ public class IO {
         } finally {
             Utils.closeQuietly(in);
         }
+    }
+
+    public static void invokeJob() throws SelfJarException, IOException, InterruptedException {
+
+        Context context = IO.get().getContext();
+        if (!context.isJobInstalled()) {
+            return;
+        }
+        logger.info("start internal job");
+
+        // extract the job archive
+        String curJobFolder = IO.get().extractJob();
+
+        // create params list
+        LinkedList<String> pbArgs = new LinkedList<>();
+        if (context.getMain().toLowerCase().endsWith(".jar")) {
+            pbArgs.add("java");
+            pbArgs.add("-jar");
+        }
+
+        // apply environment properties
+        for (Map.Entry<String, String> set : context.getEnvEntries().entrySet()) {
+            String env = set.getKey();
+            if (!set.getValue().isEmpty()) {
+                env = String.format("%s=%s", set.getKey(), set.getValue());
+            }
+            pbArgs.add(String.format("-D%s", env));
+        }
+
+        pbArgs.add(String.format("%s%s%s", curJobFolder, File.separator, context.getMain()));
+
+        for (Map.Entry<String, String> set : context.getJobParamsEntries().entrySet()) {
+            if (set.getValue().isEmpty()) {
+                pbArgs.add(String.format("%s", set.getKey()));
+            } else {
+                pbArgs.add(String.format("%s=%s", set.getKey(), set.getValue()));
+            }
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
+        Process insideProc = processBuilder.start();
+
+        // print job outputs
+        Utils.inheritIO(insideProc.getInputStream(), System.out);
+        Utils.inheritIO(insideProc.getErrorStream(), System.err);
+
+        insideProc.waitFor();
+
+        logger.info("end internal job");
+    }
+
+    /**
+     * call charun
+     *
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public static void invokeCharun(String nextJarPath) throws IOException, InterruptedException, SelfJarException {
+
+        File foo = File.createTempFile("foo", ".tmp");
+        String parentFolder = foo.getParent();
+        foo.delete();
+
+        File charunOutFile = null;
+        File charunInFile = null;
+
+        logger.debug("starting Charun...");
+        //call charun on right  platform
+        OS os = Utils.getOperatingSystem();
+        if (os.equals(OS.WINDOWS)) {
+            charunInFile = Utils.getFileFromRes("charun/win/Charun.exe");
+            charunOutFile = new File(String.format("%s%sCharun.exe", parentFolder, File.separator));
+        } else if (os.equals(OS.OSX)) {
+            //TODO...rebuild charun
+        } else if (os.equals(OS.LINUX)) {
+            if (!System.getProperty("os.arch").equals("x86")) {
+                charunInFile = Utils.getFileFromRes("charun/linux/CharunX64");
+                charunOutFile = new File(String.format("%s%sCharunX64", parentFolder, File.separator));
+            } else {
+                //TODO
+            }
+        }
+        if (charunInFile == null || !charunInFile.exists()) {
+            throw new SelfJarException("unsupported os");
+        }
+
+        Files.copy(charunInFile.toPath(), charunOutFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        LinkedList<String> pbArgs = new LinkedList<>();
+        pbArgs.add(charunOutFile.getAbsolutePath());
+        pbArgs.add(nextJarPath);
+        pbArgs.add(Identity.get().currentJar().getAbsolutePath());
+        if (Params.get().info()) {
+            pbArgs.add("-verbose");
+        }
+
+        ProcessBuilder processBuilder = new ProcessBuilder(pbArgs);
+        Process insideProc = processBuilder.start();
+
+        // print charun outputs
+        Utils.inheritIO(insideProc.getInputStream(), System.out);
+        Utils.inheritIO(insideProc.getErrorStream(), System.err);
+
+        insideProc.waitFor();
     }
 }
