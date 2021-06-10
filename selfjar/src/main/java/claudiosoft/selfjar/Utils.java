@@ -33,7 +33,7 @@ import java.util.UUID;
  *
  * @author Claudio
  */
-public class SelfUtils {
+public class Utils {
 
     private static RandomAccessFile lockFis = null;
     private static FileLock fileLock;
@@ -69,13 +69,13 @@ public class SelfUtils {
     }
 
     public static String dateToString(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat(SelfConstants.DATE_FORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.format(date);
     }
 
     public static Date stringToDate(String date) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat(SelfConstants.DATE_FORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT);
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
         return sdf.parse(date);
     }
@@ -113,7 +113,7 @@ public class SelfUtils {
         if (!directoryToBeDeleted.exists()) {
             return;
         }
-        if (!directoryToBeDeleted.getAbsolutePath().contains(SelfConstants.TMP_SELFJAR_FOLDER)) {
+        if (!directoryToBeDeleted.getAbsolutePath().contains(Constants.TMP_SELFJAR_FOLDER)) {
             // for safety
             throw new SelfJarException("self jar folder only can be deleted");
         }
@@ -149,7 +149,7 @@ public class SelfUtils {
                 in = new FileInputStream(source);
                 out = new FileOutputStream(destination);
 
-                byte[] buffer = new byte[SelfConstants.BUFFER_SIZE];
+                byte[] buffer = new byte[Constants.BUFFER_SIZE];
 
                 int length;
                 while ((length = in.read(buffer)) > 0) {
@@ -180,7 +180,7 @@ public class SelfUtils {
 
     public static byte[] getSHA256(InputStream inputStream) throws NoSuchAlgorithmException, IOException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        byte[] dataBuffer = new byte[SelfConstants.BUFFER_SIZE];
+        byte[] dataBuffer = new byte[Constants.BUFFER_SIZE];
         int bytesRead;
         while ((bytesRead = inputStream.read(dataBuffer)) >= 0) {
             digest.update(dataBuffer, 0, bytesRead);
@@ -201,7 +201,7 @@ public class SelfUtils {
     }
 
     public static void inputToOutput(InputStream source, OutputStream target) throws IOException {
-        byte[] buf = new byte[SelfConstants.BUFFER_SIZE];
+        byte[] buf = new byte[Constants.BUFFER_SIZE];
         int length;
         while ((length = source.read(buf)) > 0) {
             target.write(buf, 0, length);

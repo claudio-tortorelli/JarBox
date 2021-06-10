@@ -40,13 +40,13 @@ public class IO {
 
     private IO() throws SelfJarException {
         // use current date-time
-        SimpleDateFormat sdf = new SimpleDateFormat(SelfConstants.DATE_FORMAT_SHORT);
-        sdf.setTimeZone(SelfConstants.DEFAULT_TIMEZONE);
+        SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT);
+        sdf.setTimeZone(Constants.DEFAULT_TIMEZONE);
         String dateTime = sdf.format(new Date());
 
         // create temp out folder
-        this.selfJarTmpFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, SelfConstants.TMP_SELFJAR_FOLDER, dateTime));
-        this.jobZipFile = new File(String.format("%s%s%s", this.selfJarTmpFolder, File.separator, SelfConstants.JOB_ENTRY));
+        this.selfJarTmpFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, Constants.TMP_SELFJAR_FOLDER, dateTime));
+        this.jobZipFile = new File(String.format("%s%s%s", this.selfJarTmpFolder, File.separator, Constants.JOB_ENTRY));
         this.nextJar = new File(String.format("%s%sselfJar%s.jar", System.getProperty("java.io.tmpdir"), File.separator, dateTime));
         this.contentEntries = new Content();
     }
@@ -80,14 +80,14 @@ public class IO {
                 is = jar.getInputStream(entry);
                 File outFile = new File(selfJarTmpFolder.getAbsoluteFile() + File.separator + entry.getName());
                 fos = new FileOutputStream(outFile);
-                SelfUtils.inputToOutput(is, fos);
+                Utils.inputToOutput(is, fos);
                 // keep open entries in workspace
                 if (!entry.getFullName().startsWith("job/workspace")) {
                     entry.lockIn(outFile);
                 }
             } finally {
-                SelfUtils.closeQuietly(is);
-                SelfUtils.closeQuietly(fos);
+                Utils.closeQuietly(is);
+                Utils.closeQuietly(fos);
             }
         }
     }
@@ -109,7 +109,7 @@ public class IO {
                 addToNextJar(selfJarTmpFolder.getAbsolutePath(), nestedFile, target);
             }
         } finally {
-            SelfUtils.closeQuietly(target);
+            Utils.closeQuietly(target);
         }
         return nextJar;
     }
@@ -122,7 +122,7 @@ public class IO {
             }
             entry.lockOut();
         }
-        SelfUtils.deleteDirectory(selfJarTmpFolder);
+        Utils.deleteDirectory(selfJarTmpFolder);
     }
 
     public Context getContext() throws SelfJarException, IOException {
@@ -142,7 +142,7 @@ public class IO {
         return ret;
     }
 
-    public void applyParams(SelfParams params) throws SelfJarException, IOException {
+    public void applyParams(Params params) throws SelfJarException, IOException {
 
         Context context = getContext();
 
@@ -155,14 +155,14 @@ public class IO {
             if (params.install() != null && !params.install().isEmpty()) {
                 ContentEntry entry = null;
                 try {
-                    entry = contentEntries.getContentEntry(SelfConstants.JOB_ENTRY);
+                    entry = contentEntries.getContentEntry(Constants.JOB_ENTRY);
                 } catch (SelfJarException ex) {
                     // not installed
                 }
                 if (entry != null && entry.isLocked()) {
                     entry.lockOut();
                 }
-                if (params.install().equals(SelfParams.INSTALL_CLEAN)) {
+                if (params.install().equals(Params.INSTALL_CLEAN)) {
                     jobZipFile.delete();
                     context.setJobInstalled(false);
                     context.setMain("");
@@ -173,7 +173,7 @@ public class IO {
                     }
 
                     // install job
-                    File destJobFolder = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.JOB_FOLDER));
+                    File destJobFolder = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, Constants.JOB_FOLDER));
                     destJobFolder.mkdirs();
                     File destJobFile = new File(String.format("%s%sjob.zip", destJobFolder.getAbsolutePath(), File.separator));
                     Files.copy(jobZipToInstallFile.toPath(), destJobFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -184,11 +184,11 @@ public class IO {
                 }
             }
             for (String curRelPath : params.del()) {
-                File toDel = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, curRelPath));
+                File toDel = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, Constants.WS_ENTRY_FOLDER, File.separator, curRelPath));
                 if (toDel.isFile()) {
                     toDel.delete();
                 } else {
-                    SelfUtils.deleteDirectory(toDel);
+                    Utils.deleteDirectory(toDel);
                 }
             }
             for (String value : params.imp()) {
@@ -206,7 +206,7 @@ public class IO {
                 if (!src.exists()) {
                     throw new SelfJarException(String.format("%s not found", src.getAbsolutePath()));
                 }
-                File dst = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER, File.separator, relativeWSPath));
+                File dst = new File(String.format("%s%s%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, Constants.WS_ENTRY_FOLDER, File.separator, relativeWSPath));
                 if (!overwrite && dst.exists()) {
                     throw new SelfJarException(String.format("%s already exists", dst.getAbsolutePath()));
                 }
@@ -214,9 +214,9 @@ public class IO {
                 Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
             if (!params.exp().isEmpty()) {
-                File src = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, SelfConstants.WS_ENTRY_FOLDER));
+                File src = new File(String.format("%s%s%s", selfJarTmpFolder.getAbsolutePath(), File.separator, Constants.WS_ENTRY_FOLDER));
                 File dst = new File(params.exp());
-                SelfUtils.copyFolder(src, dst);
+                Utils.copyFolder(src, dst);
             }
         } finally {
             context.update();
@@ -233,7 +233,7 @@ public class IO {
 
         ContentEntry entry = null;
         try {
-            entry = contentEntries.getContentEntry(SelfConstants.JOB_ENTRY);
+            entry = contentEntries.getContentEntry(Constants.JOB_ENTRY);
         } catch (SelfJarException ex) {
             // not installed
         }
@@ -241,7 +241,7 @@ public class IO {
             entry.lockOut();
         }
 
-        byte[] buffer = new byte[SelfConstants.BUFFER_SIZE];
+        byte[] buffer = new byte[Constants.BUFFER_SIZE];
         int len;
         FileInputStream fis = null;
         ZipInputStream zis = null;
@@ -263,15 +263,15 @@ public class IO {
                         fos.write(buffer, 0, len);
                     }
                 } finally {
-                    SelfUtils.closeQuietly(fos);
+                    Utils.closeQuietly(fos);
                     zis.closeEntry();
                     zen = zis.getNextEntry();
                 }
             }
         } finally {
             zis.closeEntry();
-            SelfUtils.closeQuietly(zis);
-            SelfUtils.closeQuietly(fis);
+            Utils.closeQuietly(zis);
+            Utils.closeQuietly(fis);
 
             if (entry != null) {
                 entry.lockIn();
@@ -316,7 +316,7 @@ public class IO {
 
             if (newEntry) {
                 // new entries allowed inside workspace or job.zip only
-                if (!entryName.equals(SelfConstants.JOB_ENTRY) && !entryName.startsWith(SelfConstants.WS_ENTRY_FOLDER)) {
+                if (!entryName.equals(Constants.JOB_ENTRY) && !entryName.startsWith(Constants.WS_ENTRY_FOLDER)) {
                     return;
                 }
             }
@@ -326,7 +326,7 @@ public class IO {
             target.putNextEntry(jarEntry);
             in = new BufferedInputStream(new FileInputStream(source));
 
-            byte[] buffer = new byte[SelfConstants.BUFFER_SIZE];
+            byte[] buffer = new byte[Constants.BUFFER_SIZE];
             while (true) {
                 int count = in.read(buffer);
                 if (count == -1) {
@@ -336,7 +336,7 @@ public class IO {
             }
             target.closeEntry();
         } finally {
-            SelfUtils.closeQuietly(in);
+            Utils.closeQuietly(in);
         }
     }
 }

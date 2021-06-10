@@ -7,7 +7,7 @@ import java.util.List;
  *
  * @author Claudio
  */
-public class SelfParams {
+public class Params {
 
     public static final String PARAM_PREFIX = "[sj]";
 
@@ -38,7 +38,7 @@ public class SelfParams {
 
     private List<String> jobArgs;
 
-    public SelfParams() {
+    public Params() {
         this.del = new LinkedList<>();
         this.imp = new LinkedList<>();
         this.exp = "";

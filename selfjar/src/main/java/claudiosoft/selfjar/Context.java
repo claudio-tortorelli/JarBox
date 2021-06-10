@@ -71,12 +71,12 @@ public class Context {
                 fos.write(String.format("%s%s\n", CTX_MAIN, main).getBytes(Charset.forName("UTF-8")));
             }
         } finally {
-            SelfUtils.closeQuietly(fos);
+            Utils.closeQuietly(fos);
             contextEntry.lockIn(contextEntry.getFile());
         }
     }
 
-    public void applyParams(SelfParams params) {
+    public void applyParams(Params params) {
 
         for (String var : params.addEnv()) {
             String[] splitted = var.split("=");
@@ -139,7 +139,7 @@ public class Context {
     private void parse() throws IOException, SelfJarException {
         try {
             contextEntry.lockOut();
-            List<String> lines = SelfUtils.readAllLines(contextEntry.getFile().toPath());
+            List<String> lines = Utils.readAllLines(contextEntry.getFile().toPath());
             for (String line : lines) {
                 if (line.startsWith("#") || line.isEmpty()) {
                     continue;

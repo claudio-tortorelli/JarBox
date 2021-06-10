@@ -49,13 +49,13 @@ public class Content {
                     byte[] hash = null;
                     if (!zipEntry.isDirectory()) {
                         is = jarFile.getInputStream(zipEntry);
-                        hash = SelfUtils.getSHA256(is);
-                        SelfUtils.closeQuietly(is);
+                        hash = Utils.getSHA256(is);
+                        Utils.closeQuietly(is);
                     }
                     this.contentEntries.add(new ContentEntry(zipEntry, hash));
                 }
             } finally {
-                SelfUtils.closeQuietly(is);
+                Utils.closeQuietly(is);
             }
 
             Collections.sort(this.contentEntries, new Comparator<ContentEntry>() {
@@ -95,7 +95,7 @@ public class Content {
         for (ContentEntry entry : contentEntries) {
             String hash = "";
             if (entry.getHash() != null) {
-                hash = SelfUtils.bytesToHex(entry.getHash());
+                hash = Utils.bytesToHex(entry.getHash());
             }
             ret += String.format("  %s %s\n", hash, entry.getFullName());
         }
