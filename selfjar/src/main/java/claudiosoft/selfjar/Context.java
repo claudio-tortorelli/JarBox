@@ -3,7 +3,6 @@ package claudiosoft.selfjar;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,7 +139,7 @@ public class Context {
     private void parse() throws IOException, SelfJarException {
         try {
             contextEntry.lockOut();
-            List<String> lines = Files.readAllLines(contextEntry.getFile().toPath());
+            List<String> lines = SelfUtils.readAllLines(contextEntry.getFile().toPath());
             for (String line : lines) {
                 if (line.startsWith("#") || line.isEmpty()) {
                     continue;

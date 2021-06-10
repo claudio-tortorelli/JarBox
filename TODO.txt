@@ -19,13 +19,11 @@ spiegazione generale progetto readme.md
     diagramma uml delle classi
     ordine eseguito: del, import, exp
 
-supporto a job exe
-
 se interessante, a fini di prestazioni, possibilità di rendere la temp folder persistente
 
-check con file nel workspace grossi
 --------
 aggiungere i test di performances / stress
+    check con file nel workspace grossi
 
 finire integrazione bundle plugin e autostart doppio click
 
@@ -34,6 +32,7 @@ implementare l'import nel workspace
 
 verificare con jdk "vecchie" 1.7 >=
     necessaria build con 1.7
+        verificato con toolchain
 
 versione selfjar da pom
 

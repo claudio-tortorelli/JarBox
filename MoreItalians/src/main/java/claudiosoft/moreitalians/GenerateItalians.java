@@ -36,10 +36,9 @@ public final class GenerateItalians {
     public static void main(String[] args) {
         displayName = true;
         nItaliansToGenerate = 1;
-//        System.setProperty("nItaliansToGenerate", "5"); // debug
         parseParameters(args);
 
-        GenerateItalians generator = new GenerateItalians();
+        new GenerateItalians();
     }
 
     public GenerateItalians() {
@@ -87,11 +86,8 @@ public final class GenerateItalians {
     }
 
     public void loadResources() throws IOException {
-        File nameFile = Utils.getFileFromRes("nomi_italiani.txt");
-        nameDB = Files.readAllLines(nameFile.toPath());
-
-        File surnameFile = Utils.getFileFromRes("cognomi_italiani.txt");
-        surnameDB = Files.readAllLines(surnameFile.toPath());
+        nameDB = Utils.readAllLines(Utils.getFileFromRes("nomi_italiani.txt").toPath());
+        surnameDB = Utils.readAllLines(Utils.getFileFromRes("cognomi_italiani.txt").toPath());
     }
 
     public String getNewName() {
@@ -106,7 +102,6 @@ public final class GenerateItalians {
 
     public void display(String newName) {
         System.out.println("Ciao " + newName);
-
         JOptionPane.showMessageDialog(null, newName, "Ciao", JOptionPane.INFORMATION_MESSAGE);
     }
 

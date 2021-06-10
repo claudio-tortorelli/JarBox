@@ -1,5 +1,6 @@
 package claudiosoft.selfjar;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,12 +15,16 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
+import static java.nio.file.Files.newBufferedReader;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -77,7 +82,7 @@ public class SelfUtils {
 
     public static void testLockFile(File testFile) throws SelfJarException {
 
-        try ( RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
+        try (RandomAccessFile fis = new RandomAccessFile(testFile, "rw")) {
             FileLock lck = fis.getChannel().lock();
             lck.release();
         } catch (Exception ex) {
@@ -231,5 +236,20 @@ public class SelfUtils {
                 }
             }
         }).start();
+    }
+
+    // imported from jdk > 1.7
+    public static List<String> readAllLines(Path path) throws IOException {
+        try (BufferedReader reader = newBufferedReader(path, StandardCharsets.UTF_8)) {
+            List<String> result = new ArrayList<>();
+            for (;;) {
+                String line = reader.readLine();
+                if (line == null) {
+                    break;
+                }
+                result.add(line);
+            }
+            return result;
+        }
     }
 }
