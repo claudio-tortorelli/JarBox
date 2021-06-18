@@ -1,0 +1,4 @@
+based on JavaToUmlParser, https://github.com/gurnoors/JavaToUMLParser
+Needs graphviz installed https://www.graphviz.org/download/
+
+launch update.bat to update/generate uml.png class diagram image
