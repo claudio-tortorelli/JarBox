@@ -21,15 +21,14 @@ public class Context {
 
     private long exeCount = -1;
 
-    public static final String CONTEXT_FULLNAME = "context/context.txt";
-    public static final String CTX_COUNT = "EXECOUNT:";
-    public static final String CTX_INSTALLJOB = "JOB:";
-    public static final String CTX_JOBPARAM = "JOBPAR:";
-    public static final String CTX_ENVPARAM = "ENVPAR:";
-    public static final String CTX_MAIN = "MAIN:";
+    private final String CTX_COUNT = "EXECOUNT:";
+    private final String CTX_INSTALLJOB = "JOB:";
+    private final String CTX_JOBPARAM = "JOBPAR:";
+    private final String CTX_ENVPARAM = "ENVPAR:";
+    private final String CTX_MAIN = "MAIN:";
 
     public Context(ContentEntry entry) throws SelfJarException, IOException {
-        if (!entry.getFullName().equals(CONTEXT_FULLNAME)) {
+        if (!entry.getFullName().equals(Constants.CONTEXT_ENTRY)) {
             throw new SelfJarException("invalid context entry");
         }
         jobInstalled = false;

@@ -16,28 +16,9 @@ import java.util.zip.ZipEntry;
  */
 public class Content {
 
-    public static enum CHECK_MODE {
-        SIZE,
-        ADD,
-        SUB,
-        ADD_SUB,
-        ADD_SUB_COHERENCE,
-        ALL
-    }
-
-    public static enum CHECK_TARGET {
-        ALL,
-        CORE_ONLY,
-        EXTRA_ONLY
-    }
-
     private final List<ContentEntry> contentEntries;
 
     public Content() throws SelfJarException {
-        this(true);
-    }
-
-    public Content(boolean sort) throws SelfJarException {
         try {
             this.contentEntries = new LinkedList<>();
             JarFile jarFile = new JarFile(Identity.get().currentJar());
@@ -69,21 +50,17 @@ public class Content {
         }
     }
 
-    public final List<ContentEntry> getContentEntries() {
+    public final List<ContentEntry> getEntries() {
         return contentEntries;
     }
 
-    public final ContentEntry getContentEntry(String entryFullName) throws SelfJarException {
+    public final ContentEntry getEntry(String entryFullName) throws SelfJarException {
         for (ContentEntry entry : contentEntries) {
             if (entry.getFullName().equals(entryFullName)) {
                 return entry;
             }
         }
         throw new SelfJarException("no entry found with full name " + entryFullName);
-    }
-
-    public final ContentEntry getContext() throws SelfJarException {
-        return getContentEntry(Context.CONTEXT_FULLNAME);
     }
 
     @Override
@@ -99,7 +76,7 @@ public class Content {
             }
             ret += String.format("  %s %s\n", hash, entry.getFullName());
         }
-        getContentEntries().toString();
+        getEntries().toString();
         return ret + "\n";
     }
 
