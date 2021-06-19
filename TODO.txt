@@ -1,12 +1,4 @@
-incrementare il logger dentro le classi
-
-Ricompila charun per osx e linux 32
-    test su linux (errore)
-
-revisionare commenti/TODO
-    commento header classi
-
-refactoring funzioni
+commento header classi
 
 spiegazione generale progetto readme.md
     simile ad uber-jar ma...dinamico
@@ -20,9 +12,20 @@ spiegazione generale progetto readme.md
     diagramma uml delle classi
     ordine eseguito: del, import, exp
 
+incrementare il logger dentro le classi
+
+Ricompila charun per osx e linux 32
+    test su linux (errore)
+
 a fini delle prestazioni, valutare possibilità di rendere la temp folder persistente
 
 --------
+revisionare commenti/TODO
+
+rename project
+
+refactoring funzioni
+
 aggiungere i test di performances / stress
     check con file nel workspace grossi
 
