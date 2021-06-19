@@ -26,7 +26,7 @@ public class OneShotTests extends BaseJUnitTest {
         String[] args = new String[2];
         args[0] = "[sj]install=../MoreItalians/target/MoreItalians.zip";
         args[1] = "[sj]main=MoreItalians-1.0.0-SNAPSHOT.jar";
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
     }
 
     @Test
@@ -39,6 +39,6 @@ public class OneShotTests extends BaseJUnitTest {
         args[3] = "[sj]loglevel=debug";
         args[4] = "[sj]addenv=nItaliansToGenerate=500";
         args[5] = "[sj]addpar=-noDisplay";
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
     }
 }

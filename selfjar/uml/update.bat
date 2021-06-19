@@ -1,1 +1,0 @@
-java -jar umlparser.jar ..\src\main\java\claudiosoft\selfjar .\uml.png

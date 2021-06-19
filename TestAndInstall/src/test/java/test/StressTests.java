@@ -16,7 +16,7 @@ public class StressTests extends BaseJUnitTest {
         args[1] = "[sj]install=../MoreItalians/target/MoreItalians.zip";
         args[2] = "[sj]main=MoreItalians-1.0.0-SNAPSHOT.jar";
         args[3] = "[sj]addpar=-noDisplay";
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
     }
 
     @Test
@@ -25,46 +25,46 @@ public class StressTests extends BaseJUnitTest {
         long start = System.currentTimeMillis();
         String[] args = new String[15];
         args[0] = "[sj]loglevel=debug";
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - start;
         long firstElapsed = timeElapsed;
         System.out.println(String.format("first execution (%.1f mb), time %.2f sec",
-                SelfJar.size(), timeElapsed / 1000.0));
+                JarBox.size(), timeElapsed / 1000.0));
 
         File testFile = TestResource.extractToFile("test/anagraphic_2000.txt");
 
         start = System.currentTimeMillis();
         args[0] = "[sj]loglevel=debug";
         args[1] = String.format("[sj]import=%s;anagraphic_2000.txt;true", testFile.getAbsolutePath());
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
         finish = System.currentTimeMillis();
         long prevElapsed = timeElapsed;
         timeElapsed = finish - start;
         System.out.println(String.format("---> second execution (%.1f mb), time %.2f sec, delta %.2f sec, delta base %.2f sec",
-                SelfJar.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
+                JarBox.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
 
         File testFile2 = TestResource.extractToFile("test/anagraphic_100000.txt");
 
         start = System.currentTimeMillis();
         args[0] = "[sj]loglevel=debug";
         args[1] = String.format("[sj]import=%s;anagraphic_100000.txt;true", testFile2.getAbsolutePath());
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
         finish = System.currentTimeMillis();
         prevElapsed = timeElapsed;
         timeElapsed = finish - start;
         System.out.println(String.format("---> third execution (%.1f mb), time %.2f sec, delta %.2f sec, delta base %.2f sec",
-                SelfJar.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
+                JarBox.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
 
         start = System.currentTimeMillis();
         args[0] = "[sj]loglevel=debug";
         args[1] = String.format("[sj]import=%s;anagraphic_100000_2.txt;true", testFile2.getAbsolutePath());
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
         finish = System.currentTimeMillis();
         prevElapsed = timeElapsed;
         timeElapsed = finish - start;
         System.out.println(String.format("---> fourth execution (%.1f mb), time %.2f sec, delta %.2f sec, delta base %.2f sec",
-                SelfJar.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
+                JarBox.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
 
         start = System.currentTimeMillis();
         args[0] = "[sj]loglevel=debug";
@@ -76,12 +76,12 @@ public class StressTests extends BaseJUnitTest {
         args[6] = String.format("[sj]import=%s;anagraphic_100000_8.txt;true", testFile2.getAbsolutePath());
         args[7] = String.format("[sj]import=%s;anagraphic_100000_9.txt;true", testFile2.getAbsolutePath());
         args[8] = String.format("[sj]import=%s;anagraphic_100000_10.txt;true", testFile2.getAbsolutePath());
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
         finish = System.currentTimeMillis();
         prevElapsed = timeElapsed;
         timeElapsed = finish - start;
         System.out.println(String.format("---> fifth execution (%.1f mb), time %.2f sec, delta %.2f sec, delta base %.2f sec",
-                SelfJar.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
+                JarBox.size(), timeElapsed / 1000.0, (timeElapsed - prevElapsed) / 1000.0, (timeElapsed - firstElapsed) / 1000.0));
     }
 
     @Test
@@ -101,6 +101,6 @@ public class StressTests extends BaseJUnitTest {
         args[12] = "[sj]delete=anagraphic_100000_8.txt";
         args[13] = "[sj]delete=anagraphic_100000_9.txt";
         args[14] = "[sj]delete=anagraphic_100000_10.txt";
-        SelfJarInstance.start(args);
+        JarBoxInstance.start(args);
     }
 }
