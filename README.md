@@ -1,1 +1,1 @@
-# SelfJar
+# JarBox
