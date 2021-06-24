@@ -14,7 +14,7 @@ JarBox
 - has a scriptable command line interface
 - includes a context and allows a status persistance
 - parameters and environments stored in context will be passed to job every time
-- support double click start
+- supports double click start
 
 ## Limits
 ...but JarBox
