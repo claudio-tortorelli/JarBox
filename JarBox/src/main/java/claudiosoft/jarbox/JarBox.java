@@ -53,6 +53,7 @@ public final class JarBox {
     public JarBox(String[] args) throws URISyntaxException, IOException, InterruptedException, NoSuchAlgorithmException, JarBoxException {
         try {
             Params.get().parseArgs(args);
+
             BasicConsoleLogger.get().info("JarBox started");
 
             SimpleDateFormat sdf = new SimpleDateFormat(Constants.DATE_FORMAT_SHORT);
@@ -63,6 +64,10 @@ public final class JarBox {
             this.jarBoxTmpFolder = new File(String.format("%s%s%s%s", System.getProperty("java.io.tmpdir"), File.separator, Constants.TMP_JARBOX_FOLDER, dateTime));
             this.jobZipFile = new File(String.format("%s%s%s", this.jarBoxTmpFolder, File.separator, Constants.JOB_ENTRY));
             this.contentEntries = new Content();
+            if (Params.get().help()) {
+                showHelp();
+                return;
+            }
             out();
 
             BasicConsoleLogger.get().debug("apply parameters...");
@@ -97,6 +102,22 @@ public final class JarBox {
 
         }
         return ret;
+    }
+
+    private void showHelp() {
+        BasicConsoleLogger.get().info("[sj]addpar=<param>, add a parameter to context. It will be passed to job by command line");
+        BasicConsoleLogger.get().info("[sj]delpar=<param>, delete a parameter from context");
+        BasicConsoleLogger.get().info("[sj]addenv=<variable>, add a environment variable to context. It will be set using -D to job");
+        BasicConsoleLogger.get().info("[sj]delenv=<variable>, delete a environment variable from context");
+        BasicConsoleLogger.get().info("[sj]install=<path/job.zip>, the path to job's archive to be installed");
+        BasicConsoleLogger.get().info("[sj]install=clean, delete the installed job");
+        BasicConsoleLogger.get().info("[sj]main=<job jar filename>, the workspace relative path to the executable job jar");
+        BasicConsoleLogger.get().info("[sj]import=<path/to/file>;<path/relative/workspace>;[true|false], import a external file in a workspace location, replacing if exists");
+        BasicConsoleLogger.get().info("[sj]export=<path/folder>, export the workspace to an external folder path");
+        BasicConsoleLogger.get().info("[sj]delete=<path/workspace/file>, remove a file from the internal workspace");
+        BasicConsoleLogger.get().info("[sj]loglevel=[debug|info|none], sets the console logger level. none is default");
+        BasicConsoleLogger.get().info("[sj]info=true, prints JarBox status and content to console");
+        BasicConsoleLogger.get().info("[sj]help=true, prints this help to console");
     }
 
     /**

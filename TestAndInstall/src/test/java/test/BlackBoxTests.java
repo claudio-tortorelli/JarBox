@@ -86,6 +86,13 @@ public class BlackBoxTests extends BaseJUnitTest {
         Assert.assertTrue(exist2);
     }
 
+    @Test
+    public void t08ShowHelp() throws InterruptedException, IOException {
+        String[] args = new String[10];
+        args[0] = "[sj]help=true";
+        JarBoxInstance.start(args);
+    }
+
     private void deleteDirectory(File directoryToBeDeleted) {
         if (!directoryToBeDeleted.exists()) {
             return;

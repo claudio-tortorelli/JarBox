@@ -12,6 +12,7 @@ public class Params {
     public static final String PARAM_PREFIX = "[sj]";
 
     public static final String INSTALL = "install";
+    public static final String INSTALL_CLEAN = "clean";
     public static final String MAIN = "main";
     public static final String ADDENV = "addenv";
     public static final String DELENV = "delenv";
@@ -22,8 +23,7 @@ public class Params {
     public static final String DEL = "delete";
     public static final String INFO = "info";
     public static final String LOGLEVEL = "loglevel";
-
-    public static final String INSTALL_CLEAN = "clean";
+    public static final String HELP = "help";
 
     private String install;
     private String main;
@@ -35,6 +35,7 @@ public class Params {
     private List<String> imp;
     private List<String> del;
     private boolean info;
+    private boolean help;
 
     private List<String> jobArgs;
 
@@ -58,6 +59,7 @@ public class Params {
         this.addEnv = new LinkedList<>();
         this.jobArgs = new LinkedList<>();
         this.info = false;
+        this.help = false;
     }
 
     public String install() {
@@ -120,6 +122,14 @@ public class Params {
         this.info = info;
     }
 
+    public boolean help() {
+        return help;
+    }
+
+    public void help(boolean help) {
+        this.help = help;
+    }
+
     public void parseArgs(String[] args) throws JarBoxException {
         boolean loggerCreated = false;
         for (int iAr = 0; iAr < args.length; iAr++) {
@@ -144,7 +154,8 @@ public class Params {
 
             if (param.startsWith(Params.INFO) && value.equalsIgnoreCase("true")) {
                 params.info(true);// enable internal info printing
-                continue;
+            } else if (param.startsWith(Params.HELP) && value.equalsIgnoreCase("true")) {
+                params.help(true);
             } else if (param.startsWith(Params.LOGLEVEL)) {
                 loggerCreated = true;
                 // set logger level
