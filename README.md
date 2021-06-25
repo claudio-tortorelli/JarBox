@@ -3,23 +3,25 @@
 ## What is JarBox
 You can consider JarBox like a container or a uber-jar ora a fat-jar, but with dynamic contents. 
 It is possible to "install" and "uninstall" a job (an executable sub-jar) into a JarBox so it can generate or process data inside a local workspace.
-JarBox includes a Java job tool, dependencies and data that can be moved alltogheter.
+JarBox is a portable environment that includes a Java job tool, dependencies and data moved alltogheter.
+
 
 ## Features
 JarBox
 - needs a small payload (about 45KB) 
 - is a pure Java project, without any third-party dependency
 - is JDK 1.7+ compatible (tested up to JRE 15) 
-- is multi-platform (Windows, OSX, Linux)
+- is (virtually) multi-platform (Windows, OSX, Linux)
 - has a scriptable command line interface
 - includes a context and allows a status persistance
-- parameters and environments stored in context will be passed to job every time
+- parameters and environments stored in context will be passed to job every execution
+- is a wrapper, but a standard jar too, so its content is natively compressed
 - supports double click start
 
 ## Limits
 ...but JarBox
 - is not tuned to store huge data. It's performances get worse increasing work data size
-- requires free access to user temporary folder ("java.io.tmpdir")
+- requires write privileges to user temporary folder ("java.io.tmpdir")
 
 ## How to use
 Any command line parameter recognized by JarBox must starts by "[sj]" prefix.
