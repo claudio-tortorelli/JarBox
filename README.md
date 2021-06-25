@@ -19,7 +19,7 @@ JarBox
 ## Limits
 ...but JarBox
 - is not tuned to store huge data. It's performances get worse increasing work data size
-- require free access to user temporary folder ("java.io.tmpdir")
+- requires free access to user temporary folder ("java.io.tmpdir")
 
 ## How to use
 Any command line parameter recognized by JarBox must starts by "[sj]" prefix.
