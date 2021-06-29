@@ -1,3 +1,8 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.io.File;
@@ -8,8 +13,9 @@ import java.nio.channels.FileLock;
 import java.util.zip.ZipEntry;
 
 /**
- *
- * @author claudio.tortorelli
+ * A single JarBox's entry, deployed inside user temporary folder. A "core"
+ * entry isn't included under job or context folder and it is locked by file
+ * system. Every entry has a status SHA256 hash
  */
 public class ContentEntry extends ZipEntry {
 

@@ -1,11 +1,15 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
- * @author Claudio
+ * Command line parameters bean
  */
 public class Params {
 

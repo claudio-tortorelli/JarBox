@@ -1,3 +1,8 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.moreitalians;
 
 import java.io.BufferedReader;
@@ -52,7 +57,7 @@ public class Utils {
 
     // imported from jdk > 1.7
     public static List<String> readAllLines(Path path) throws IOException {
-        try (BufferedReader reader = newBufferedReader(path, StandardCharsets.UTF_8)) {
+        try ( BufferedReader reader = newBufferedReader(path, StandardCharsets.UTF_8)) {
             List<String> result = new ArrayList<>();
             for (;;) {
                 String line = reader.readLine();

@@ -1,10 +1,14 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.util.TimeZone;
 
 /**
- *
- * @author Claudio
+ * Jarbox project constants
  */
 public class Constants {
 

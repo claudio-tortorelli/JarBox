@@ -1,3 +1,22 @@
+wiki
+    elementi costitutivi
+    uml
+    flusso
+    job di esempio
+    test di unità
+    todo
+    changelog
+
+incrementare il logger dentro le classi
+
+Ricompila charun per osx e linux 32
+    test su linux (errore)
+
+a fini delle prestazioni, valutare possibilità di rendere la temp folder persistente
+
+--------
+licenza
+
 commento header classi
 
 spiegazione generale progetto readme.md
@@ -12,14 +31,6 @@ spiegazione generale progetto readme.md
     diagramma uml delle classi
     ordine eseguito: del, import, exp
 
-incrementare il logger dentro le classi
-
-Ricompila charun per osx e linux 32
-    test su linux (errore)
-
-a fini delle prestazioni, valutare possibilità di rendere la temp folder persistente
-
---------
 revisionare commenti/TODO
 
 rename project

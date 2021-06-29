@@ -1,3 +1,8 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.io.FileOutputStream;
@@ -8,8 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- * @author claudio.tortorelli
+ * The context holds all persistant JarBox status information. It consists in a
+ * content entry file with a list of environment entries and job parameters to
+ * set at startup, info about job to be executed and execution counter.
  */
 public class Context {
 

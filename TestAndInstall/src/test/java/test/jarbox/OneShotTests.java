@@ -1,4 +1,9 @@
-package test;
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
+package test.jarbox;
 
 import java.io.IOException;
 import org.junit.BeforeClass;

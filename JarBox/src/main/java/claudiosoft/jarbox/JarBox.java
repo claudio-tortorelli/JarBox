@@ -1,3 +1,8 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.io.BufferedInputStream;
@@ -22,8 +27,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- *
- * @author claudio.tortorelli
+ * Main class of JarBox. It implements the execution flow, helps, logging and so
+ * on.
  */
 public final class JarBox {
 

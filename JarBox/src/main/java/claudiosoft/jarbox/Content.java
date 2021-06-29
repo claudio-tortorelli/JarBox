@@ -1,3 +1,8 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.io.InputStream;
@@ -11,8 +16,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 /**
- *
- * @author claudio.tortorelli
+ * It represents all entries inside the JarBox
  */
 public class Content {
 

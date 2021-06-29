@@ -1,11 +1,15 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.io.File;
 import java.io.FilenameFilter;
 
 /**
- *
- * @author Claudio
+ * Supplies all JarBox instance identity information.
  */
 public class Identity {
 

@@ -1,3 +1,8 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.io.BufferedReader;
@@ -30,8 +35,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 /**
- *
- * @author Claudio
+ * Some usefull common utilities
  */
 public class Utils {
 
@@ -208,6 +212,9 @@ public class Utils {
         }
     }
 
+    /**
+     * Supported OS
+     */
     public static enum OS {
         WINDOWS,
         LINUX,

@@ -1,3 +1,8 @@
+/**
+ * JarBoxProject - https://github.com/claudio-tortorelli/JarBox/
+ *
+ * MIT License - 2021
+ */
 package claudiosoft.jarbox;
 
 import java.util.logging.ConsoleHandler;
@@ -6,8 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author claudio.tortorelli
+ * A really simple logging wrapper. Aimed to print to console (stdout) only
  */
 public class BasicConsoleLogger {
 
@@ -16,6 +20,9 @@ public class BasicConsoleLogger {
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS - %5$s%6$s%n");
     }
 
+    /**
+     * Three supported log level
+     */
     public enum LogLevel {
         NONE,
         NORMAL,
