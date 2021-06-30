@@ -473,14 +473,14 @@ public final class JarBox {
         //call charun on right  platform
         Utils.OS os = Utils.getOperatingSystem();
         if (os.equals(Utils.OS.WINDOWS)) {
-            charunInFile = Utils.getFileFromRes("charun/win/Charun.exe");
-            charunOutFile = new File(String.format("%s%sCharun.exe", parentFolder, File.separator));
+            charunInFile = Utils.getFileFromRes("charun/win/charun.exe");
+            charunOutFile = new File(String.format("%s%scharun.exe", parentFolder, File.separator));
         } else if (os.equals(Utils.OS.OSX)) {
             //TODO...rebuild charun
         } else if (os.equals(Utils.OS.LINUX)) {
             if (!System.getProperty("os.arch").equals("x86")) {
-                charunInFile = Utils.getFileFromRes("charun/linux/CharunX64");
-                charunOutFile = new File(String.format("%s%sCharunX64", parentFolder, File.separator));
+                charunInFile = Utils.getFileFromRes("charun/linux/charunX64");
+                charunOutFile = new File(String.format("%s%scharunX64", parentFolder, File.separator));
             } else {
                 //TODO
             }
