@@ -10,7 +10,7 @@ JarBox is a portable environment that includes a Java job tool, dependencies and
 
 ## Features
 JarBox
-- needs a small payload (about 45KB) 
+- needs a small payload (less than 100KB) 
 - is a pure Java project, without any third-party dependency
 - is JDK 1.7+ compatible (tested up to JRE 15) 
 - is (virtually) multi-platform (Windows, OSX, Linux)
