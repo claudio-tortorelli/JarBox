@@ -1,5 +1,7 @@
 # JarBox
 
+![logo](./JarBox/docs/logo/jarbox_logo.gif)
+
 ## What is JarBox
 You can consider JarBox like a container or a uber-jar ora a fat-jar, but with dynamic contents. 
 It is possible to "install" and "uninstall" a job (an executable sub-jar) into a JarBox so it can generate or process data inside a local workspace.
@@ -77,4 +79,4 @@ java -jar JarBox.jar [sj]info=true"
 ```
 
 ## Technical details
-You can find a technical description in the Wiki section
+You can find a technical description in the Wiki section: https://github.com/claudio-tortorelli/JarBox/wiki
