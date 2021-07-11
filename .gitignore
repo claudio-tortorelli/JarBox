@@ -1,9 +1,5 @@
 /MoreItalians/target/
-/SelfGeneratingLib/target/
-/SelfGeneratingCommon/target/
-/TestAndRebuild/target/
 /TestAndInstall/target/
-selfjar/workspace/
 TestAndInstall/workspace/
 charun/Charun/Release/
 charun/Charun/Debug/
