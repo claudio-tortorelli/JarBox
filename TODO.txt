@@ -1,3 +1,11 @@
+incrementare il logger dentro le classi
+
+Ricompila charun per osx e linux 32
+    test su linux (errore)
+
+a fini delle prestazioni, valutare possibilità di rendere la temp folder persistente
+
+--------
 wiki
     elementi costitutivi
     uml
@@ -7,14 +15,6 @@ wiki
     todo
     changelog
 
-incrementare il logger dentro le classi
-
-Ricompila charun per osx e linux 32
-    test su linux (errore)
-
-a fini delle prestazioni, valutare possibilità di rendere la temp folder persistente
-
---------
 licenza
 
 commento header classi
