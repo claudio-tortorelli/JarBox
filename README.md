@@ -3,7 +3,7 @@
 ![logo](./JarBox/docs/logo/jarbox_logo.gif)
 
 ## What is JarBox
-You can consider JarBox like a container or a uber-jar ora a fat-jar, but with dynamic contents. 
+You can consider JarBox like a container or a "uber-jar" or a "fat-jar", but with dynamic contents. 
 It is possible to "install" and "uninstall" a job (an executable sub-jar) into a JarBox so it can generate or process data inside a local workspace.
 JarBox is a portable environment that includes a Java job tool, dependencies and data moved alltogheter.
 
@@ -45,38 +45,38 @@ Any command line parameter recognized by JarBox must starts by "[sj]" prefix.
 any other parameter passed to JarBox will be directly sent to internal job.  
 
 ### Some samples
-- Install a job
+- <b>Install</b> a job
 ```
 java -jar JarBox.jar [sj]install=../pippo.zip
 ```
-- Start the job passing a one shot parameter
+- <b>Start</b> the job passing a one shot parameter
 ```
 java -jar JarBox.jar -noDisplay
 ```
-- Delete a job
+- <b>Delete</b> a job
 ```
 java -jar JarBox.jar [sj]install=clean
 ```  
-- Add params and environments to persistent context
+- <b>Add params and environment variable</b> to persistent context
 ```
 java -jar JarBox.jar [sj]addenv=temp.folder=C:\temp [sj]addpar=-noDisplay"
 ```
-- Export workspace
+- <b>Export</b> workspace
 ```
 java -jar JarBox.jar [sj]export=c:\temp\export"
 ```
-- Import a file into workspace
+- <b>Import</b> a file into workspace
 ```
 java -jar JarBox.jar [sj]import=c:\temp\test.txt;mytests\test.txt;true"
 ```
-- Delete a file from workspace
+- <b>Delete</b> a file from workspace
 ```
 java -jar JarBox.jar [sj]delete=mytests\test.txt"
 ```
-- Shows informations
+- <b>Shows</b> informations
 ```
 java -jar JarBox.jar [sj]info=true"
 ```
 
-## Technical details
+## Technical details and info
 You can find a technical description in the Wiki section: https://github.com/claudio-tortorelli/JarBox/wiki
