@@ -28,26 +28,26 @@ JarBox
 ## How to use
 Any command line parameter recognized by JarBox must starts by "[sj]" prefix.
 ```
-[sj]addpar=<param>, add a parameter to context. It will be passed to job by command line
-[sj]delpar=<param>, delete a parameter from context
-[sj]addenv=<variable>, add a environment variable to context. It will be set using -D to job
-[sj]delenv=<variable>, delete a environment variable from context
-[sj]install=<path/job.zip>, the path to job's archive to be installed
-[sj]install=clean, delete the installed job
-[sj]main=<job jar filename>, the workspace relative path to the executable job jar
-[sj]import=<path/to/file>;<path/relative/workspace>;[true|false], import a external file in a workspace location, replacing if exists
-[sj]export=<path/folder>, export the workspace to an external folder path
-[sj]delete=<path/workspace/file>, remove a file from the internal workspace
-[sj]loglevel=[debug|info|none], sets the console logger level. none is default
-[sj]info=true, prints JarBox status and content to console
-[sj]help=true, prints this help to console
+[jb]addpar=<param>, add a parameter to context. It will be passed to job by command line
+[jb]delpar=<param>, delete a parameter from context
+[jb]addenv=<variable>, add a environment variable to context. It will be set using -D to job
+[jb]delenv=<variable>, delete a environment variable from context
+[jb]install=<path/job.zip>, the path to job's archive to be installed
+[jb]install=clean, delete the installed job
+[jb]main=<job jar filename>, the workspace relative path to the executable job jar
+[jb]import=<path/to/file>;<path/relative/workspace>;[true|false], import a external file in a workspace location, replacing if exists
+[jb]export=<path/folder>, export the workspace to an external folder path
+[jb]delete=<path/workspace/file>, remove a file from the internal workspace
+[jb]loglevel=[debug|info|none], sets the console logger level. none is default
+[jb]info=true, prints JarBox status and content to console
+[jb]help=true, prints this help to console
 ```  
 any other parameter passed to JarBox will be directly sent to internal job.  
 
 ### Some samples
 - <b>Install</b> a job
 ```
-java -jar JarBox.jar [sj]install=../pippo.zip
+java -jar JarBox.jar [jb]install=../pippo.zip
 ```
 - <b>Start</b> the job passing a one shot parameter
 ```
@@ -55,27 +55,27 @@ java -jar JarBox.jar -noDisplay
 ```
 - <b>Delete</b> a job
 ```
-java -jar JarBox.jar [sj]install=clean
+java -jar JarBox.jar [jb]install=clean
 ```  
 - <b>Add params and environment variable</b> to persistent context
 ```
-java -jar JarBox.jar [sj]addenv=temp.folder=C:\temp [sj]addpar=-noDisplay"
+java -jar JarBox.jar [jb]addenv=temp.folder=C:\temp [jb]addpar=-noDisplay"
 ```
 - <b>Export</b> workspace
 ```
-java -jar JarBox.jar [sj]export=c:\temp\export"
+java -jar JarBox.jar [jb]export=c:\temp\export"
 ```
 - <b>Import</b> a file into workspace
 ```
-java -jar JarBox.jar [sj]import=c:\temp\test.txt;mytests\test.txt;true"
+java -jar JarBox.jar [jb]import=c:\temp\test.txt;mytests\test.txt;true"
 ```
 - <b>Delete</b> a file from workspace
 ```
-java -jar JarBox.jar [sj]delete=mytests\test.txt"
+java -jar JarBox.jar [jb]delete=mytests\test.txt"
 ```
 - <b>Shows</b> informations
 ```
-java -jar JarBox.jar [sj]info=true"
+java -jar JarBox.jar [jb]info=true"
 ```
 
 ## Technical details and info
