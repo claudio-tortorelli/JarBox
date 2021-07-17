@@ -1,7 +1,50 @@
-incrementare il logger dentro le classi
+problemi di privilegi e display swing su linux
 
-Ricompila charun per osx e linux 32
-    test su linux (errore)
+2021-07-17 16:38:43 - [INFO] start internal job
+2021-07-17 16:38:43 - [INFO] job jar is /tmp/jarbox20210717143843/job/job/MoreItalians-1.0.0-SNAPSHOT.jar
+Ciao Patrizia Gualterio
+Exception in thread "main" java.awt.AWTError: Assistive Technology not found: org.GNOME.Accessibility.AtkWrapper
+	at java.awt.Toolkit.loadAssistiveTechnologies(Toolkit.java:807)
+	at java.awt.Toolkit.getDefaultToolkit(Toolkit.java:886)
+	at sun.swing.SwingUtilities2.getSystemMnemonicKeyMask(SwingUtilities2.java:2032)
+	at javax.swing.plaf.basic.BasicLookAndFeel.initComponentDefaults(BasicLookAndFeel.java:1158)
+	at javax.swing.plaf.metal.MetalLookAndFeel.initComponentDefaults(MetalLookAndFeel.java:431)
+	at javax.swing.plaf.basic.BasicLookAndFeel.getDefaults(BasicLookAndFeel.java:148)
+	at javax.swing.plaf.metal.MetalLookAndFeel.getDefaults(MetalLookAndFeel.java:1577)
+	at javax.swing.UIManager.setLookAndFeel(UIManager.java:539)
+	at javax.swing.UIManager.setLookAndFeel(UIManager.java:579)
+	at javax.swing.UIManager.initializeDefaultLAF(UIManager.java:1349)
+	at javax.swing.UIManager.initialize(UIManager.java:1459)
+	at javax.swing.UIManager.maybeInitialize(UIManager.java:1426)
+	at javax.swing.UIManager.getUI(UIManager.java:1006)
+	at javax.swing.JOptionPane.updateUI(JOptionPane.java:1882)
+	at javax.swing.JOptionPane.<init>(JOptionPane.java:1845)
+	at javax.swing.JOptionPane.showOptionDialog(JOptionPane.java:857)
+	at javax.swing.JOptionPane.showMessageDialog(JOptionPane.java:666)
+	at javax.swing.JOptionPane.showMessageDialog(JOptionPane.java:637)
+	at claudiosoft.moreitalians.GenerateItalians.display(GenerateItalians.java:110)
+	at claudiosoft.moreitalians.GenerateItalians.<init>(GenerateItalians.java:60)
+	at claudiosoft.moreitalians.GenerateItalians.main(GenerateItalians.java:46)
+2021-07-17 16:38:44 - [INFO] end internal job
+java.io.IOException: Cannot run program "/tmp/charunX64": error=13, Permission denied
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1048)
+	at claudiosoft.jarbox.JarBox.invokeCharun(JarBox.java:505)
+	at claudiosoft.jarbox.JarBox.<init>(JarBox.java:91)
+	at claudiosoft.jarbox.JarBox.main(JarBox.java:49)
+Caused by: java.io.IOException: error=13, Permission denied
+	at java.lang.UNIXProcess.forkAndExec(Native Method)
+	at java.lang.UNIXProcess.<init>(UNIXProcess.java:247)
+	at java.lang.ProcessImpl.start(ProcessImpl.java:134)
+	at java.lang.ProcessBuilder.start(ProcessBuilder.java:1029)
+	... 3 more
+
+SOSTITUIRE nella invokeCharun la Files.copy (problemi di portabilità) e l'uso del file temp...usare la versione estratta 
+
+nuova opzione per non eliminare la temp in uscita
+
+Ricompila charun per osx e linux
+
+incrementare il logger dentro le classi
 
 a fini delle prestazioni, valutare possibilità di rendere la temp folder persistente
 

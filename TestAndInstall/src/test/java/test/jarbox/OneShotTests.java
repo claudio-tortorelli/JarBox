@@ -5,6 +5,7 @@
  */
 package test.jarbox;
 
+import claudiosoft.jarbox.Params;
 import java.io.IOException;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
@@ -29,8 +30,8 @@ public class OneShotTests extends BaseJUnitTest {
     @Ignore
     public void tOneShot() throws IOException, InterruptedException {
         String[] args = new String[2];
-        args[0] = "[sj]install=../MoreItalians/target/MoreItalians.zip";
-        args[1] = "[sj]main=MoreItalians-1.0.0-SNAPSHOT.jar";
+        args[0] = Params.PARAM_PREFIX + "install=../MoreItalians/target/MoreItalians.zip";
+        args[1] = Params.PARAM_PREFIX + "main=MoreItalians-1.0.0-SNAPSHOT.jar";
         JarBoxInstance.start(args);
     }
 
@@ -38,12 +39,12 @@ public class OneShotTests extends BaseJUnitTest {
     @Ignore
     public void tBuildDB500() throws IOException, InterruptedException {
         String[] args = new String[20];
-        args[0] = "[sj]install=../MoreItalians/target/MoreItalians.zip";
-        args[1] = "[sj]main=MoreItalians-1.0.0-SNAPSHOT.jar";
-        args[2] = "[sj]info=true";
-        args[3] = "[sj]loglevel=debug";
-        args[4] = "[sj]addenv=nItaliansToGenerate=500";
-        args[5] = "[sj]addpar=-noDisplay";
+        args[0] = Params.PARAM_PREFIX + "install=../MoreItalians/target/MoreItalians.zip";
+        args[1] = Params.PARAM_PREFIX + "main=MoreItalians-1.0.0-SNAPSHOT.jar";
+        args[2] = Params.PARAM_PREFIX + "info=true";
+        args[3] = Params.PARAM_PREFIX + "loglevel=debug";
+        args[4] = Params.PARAM_PREFIX + "addenv=nItaliansToGenerate=500";
+        args[5] = Params.PARAM_PREFIX + "addpar=-noDisplay";
         JarBoxInstance.start(args);
     }
 }

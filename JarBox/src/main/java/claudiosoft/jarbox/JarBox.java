@@ -34,8 +34,6 @@ public final class JarBox {
 
     private static final File FILE_LOCK = new File(System.getProperty("user.home") + File.separator + ".selfgenerating_lock");
 
-    private static BasicConsoleLogger logger = BasicConsoleLogger.get();
-
     private final String dateTime;
     private final File jarBoxTmpFolder;
     private final File jobZipFile;
@@ -409,7 +407,7 @@ public final class JarBox {
         if (!context.isJobInstalled()) {
             return;
         }
-        logger.info("start internal job");
+        BasicConsoleLogger.get().info("start internal job");
 
         // extract the job archive
         String curJobFolder = extractJob();
@@ -431,7 +429,7 @@ public final class JarBox {
 
         pbArgs.add("-jar");
         String jobJar = String.format("%s%s%s", curJobFolder, File.separator, context.getMain());
-        logger.info("job jar is " + jobJar);
+        BasicConsoleLogger.get().debug("job jar is " + jobJar);
         pbArgs.add(jobJar);
 
         for (Map.Entry<String, String> set : context.getJobParamsEntries().entrySet()) {
@@ -451,7 +449,7 @@ public final class JarBox {
 
         insideProc.waitFor();
 
-        logger.info("end internal job");
+        BasicConsoleLogger.get().info("end internal job");
     }
 
     /**
@@ -471,7 +469,7 @@ public final class JarBox {
         File charunOutFile = null;
         File charunInFile = null;
 
-        logger.debug("starting Charun...");
+        BasicConsoleLogger.get().debug("starting Charun...");
         //call charun on right  platform
         Utils.OS os = Utils.getOperatingSystem();
         if (os.equals(Utils.OS.WINDOWS)) {
