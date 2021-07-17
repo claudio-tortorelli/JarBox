@@ -14,8 +14,8 @@ import java.util.Map;
 
 /**
  * The context holds all persistant JarBox status information. It consists in a
- * content entry file with a list of environment entries and job parameters to
- * set at startup, info about job to be executed and execution counter.
+ * content entry file with a list of system properties and job parameters to set
+ * at startup, info about job to be executed and execution counter.
  */
 public class Context {
 

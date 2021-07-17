@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Params {
 
-    public static final String PARAM_PREFIX = "[sj]";
+    public static final String PARAM_PREFIX = "[jb]";
 
     public static final String INSTALL = "install";
     public static final String INSTALL_CLEAN = "clean";
@@ -177,10 +177,10 @@ public class Params {
                 // add a job main executable to context
                 params.main(value);
             } else if (param.startsWith(Params.ADDENV)) {
-                // add an environment variable to context
+                // add an system property to context
                 params.addEnv().add(value);
             } else if (param.startsWith(Params.DELENV)) {
-                // delete an environment variable to context
+                // delete an system property to context
                 params.delEnv().add(value);
             } else if (param.startsWith(Params.ADDPAR)) {
                 // add a job parameter to context

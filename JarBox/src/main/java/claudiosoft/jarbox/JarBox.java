@@ -110,19 +110,19 @@ public final class JarBox {
     }
 
     private void showHelp() {
-        BasicConsoleLogger.get().info("[sj]addpar=<param>, add a parameter to context. It will be passed to job by command line");
-        BasicConsoleLogger.get().info("[sj]delpar=<param>, delete a parameter from context");
-        BasicConsoleLogger.get().info("[sj]addenv=<variable>, add a environment variable to context. It will be set using -D to job");
-        BasicConsoleLogger.get().info("[sj]delenv=<variable>, delete a environment variable from context");
-        BasicConsoleLogger.get().info("[sj]install=<path/job.zip>, the path to job's archive to be installed");
-        BasicConsoleLogger.get().info("[sj]install=clean, delete the installed job");
-        BasicConsoleLogger.get().info("[sj]main=<job jar filename>, the workspace relative path to the executable job jar");
-        BasicConsoleLogger.get().info("[sj]import=<path/to/file>;<path/relative/workspace>;[true|false], import a external file in a workspace location, replacing if exists");
-        BasicConsoleLogger.get().info("[sj]export=<path/folder>, export the workspace to an external folder path");
-        BasicConsoleLogger.get().info("[sj]delete=<path/workspace/file>, remove a file from the internal workspace");
-        BasicConsoleLogger.get().info("[sj]loglevel=[debug|info|none], sets the console logger level. none is default");
-        BasicConsoleLogger.get().info("[sj]info=true, prints JarBox status and content to console");
-        BasicConsoleLogger.get().info("[sj]help=true, prints this help to console");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "addpar=<param>, add a parameter to context. It will be passed to job by command line");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "delpar=<param>, delete a parameter from context");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "addenv=<variable>, add a system property to context. It will be set using -D to job");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "delenv=<variable>, delete a system property from context");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "install=<path/job.zip>, the path to job's archive to be installed");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "install=clean, delete the installed job");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "main=<job jar filename>, the workspace relative path to the executable job jar");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "import=<path/to/file>;<path/relative/workspace>;[true|false], import a external file in a workspace location, replacing if exists");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "export=<path/folder>, export the workspace to an external folder path");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "delete=<path/workspace/file>, remove a file from the internal workspace");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "loglevel=[debug|info|none], sets the console logger level. none is default");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "info=true, prints JarBox status and content to console");
+        BasicConsoleLogger.get().info(Params.PARAM_PREFIX + "help=true, prints this help to console");
     }
 
     /**
@@ -283,7 +283,7 @@ public final class JarBox {
     }
 
     private String extractJob() throws JarBoxException, IOException {
-        File jobDir = new File(String.format("%s%sjob%sjob", jarBoxTmpFolder, File.separator, File.separator));
+        File jobDir = new File(String.format("%s%sjob%sdist", jarBoxTmpFolder, File.separator, File.separator));
         if (!jobDir.exists()) {
             jobDir.mkdirs();
         }
@@ -418,10 +418,9 @@ public final class JarBox {
         LinkedList<String> pbArgs = new LinkedList<>();
         if (context.getMain().toLowerCase().endsWith(".jar")) {
             pbArgs.add("java");
-            pbArgs.add("-jar");
         }
 
-        // apply environment properties
+        // apply system properties
         for (Map.Entry<String, String> set : context.getEnvEntries().entrySet()) {
             String env = set.getKey();
             if (!set.getValue().isEmpty()) {
@@ -430,7 +429,10 @@ public final class JarBox {
             pbArgs.add(String.format("-D%s", env));
         }
 
-        pbArgs.add(String.format("%s%s%s", curJobFolder, File.separator, context.getMain()));
+        pbArgs.add("-jar");
+        String jobJar = String.format("%s%s%s", curJobFolder, File.separator, context.getMain());
+        logger.info("job jar is " + jobJar);
+        pbArgs.add(jobJar);
 
         for (Map.Entry<String, String> set : context.getJobParamsEntries().entrySet()) {
             if (set.getValue().isEmpty()) {
